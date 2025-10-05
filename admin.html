@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Dashboard Affiliés</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <style>
+        /* Admin responsive styles */
+        .admin-grid-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .payout-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 200px 100px;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-grid-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .payout-item {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .payout-item > div:nth-child(1),
+            .payout-item > div:nth-child(2) {
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+    </style>
+
+    <header class="header">
+        <div class="container">
+            <h1>⚙️ Administration</h1>
+            <div class="header-info">
+                <span id="admin-name"></span>
+                <button onclick="logout()" class="logout-btn">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 2rem 0;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <a href="/" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 6px;">📊 Voir le Dashboard</a>
+        </div>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>💰 Paramètres du Payout</h2>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Payout par Défaut</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
+                <form id="settings-form" style="display: flex; gap: 1rem; align-items: end;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Payout par défaut ($)</label>
+                        <input type="number" id="payout_per_lead" step="0.01" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1.1rem;">
+                    </div>
+                    <div>
+                        <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Mettre à jour</button>
+                    </div>
+                </form>
+                <div id="settings-message" style="margin-top: 1rem; display: none;"></div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Marge Manager</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Définissez la marge que les managers gagnent par lead (en plus du payout affilié)</p>
+                <form id="manager-margin-form" style="display: flex; gap: 1rem; align-items: end;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Marge par lead ($)</label>
+                        <input type="number" id="manager_margin_per_lead" step="0.01" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1.1rem;">
+                    </div>
+                    <div>
+                        <button type="submit" style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Mettre à jour</button>
+                    </div>
+                </form>
+                <div id="manager-margin-message" style="margin-top: 1rem; display: none;"></div>
+                <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 1rem;">
+                    💡 <strong>Exemple :</strong> Si marge = $1 et affilié fait 100 leads, le manager gagne $100 (en plus de ce que l'affilié touche)
+                </p>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Payout par Affilié (Sub1)</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Définissez un payout spécifique pour chaque affilié en <strong>$ (USD)</strong>. Le revenu sera : <strong>Conversions × Payout spécifique ($)</strong></p>
+                <div id="payout-by-sub1-container" style="display: grid; gap: 1rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>👥 Gestion des Utilisateurs</h2>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Créer un nouveau compte</h3>
+                <form id="create-user-form" class="admin-grid-form">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Nom</label>
+                        <input type="text" id="name" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email</label>
+                        <input type="email" id="email" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Mot de passe</label>
+                        <input type="password" id="password" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Rôle</label>
+                        <select id="role" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
+                            <option value="affiliate">Affilié (1 sub1)</option>
+                            <option value="manager">Manager (plusieurs sub1)</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sub1 (ID Affilié) - Maintenez Ctrl pour sélectionner plusieurs</label>
+                        <select id="sub1" multiple size="6" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
+                            <option value="">Chargement...</option>
+                        </select>
+                        <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.5rem;">
+                            💡 Pour un Affilié : sélectionnez 1 seul sub1<br>
+                            💡 Pour un Manager : maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs sub1
+                        </p>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <button type="submit" style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Créer le compte</button>
+                    </div>
+                </form>
+                <div id="create-message" style="margin-top: 1rem; display: none;"></div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Sub1</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <tr>
+                            <td colspan="6" class="loading-row">
+                                <span class="loading">Chargement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function loadSub1List() {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const select = document.getElementById('sub1');
+                
+                if (sub1List.length === 0) {
+                    select.innerHTML = '<option value="">Aucun sub1 disponible (lancez report_today.ps1)</option>';
+                    return;
+                }
+                
+                select.innerHTML = '<option value="">-- Sélectionnez un sub1 --</option>' +
+                    sub1List.map(item => 
+                        `<option value="${item.sub1}">${item.sub1} (${item.conversions} conv, $${item.revenue.toFixed(2)})</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Erreur chargement sub1:', error);
+                document.getElementById('sub1').innerHTML = '<option value="">Erreur de chargement</option>';
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                const users = await response.json();
+                
+                const tbody = document.getElementById('users-body');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Aucun utilisateur</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => {
+                    const sub1Display = Array.isArray(user.sub1) ? user.sub1.join(', ') : user.sub1;
+                    const roleDisplay = user.role === 'admin' ? 'Admin' : user.role === 'manager' ? 'Manager' : 'Affilié';
+                    const roleBadge = user.role === 'admin' ? 'approved' : user.role === 'manager' ? 'pending' : 'rejected';
+                    
+                    return `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td><strong>${sub1Display}</strong></td>
+                        <td><span class="status-badge status-${roleBadge}">${roleDisplay}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="addSub1ToUser(${user.id})" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">+ Sub1</button>
+                                ${user.role !== 'admin' ? `<button onclick="deleteUser(${user.id})" style="padding: 0.5rem 1rem; background: var(--danger-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Supprimer</button>` : '<span style="color: var(--text-light);">-</span>'}
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur chargement users:', error);
+            }
+        }
+
+        document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            // Récupérer les sub1 sélectionnés (peut être un ou plusieurs)
+            const sub1Select = document.getElementById('sub1');
+            const selectedSub1 = Array.from(sub1Select.selectedOptions).map(option => option.value);
+            const sub1 = selectedSub1.length === 1 ? selectedSub1[0] : selectedSub1;
+            
+            const messageDiv = document.getElementById('create-message');
+            
+            try {
+                const response = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, sub1, role })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `Compte créé avec succès pour ${data.name} !`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('create-user-form').reset();
+                    
+                    // Recharger la liste
+                    loadUsers();
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la création';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        async function deleteUser(userId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadUsers();
+                } else {
+                    alert('Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/api/auth/me');
+                const user = await response.json();
+                document.getElementById('admin-name').textContent = user.name;
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/admin/settings');
+                const settings = await response.json();
+                document.getElementById('payout_per_lead').value = settings.payout_per_lead;
+                document.getElementById('manager_margin_per_lead').value = settings.manager_margin_per_lead || 1;
+                
+                // Charger la liste des sub1 pour les payouts personnalisés
+                await loadPayoutBySub1(settings);
+            } catch (error) {
+                console.error('Erreur chargement settings:', error);
+            }
+        }
+
+        async function loadPayoutBySub1(settings) {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const container = document.getElementById('payout-by-sub1-container');
+                
+                if (sub1List.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun affilié disponible</p>';
+                    return;
+                }
+                
+                container.innerHTML = sub1List.map(item => `
+                    <div class="payout-item">
+                        <div>
+                            <strong style="font-size: 1.1rem;">${item.sub1}</strong>
+                        </div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">
+                            ${item.conversions} conv • $${item.revenue.toFixed(2)}
+                        </div>
+                        <div>
+                            <input type="number" 
+                                   id="payout_${item.sub1}" 
+                                   step="0.01" 
+                                   placeholder="Payout ($)" 
+                                   value="${settings.payout_by_sub1[item.sub1] || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button onclick="updateSub1Payout('${item.sub1}')" 
+                                    style="width: 100%; padding: 0.5rem; background: var(--success-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                                ✓
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur chargement payout by sub1:', error);
+            }
+        }
+
+        async function updateSub1Payout(sub1) {
+            const input = document.getElementById(`payout_${sub1}`);
+            const payoutValue = parseFloat(input.value);
+            
+            if (isNaN(payoutValue) || payoutValue < 0) {
+                alert('Valeur invalide');
+                return;
+            }
+            
+            try {
+                const settingsResponse = await fetch('/api/admin/settings');
+                const currentSettings = await settingsResponse.json();
+                
+                const updatedPayoutBySub1 = { ...currentSettings.payout_by_sub1 };
+                updatedPayoutBySub1[sub1] = payoutValue;
+                
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ payout_by_sub1: updatedPayoutBySub1 })
+                });
+                
+                if (response.ok) {
+                    input.style.borderColor = 'var(--success-color)';
+                    setTimeout(() => {
+                        input.style.borderColor = 'var(--border-color)';
+                    }, 1000);
+                } else {
+                    alert('Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const payout_per_lead = document.getElementById('payout_per_lead').value;
+            const messageDiv = document.getElementById('settings-message');
+            
+            try {
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ payout_per_lead })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `✅ Payout mis à jour : $${payout_per_lead} par lead`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la mise à jour';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        document.getElementById('manager-margin-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const manager_margin_per_lead = document.getElementById('manager_margin_per_lead').value;
+            const messageDiv = document.getElementById('manager-margin-message');
+            
+            try {
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ manager_margin_per_lead })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `✅ Marge Manager mise à jour : $${manager_margin_per_lead} par lead`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la mise à jour';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        async function addSub1ToUser(userId) {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                if (sub1List.length === 0) {
+                    alert('Aucun sub1 disponible');
+                    return;
+                }
+                
+                // Créer une liste de sélection
+                let options = sub1List.map(item => 
+                    `<option value="${item.sub1}">${item.sub1} (${item.conversions} conv, $${item.revenue.toFixed(2)})</option>`
+                ).join('');
+                
+                const selectHtml = `
+                    <select id="newSub1Select" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
+                        <option value="">-- Sélectionnez un sub1 --</option>
+                        ${options}
+                    </select>
+                `;
+                
+                const newSub1 = prompt(`Ajouter un sub1 à cet utilisateur:\n\n${selectHtml}`);
+                
+                if (newSub1 && newSub1.trim()) {
+                    const addResponse = await fetch(`/api/admin/users/${userId}/sub1`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ sub1: newSub1.trim() })
+                    });
+                    
+                    if (addResponse.ok) {
+                        alert('Sub1 ajouté avec succès !');
+                        loadUsers();
+                    } else {
+                        const error = await addResponse.json();
+                        alert(error.error || 'Erreur lors de l\'ajout');
+                    }
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        loadCurrentUser();
+        loadUsers();
+        loadSub1List();
+        loadSettings();
+    </script>
+</body>
+</html>
