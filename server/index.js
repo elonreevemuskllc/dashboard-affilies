@@ -271,14 +271,20 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     // Récupérer les sub1 de l'utilisateur
     const userSub1s = Array.isArray(user.sub1) ? user.sub1 : [user.sub1];
     
+    console.log(`🔍 DEBUG - User: ${user.name}, Sub1s: ${userSub1s.join(', ')}, Role: ${user.role}`);
+    
     // Récupérer les règles de sous-affiliés
     const settings = settingsManager.getSettings();
     const subAffiliateRules = settings.sub_affiliate_rules || [];
+    
+    console.log(`🔍 DEBUG - Sub affiliate rules:`, subAffiliateRules);
     
     // Trouver les règles où cet utilisateur est le superviseur (target)
     const applicableRules = subAffiliateRules.filter(rule => 
       userSub1s.includes(rule.targetSub1)
     );
+    
+    console.log(`🔍 DEBUG - Applicable rules for ${userSub1s.join(', ')}:`, applicableRules);
     
     if (applicableRules.length === 0) {
       return res.json({ bonuses: [], totalBonus: 0 });

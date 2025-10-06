@@ -98,6 +98,9 @@ async function loadDashboardStats() {
         // Coût total et Profit Manager selon le rôle
         let totalCost = revenue + bonus;
         
+        // Calculer le profit net pour les affiliés (revenus + bonus)
+        const netProfit = revenue + bonus;
+        
         document.getElementById('total-clicks').textContent = formatNumber(clicks);
         document.getElementById('total-conversions').textContent = formatNumber(conversions);
         document.getElementById('total-revenue').innerHTML = formatCurrencyWithEur(revenue);
@@ -190,8 +193,8 @@ async function loadDashboardStats() {
             if (epcCard) epcCard.style.display = 'none';
             
             
-            // Coût Total = ce qu'il va recevoir (revenus + bonus)
-            document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(totalCost);
+            // Profit Net = ce qu'il va recevoir (revenus + bonus)
+            document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(netProfit);
         }
         
         updateLastUpdate();
