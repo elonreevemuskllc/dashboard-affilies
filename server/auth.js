@@ -25,21 +25,18 @@ function saveUsers(users) {
   }
 }
 
-// Authentifier un utilisateur
-function authenticateUser(email, password) {
+// Authentifier un utilisateur (sans mot de passe, juste username)
+function authenticateUser(username) {
   // Recharger les utilisateurs à chaque tentative de connexion
-  // pour permettre les modifications directes dans users.json
   const users = getUsers();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const user = users.find(u => 
+    u.email.toLowerCase() === username.toLowerCase() || 
+    u.name.toLowerCase() === username.toLowerCase() ||
+    (Array.isArray(u.sub1) ? u.sub1.includes(username) : u.sub1 === username)
+  );
   
   if (!user) {
-    console.log(`🔍 Tentative de connexion échouée: utilisateur "${email}" non trouvé`);
-    return null;
-  }
-  
-  // Vérifier le mot de passe en clair
-  if (user.password !== password) {
-    console.log(`🔍 Tentative de connexion échouée: mot de passe incorrect pour "${email}"`);
+    console.log(`🔍 Tentative de connexion échouée: utilisateur "${username}" non trouvé`);
     return null;
   }
   

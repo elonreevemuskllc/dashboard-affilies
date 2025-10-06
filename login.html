@@ -105,12 +105,8 @@
             <div class="error-message" id="error-message"></div>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" placeholder="Votre nom, email ou ID affilié" required>
                 </div>
                 <button type="submit" class="btn-login">Se connecter</button>
             </form>
@@ -121,9 +117,14 @@
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
             const errorDiv = document.getElementById('error-message');
+            
+            if (!username.trim()) {
+                errorDiv.textContent = 'Veuillez saisir votre nom d\'utilisateur';
+                errorDiv.style.display = 'block';
+                return;
+            }
             
             try {
                 const response = await fetch('/api/auth/login', {
@@ -131,7 +132,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ username: username.trim() })
                 });
                 
                 const data = await response.json();
@@ -144,7 +145,7 @@
                         window.location.href = '/';
                     }
                 } else {
-                    errorDiv.textContent = data.error || 'Erreur de connexion';
+                    errorDiv.textContent = data.error || 'Nom d\'utilisateur incorrect';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
