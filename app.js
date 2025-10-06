@@ -424,6 +424,13 @@ async function loadUserBonuses() {
     try {
         console.log('🔍 DEBUG - Loading user bonuses...');
         const timestamp = Date.now();
+        
+        // Debug: Appeler l'API stats pour voir les données brutes
+        console.log('🔍 DEBUG - Appel API stats pour debug...');
+        const statsResponse = await fetch(`/api/stats?period=${currentPeriod}&_t=${timestamp}`);
+        const statsData = await statsResponse.json();
+        console.log('🔍 DEBUG - Stats data reçues:', statsData);
+        
         const response = await fetch(`/api/user-bonuses?period=${currentPeriod}&_t=${timestamp}`);
         console.log('🔍 DEBUG - Response status:', response.status);
         
