@@ -416,8 +416,17 @@ async function refreshAllData() {
 // Fonction pour charger les bonus reçus par l'utilisateur
 async function loadUserBonuses() {
     try {
-        const response = await fetch(`/api/user-bonuses?period=${currentPeriod}`);
+        console.log('🔍 DEBUG - Loading user bonuses...');
+        const timestamp = Date.now();
+        const response = await fetch(`/api/user-bonuses?period=${currentPeriod}&_t=${timestamp}`);
+        console.log('🔍 DEBUG - Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
+        console.log('🔍 DEBUG - User bonuses data:', data);
         
         const commissionSection = document.getElementById('commission-helper-section');
         const totalBonusElement = document.getElementById('total-bonus-received');
