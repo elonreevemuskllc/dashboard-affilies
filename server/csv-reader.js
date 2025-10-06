@@ -15,12 +15,15 @@ const HIDDEN_AFFILIATES = [];
 const EVERFLOW_API_KEY = process.env.EVERFLOW_API_KEY || 'Gil8vPvQ6GRq3skkYX2cA';
 const EVERFLOW_API_URL = 'https://api.eflow.team/v1';
 
-// Cache pour éviter trop d'appels API
+// Cache DÉSACTIVÉ pour éviter les incohérences de données
 let apiCache = {
   data: null,
   timestamp: 0,
-  ttl: 30000 // 30 secondes (réduit pour voir les changements plus vite)
+  ttl: 0 // Cache désactivé
 };
+
+// Stockage temporaire des conversions brutes par période
+let latestConversions = {};
 
 // Fonction pour calculer les dates selon la période
 function getDateRange(period = 'today') {
@@ -146,13 +149,8 @@ async function fetchConversionsFromAPI(period = 'today') {
       };
     });
 
-    // Mettre en cache les données agrégées ET les conversions détaillées
-    const cacheKey = `cache_${period}`;
-    apiCache[cacheKey] = {
-      data: result,
-      rawConversions: allConversions,
-      timestamp: Date.now()
-    };
+    // Stocker les conversions brutes pour la fonction getConversions
+    latestConversions[period] = allConversions;
 
     return result;
   } catch (error) {
@@ -301,9 +299,8 @@ const csvDataAPI = {
     // Déclencher le fetch pour s'assurer que les données sont en cache
     await fetchConversionsFromAPI(period);
     
-    // Récupérer les conversions brutes du cache
-    const cacheKey = `cache_${period}`;
-    const rawConversions = (apiCache[cacheKey] && apiCache[cacheKey].rawConversions) || [];
+    // Récupérer les conversions depuis le stockage temporaire
+    const rawConversions = latestConversions[period] || [];
     
     if (rawConversions.length === 0) {
       return { conversions: [] };
