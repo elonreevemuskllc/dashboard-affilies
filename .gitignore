@@ -72,7 +72,7 @@ jspm_packages/
 .tern-port
 
 # Data files (sensitive)
-data/users.json
+# data/users.json  # Temporairement commenté pour le déploiement initial
 data/settings.json
 
 # CSV files (optional - remove if you want to track them)

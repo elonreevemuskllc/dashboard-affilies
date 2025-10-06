@@ -1,0 +1,51 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@dashboard.com",
+      "password": "admin123",
+      "sub1": "admin",
+      "role": "admin",
+      "name": "Administrateur"
+    },
+    {
+      "id": 2,
+      "email": "moddingcharo123@gmail.com",
+      "password": "losh123",
+      "sub1": "losh",
+      "role": "affiliate",
+      "name": "Losh"
+    },
+    {
+      "id": 3,
+      "email": "saw398493843@yopmail.com",
+      "password": "sw123",
+      "sub1": "elon",
+      "role": "affiliate",
+      "name": "sw"
+    },
+    {
+      "id": 4,
+      "email": "ila.email.pro@gmail.com",
+      "password": "lico123",
+      "sub1": [
+        "llico",
+        "lico",
+        "fian"
+      ],
+      "role": "manager",
+      "name": "lico"
+    },
+    {
+      "id": 5,
+      "email": "johnpalmer1270@gmail.com",
+      "password": "elon123",
+      "sub1": [
+        "elon",
+        "losh"
+      ],
+      "role": "manager",
+      "name": "elon"
+    }
+  ]
+}
