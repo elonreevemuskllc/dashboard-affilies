@@ -85,7 +85,8 @@ function changePeriod(period) {
 // 1. Charger les statistiques du dashboard
 async function loadDashboardStats() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/stats?period=${currentPeriod}`);
+        const timestamp = Date.now();
+        const response = await fetch(`${API_BASE_URL}/api/stats?period=${currentPeriod}&_t=${timestamp}`);
         const data = await response.json();
         
         // Exemple de structure de données - adapter selon la réponse réelle de l'API
@@ -214,7 +215,8 @@ async function loadDashboardStats() {
 // 2. Charger les conversions récentes
 async function loadConversions() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/conversions?period=${currentPeriod}`);
+        const timestamp = Date.now();
+        const response = await fetch(`${API_BASE_URL}/api/conversions?period=${currentPeriod}&_t=${timestamp}`);
         const data = await response.json();
         
         const conversionsBody = document.getElementById('conversions-body');
@@ -486,7 +488,8 @@ async function loadSub1Leads() {
     
     try {
         console.log('🔍 Chargement des leads par sub1 pour manager...');
-        const response = await fetch(`${API_BASE_URL}/api/sub1-leads?period=${currentPeriod}`);
+        const timestamp = Date.now();
+        const response = await fetch(`${API_BASE_URL}/api/sub1-leads?period=${currentPeriod}&_t=${timestamp}`);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -599,7 +602,8 @@ async function loadManagerEPC() {
     
     try {
         console.log('🔍 Chargement de l\'EPC global pour manager...');
-        const response = await fetch(`${API_BASE_URL}/api/manager-epc?period=${currentPeriod}`);
+        const timestamp = Date.now();
+        const response = await fetch(`${API_BASE_URL}/api/manager-epc?period=${currentPeriod}&_t=${timestamp}`);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);

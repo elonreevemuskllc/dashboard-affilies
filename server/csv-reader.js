@@ -75,12 +75,12 @@ function getDateRange(period = 'today') {
 
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
-  // Vérifier le cache (avec la période dans la clé)
-  const cacheKey = `cache_${period}`;
-  const cacheTime = Date.now();
-  if (apiCache[cacheKey] && (cacheTime - apiCache[cacheKey].timestamp) < apiCache.ttl) {
-    return apiCache[cacheKey].data;
-  }
+  // Cache désactivé pour éviter les problèmes de données incohérentes
+  // const cacheKey = `cache_${period}`;
+  // const cacheTime = Date.now();
+  // if (apiCache[cacheKey] && (cacheTime - apiCache[cacheKey].timestamp) < apiCache.ttl) {
+  //   return apiCache[cacheKey].data;
+  // }
 
   try {
     const { from, to } = getDateRange(period);
