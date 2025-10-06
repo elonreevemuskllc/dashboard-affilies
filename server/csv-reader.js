@@ -588,6 +588,11 @@ const csvDataAPI = {
     // Gérer sub1 comme string ou array
     const sub1List = Array.isArray(sub1Array) ? sub1Array : [sub1Array];
     
+    // Calculer le bonus total de Losh (2€ par lead de som)
+    const somData = aggBySub1.find(row => row.sub1 === 'som');
+    const somLeads = somData ? (parseInt(somData.convs) || 0) : 0;
+    const totalLoshBonus = somLeads * 2.00;
+    
     // Récupérer les données pour chaque sub1 assigné au manager
     const sub1Leads = sub1List.map(sub1 => {
       const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
@@ -605,16 +610,14 @@ const csvDataAPI = {
       // Calculer le CA total (leads × 30$)
       const caTotal = leads * 30;
       
-      // Vérifier si c'est un sous-manager et déduire sa commission
-      let subManagerCommission = 0;
-      // TODO: Récupérer depuis la DB si ce sub1 a un sous-manager
-      // Pour l'instant, on utilise une valeur par défaut
-      if (sub1 === 'losh') { // Exemple: losh est un sous-manager
-        subManagerCommission = leads * 2.00; // 2€ par lead
+      // Bonus pour Losh : 2€ par lead de som (seulement pour som)
+      let loshBonus = 0;
+      if (sub1 === 'som') {
+        loshBonus = leads * 2.00;
       }
       
-      // Calculer le net (CA total - gains affilié - bonus - commission sous-manager = profit manager)
-      const net = caTotal - gainsAffiliate - bonus - subManagerCommission;
+      // Calculer le net (CA total - gains affilié - bonus = profit manager)
+      const net = caTotal - gainsAffiliate - bonus;
       
       // Calculer l'EPC pour ce sub1 (profit manager / clics estimés)
       const estimatedClicks = Math.round(leads / 0.077);
@@ -627,7 +630,7 @@ const csvDataAPI = {
         leads: leads,
         costAffiliate: gainsAffiliate,
         bonus: bonus,
-        subManagerCommission: subManagerCommission,
+        loshBonus: loshBonus,
         net: net,
         epc: Math.round(epc * 100) / 100 // Arrondir à 2 décimales
       };
@@ -635,6 +638,24 @@ const csvDataAPI = {
     
     // Trier par nombre de leads décroissant
     return sub1Leads.sort((a, b) => b.leads - a.leads);
+  },
+
+  // Obtenir le bonus total de Losh
+  async getLoshBonus(period = 'today') {
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return { loshBonus: 0, somLeads: 0 };
+    }
+
+    const somData = aggBySub1.find(row => row.sub1 === 'som');
+    const somLeads = somData ? (parseInt(somData.convs) || 0) : 0;
+    const loshBonus = somLeads * 2.00;
+
+    return {
+      loshBonus: loshBonus,
+      somLeads: somLeads
+    };
   },
 
   // Calculer l'EPC global pour un manager (profit manager / clics total)

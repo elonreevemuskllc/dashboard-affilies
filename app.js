@@ -461,8 +461,8 @@ async function loadSub1Leads() {
                 <td>${formatNumber(item.leads)}</td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.costAffiliate)}</td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.bonus)}</td>
-                <td style="text-align: center; color: ${item.subManagerCommission > 0 ? 'var(--warning-color)' : 'var(--text-secondary)'};">
-                    ${item.subManagerCommission > 0 ? formatCurrencyWithEur(item.subManagerCommission) : '-'}
+                <td style="text-align: center; color: ${item.loshBonus > 0 ? 'var(--warning-color)' : 'var(--text-secondary)'};">
+                    ${item.loshBonus > 0 ? formatCurrencyWithEur(item.loshBonus) : '-'}
                 </td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.net)}</td>
                 <td style="color: ${item.epc > 0 ? 'var(--success-color)' : item.epc < 0 ? 'var(--danger-color)' : 'var(--text-secondary)'}; font-weight: 600; text-align: center;">

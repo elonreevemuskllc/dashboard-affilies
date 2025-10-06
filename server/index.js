@@ -250,6 +250,18 @@ app.get('/api/manager-epc', requireAuth, async (req, res) => {
   }
 });
 
+// Route pour le bonus de Losh
+app.get('/api/losh-bonus', requireAuth, async (req, res) => {
+  try {
+    const period = req.query.period || 'today';
+    const bonusData = await csvDataAPI.getLoshBonus(period);
+    res.json(bonusData);
+  } catch (error) {
+    console.error('❌ Erreur bonus Losh:', error.message);
+    res.status(500).json({ error: 'Erreur lors du calcul du bonus Losh' });
+  }
+});
+
 // Routes API - Stats depuis Everflow API, détails depuis CSV (protégé)
 app.get('/api/stats', requireAuth, async (req, res) => {
   try {
