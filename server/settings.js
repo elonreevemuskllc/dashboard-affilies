@@ -69,9 +69,9 @@ function updateSettings(newSettings) {
   }
 }
 
-// Obtenir la marge du manager par lead (TOUJOURS $26.30 - FIXE)
+// Obtenir la marge du manager par lead (TOUJOURS $25.30 - FIXE)
 function getManagerMargin() {
-  return 26.30; // TOUJOURS $26.30 - NON MODIFIABLE
+  return 25.30; // TOUJOURS $25.30 - NON MODIFIABLE
 }
 
 module.exports = {
