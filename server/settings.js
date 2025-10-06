@@ -13,7 +13,8 @@ function getSettings() {
         payout_by_sub1: {},
         currency: 'USD',
         usd_to_eur_rate: 1,
-        manager_margin_per_lead: 25.30
+        manager_margin_per_lead: 25.30,
+        sub_affiliate_rules: []
       };
       fs.writeFileSync(SETTINGS_FILE, JSON.stringify(defaultSettings, null, 2));
       return defaultSettings;
@@ -33,7 +34,8 @@ function getSettings() {
       payout_by_sub1: {},
       currency: 'USD',
       usd_to_eur_rate: 1,
-      manager_margin_per_lead: 25.30
+      manager_margin_per_lead: 25.30,
+      sub_affiliate_rules: []
     };
   }
 }

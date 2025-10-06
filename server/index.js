@@ -262,6 +262,81 @@ app.get('/api/losh-bonus', requireAuth, async (req, res) => {
   }
 });
 
+// Routes pour les sous-affiliés
+app.get('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
+  try {
+    const settings = await settingsAPI.getSettings();
+    const subAffiliateRules = settings.sub_affiliate_rules || [];
+    res.json(subAffiliateRules);
+  } catch (error) {
+    console.error('❌ Erreur récupération règles sous-affiliés:', error.message);
+    res.status(500).json({ error: 'Erreur lors de la récupération des règles' });
+  }
+});
+
+app.post('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
+  try {
+    const { sourceSub1, targetSub1, bonusAmount } = req.body;
+    
+    if (!sourceSub1 || !targetSub1 || !bonusAmount) {
+      return res.status(400).json({ error: 'Tous les champs sont requis' });
+    }
+    
+    if (sourceSub1 === targetSub1) {
+      return res.status(400).json({ error: 'Un Sub1 ne peut pas se superviser lui-même' });
+    }
+    
+    const settings = await settingsAPI.getSettings();
+    const subAffiliateRules = settings.sub_affiliate_rules || [];
+    
+    // Vérifier si la règle existe déjà
+    const existingRule = subAffiliateRules.find(rule => 
+      rule.sourceSub1 === sourceSub1 && rule.targetSub1 === targetSub1
+    );
+    
+    if (existingRule) {
+      existingRule.bonusAmount = bonusAmount;
+    } else {
+      subAffiliateRules.push({ sourceSub1, targetSub1, bonusAmount });
+    }
+    
+    const result = await settingsAPI.updateSettings({ sub_affiliate_rules: subAffiliateRules });
+    
+    if (result.success) {
+      res.json({ success: true, message: 'Règle de sous-affilié ajoutée' });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('❌ Erreur ajout règle sous-affilié:', error.message);
+    res.status(500).json({ error: 'Erreur lors de l\'ajout de la règle' });
+  }
+});
+
+app.delete('/api/admin/sub-affiliate-rules/:sourceSub1/:targetSub1', requireAdmin, async (req, res) => {
+  try {
+    const { sourceSub1, targetSub1 } = req.params;
+    
+    const settings = await settingsAPI.getSettings();
+    const subAffiliateRules = settings.sub_affiliate_rules || [];
+    
+    const filteredRules = subAffiliateRules.filter(rule => 
+      !(rule.sourceSub1 === sourceSub1 && rule.targetSub1 === targetSub1)
+    );
+    
+    const result = await settingsAPI.updateSettings({ sub_affiliate_rules: filteredRules });
+    
+    if (result.success) {
+      res.json({ success: true, message: 'Règle de sous-affilié supprimée' });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('❌ Erreur suppression règle sous-affilié:', error.message);
+    res.status(500).json({ error: 'Erreur lors de la suppression de la règle' });
+  }
+});
+
 // Routes API - Stats depuis Everflow API, détails depuis CSV (protégé)
 app.get('/api/stats', requireAuth, async (req, res) => {
   try {

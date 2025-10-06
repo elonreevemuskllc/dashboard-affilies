@@ -111,6 +111,40 @@
                     <p style="text-align: center; color: var(--text-light);">Chargement...</p>
                 </div>
             </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">🔗 Système de Sous-Affiliés</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Liez les affiliés entre eux et définissez les bonus. Exemple : Losh supervise Som et gagne $2 par lead de Som.</p>
+                
+                <div style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto auto; gap: 1rem; align-items: end;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sous-affilié (fait les leads):</label>
+                            <select id="sub-affiliate-source" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                                <option value="">-- Sélectionnez un Sub1 --</option>
+                            </select>
+                        </div>
+                        <div style="text-align: center; font-size: 1.2rem;">→</div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Superviseur (reçoit le bonus):</label>
+                            <select id="sub-affiliate-target" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                                <option value="">-- Sélectionnez un Sub1 --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Bonus ($ par lead):</label>
+                            <input type="number" id="sub-affiliate-bonus" step="0.01" placeholder="2.00" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button onclick="addSubAffiliateRule()" class="btn btn-primary" style="padding: 0.5rem 1rem;">Lier</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="sub-affiliate-rules-container" style="display: grid; gap: 1rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement des liens...</p>
+                </div>
+            </div>
         </section>
 
         <section class="conversions-section">
@@ -341,6 +375,12 @@
                 
                 // Charger la liste des sub1 pour les payouts personnalisés
                 await loadPayoutBySub1(settings);
+                
+                // Charger les liens de sous-affiliés
+                await loadSubAffiliateRules();
+                
+                // Charger les sub1 dans les dropdowns de sous-affiliés
+                await loadSub1ForSubAffiliate();
             } catch (error) {
                 console.error('Erreur chargement settings:', error);
             }
@@ -428,6 +468,130 @@
         }
 
         // Les formulaires de modification ont été supprimés car les valeurs sont maintenant fixes
+
+        // Gestion du système de sous-affiliés
+        async function loadSubAffiliateRules() {
+            try {
+                const response = await fetch('/api/admin/sub-affiliate-rules');
+                const rules = await response.json();
+                
+                const container = document.getElementById('sub-affiliate-rules-container');
+                
+                if (rules.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun lien de sous-affilié configuré</p>';
+                    return;
+                }
+                
+                container.innerHTML = rules.map(rule => `
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto auto; gap: 1rem; align-items: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div>
+                            <strong>${rule.sourceSub1}</strong> fait des leads
+                        </div>
+                        <div style="text-align: center; font-size: 1.2rem;">→</div>
+                        <div>
+                            <strong>${rule.targetSub1}</strong> supervise
+                        </div>
+                        <div style="text-align: right;">
+                            <strong style="color: var(--success-color); font-size: 1.1rem;">$${rule.bonusAmount}</strong> par lead
+                        </div>
+                        <div>
+                            <button onclick="deleteSubAffiliateRule('${rule.sourceSub1}', '${rule.targetSub1}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Délier</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erreur chargement sub-affiliate rules:', error);
+                document.getElementById('sub-affiliate-rules-container').innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+            }
+        }
+
+        async function loadSub1ForSubAffiliate() {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const sourceSelect = document.getElementById('sub-affiliate-source');
+                const targetSelect = document.getElementById('sub-affiliate-target');
+                
+                if (sub1List.length === 0) {
+                    sourceSelect.innerHTML = '<option value="">Aucun sub1 disponible</option>';
+                    targetSelect.innerHTML = '<option value="">Aucun sub1 disponible</option>';
+                    return;
+                }
+                
+                const options = sub1List.map(item => 
+                    `<option value="${item.sub1}">${item.sub1}</option>`
+                ).join('');
+                
+                sourceSelect.innerHTML = '<option value="">-- Sélectionnez un Sub1 --</option>' + options;
+                targetSelect.innerHTML = '<option value="">-- Sélectionnez un Sub1 --</option>' + options;
+                
+            } catch (error) {
+                console.error('Erreur chargement sub1 pour sous-affiliés:', error);
+            }
+        }
+
+        async function addSubAffiliateRule() {
+            const sourceSub1 = document.getElementById('sub-affiliate-source').value;
+            const targetSub1 = document.getElementById('sub-affiliate-target').value;
+            const bonusAmount = parseFloat(document.getElementById('sub-affiliate-bonus').value);
+            
+            if (!sourceSub1 || !targetSub1 || !bonusAmount) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            if (sourceSub1 === targetSub1) {
+                alert('Un Sub1 ne peut pas se superviser lui-même');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/sub-affiliate-rules', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sourceSub1, targetSub1, bonusAmount })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lien de sous-affilié créé avec succès !');
+                    loadSubAffiliateRules();
+                    // Reset form
+                    document.getElementById('sub-affiliate-source').value = '';
+                    document.getElementById('sub-affiliate-target').value = '';
+                    document.getElementById('sub-affiliate-bonus').value = '';
+                } else {
+                    alert(data.error || 'Erreur lors de la création du lien');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function deleteSubAffiliateRule(sourceSub1, targetSub1) {
+            if (!confirm(`Délier ${sourceSub1} de ${targetSub1} ?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/sub-affiliate-rules/${sourceSub1}/${targetSub1}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Lien supprimé avec succès !');
+                    loadSubAffiliateRules();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
 
         async function addSub1ToUser(userId) {
             try {

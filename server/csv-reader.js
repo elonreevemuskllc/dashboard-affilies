@@ -616,8 +616,21 @@ const csvDataAPI = {
         loshBonus = leads * 2.00;
       }
       
-      // Calculer le net (CA total - gains affilié - bonus = profit manager)
-      const net = caTotal - gainsAffiliate - bonus;
+           // Calculer les bonus selon les règles de sous-affiliés
+           let subAffiliateBonus = 0;
+           const settings = await settingsAPI.getSettings();
+           const subAffiliateRules = settings.sub_affiliate_rules || [];
+           
+           // Trouver les règles où ce sub1 est la source
+           const applicableRules = subAffiliateRules.filter(rule => rule.sourceSub1 === sub1);
+           
+           if (applicableRules.length > 0) {
+             // Pour l'affichage, on montre le total des bonus générés par ce sub1
+             subAffiliateBonus = applicableRules.reduce((total, rule) => total + (leads * rule.bonusAmount), 0);
+           }
+           
+           // Calculer le net (CA total - gains affilié - bonus = profit manager)
+           const net = caTotal - gainsAffiliate - bonus;
       
       // Calculer l'EPC pour ce sub1 (profit manager / clics estimés)
       const estimatedClicks = Math.round(leads / 0.077);
@@ -630,7 +643,7 @@ const csvDataAPI = {
         leads: leads,
         costAffiliate: gainsAffiliate,
         bonus: bonus,
-        loshBonus: loshBonus,
+        bonusAmount: subAffiliateBonus,
         net: net,
         epc: Math.round(epc * 100) / 100 // Arrondir à 2 décimales
       };
