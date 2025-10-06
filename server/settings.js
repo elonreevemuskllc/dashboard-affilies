@@ -9,7 +9,7 @@ function getSettings() {
     if (!fs.existsSync(SETTINGS_FILE)) {
       // Créer le fichier avec des valeurs par défaut
       const defaultSettings = { 
-        payout_per_lead: 30, 
+        payout_per_lead: 4, 
         payout_by_sub1: {},
         currency: 'EUR',
         usd_to_eur_rate: 0.92,
@@ -28,7 +28,7 @@ function getSettings() {
   } catch (error) {
     console.error('Erreur lecture settings:', error.message);
     return { 
-      payout_per_lead: 30, 
+      payout_per_lead: 4, 
       payout_by_sub1: {},
       currency: 'EUR',
       usd_to_eur_rate: 0.92,
@@ -41,7 +41,7 @@ function getSettings() {
 function getPayoutForSub1(sub1) {
   const settings = getSettings();
   // Si un payout spécifique existe pour ce sub1, l'utiliser, sinon utiliser le payout par défaut
-  return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 30;
+  return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 4;
 }
 
 // Obtenir le payout affiché (toujours $4 pour masquer le vrai coût)
