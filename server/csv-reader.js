@@ -19,7 +19,7 @@ const EVERFLOW_API_URL = 'https://api.eflow.team/v1';
 let apiCache = {
   data: null,
   timestamp: 0,
-  ttl: 60000 // 1 minute
+  ttl: 30000 // 30 secondes (réduit pour voir les changements plus vite)
 };
 
 // Fonction pour calculer les dates selon la période
@@ -464,6 +464,16 @@ const csvDataAPI = {
       conversions: parseInt(row.convs) || 0,
       revenue: parseFloat(row.revenue) || 0
     })).sort((a, b) => b.revenue - a.revenue);
+  },
+
+  // Vider le cache (utile pour forcer un rafraîchissement)
+  clearCache() {
+    apiCache = {
+      data: null,
+      timestamp: 0,
+      ttl: 30000
+    };
+    console.log('🗑️ Cache vidé');
   },
 
   // Obtenir les stats pour un affilié spécifique

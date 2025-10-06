@@ -108,6 +108,12 @@ app.get('/api/admin/sub1-list', requireAdmin, async (req, res) => {
   res.json(sub1List);
 });
 
+// Route pour vider le cache (admin seulement)
+app.post('/api/admin/clear-cache', requireAdmin, (req, res) => {
+  csvDataAPI.clearCache();
+  res.json({ success: true, message: 'Cache vidé' });
+});
+
 app.get('/api/admin/settings', requireAdmin, (req, res) => {
   const settings = settingsManager.getSettings();
   res.json(settings);
