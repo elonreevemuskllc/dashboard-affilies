@@ -1,0 +1,22 @@
+{
+  "payout_per_lead": 4.70,
+  "payout_by_sub1": {
+    "losh": 4.70,
+    "elon": 4.70,
+    "fian": 4.70,
+    "lico": 4.70,
+    "llico": 4.70,
+    "som": 4.70,
+    "lllico": 4.70
+  },
+  "currency": "USD",
+  "usd_to_eur_rate": 1,
+  "manager_margin_per_lead": 25.30,
+  "sub_affiliate_rules": [
+    {
+      "sourceSub1": "som",
+      "targetSub1": "losh",
+      "bonusAmount": 2.00
+    }
+  ]
+}
