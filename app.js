@@ -445,8 +445,8 @@ async function loadUserBonuses() {
         console.log('🔍 DEBUG - Total bonus element:', totalBonusElement);
         console.log('🔍 DEBUG - Bonus table body:', bonusTableBody);
         
-        if (data.totalBonus > 0) {
-            // Afficher la section Commission Helper
+        // Afficher la section Commission Helper pour tous les sous-managers
+        if (data.bonuses.length > 0 || currentUserRole === 'submanager') {
             commissionSection.style.display = 'block';
             
             // Afficher le total des bonus
@@ -459,8 +459,8 @@ async function loadUserBonuses() {
                         <td><strong>${bonus.sourceSub1}</strong></td>
                         <td style="text-align: center;">${formatNumber(bonus.leads)}</td>
                         <td style="text-align: center;">${formatCurrencyWithEur(bonus.bonusAmount)}</td>
-                        <td style="text-align: center; color: var(--success-color); font-weight: 600;">
-                            ${formatCurrencyWithEur(bonus.totalBonus)}
+                        <td style="text-align: center; color: ${bonus.totalBonus > 0 ? 'var(--success-color)' : 'var(--text-secondary)'}; font-weight: 600;">
+                            ${bonus.totalBonus > 0 ? formatCurrencyWithEur(bonus.totalBonus) : '$0.00'}
                         </td>
                     </tr>
                 `).join('');
@@ -468,13 +468,13 @@ async function loadUserBonuses() {
                 bonusTableBody.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align: center; color: var(--text-secondary);">
-                            Aucun bonus reçu pour cette période
+                            Aucun sous-affilié configuré pour cette période
                         </td>
                     </tr>
                 `;
             }
         } else {
-            // Masquer la section si aucun bonus
+            // Masquer la section si pas de bonus et pas sous-manager
             commissionSection.style.display = 'none';
         }
     } catch (error) {
