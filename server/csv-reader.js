@@ -461,6 +461,67 @@ const csvDataAPI = {
     })).sort((a, b) => b.revenue - a.revenue);
   },
 
+  // Obtenir les stats pour un sous-manager
+  async getSubManagerStats(sub1Input, period = 'today') {
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return {
+        clicks: 0,
+        conversions: 0,
+        revenue: 0,
+        bonus: 0,
+        subManagerCommission: 0,
+        netProfit: 0
+      };
+    }
+
+    // Gérer sub1 comme string ou array
+    const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    
+    let totalConversions = 0;
+    let totalRevenue = 0;
+    let subManagerCommission = 0;
+    
+    sub1Array.forEach(sub1 => {
+      const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
+      if (affiliateData) {
+        const conversions = parseInt(affiliateData.convs) || 0;
+        const payoutPerLead = settings.getPayoutForSub1(sub1);
+        totalConversions += conversions;
+        totalRevenue += conversions * payoutPerLead;
+        
+        // Calculer la commission du sous-manager (2€ par lead par défaut)
+        const commissionPerLead = 2.00; // À récupérer depuis la DB utilisateur
+        subManagerCommission += conversions * commissionPerLead;
+      }
+    });
+
+    const estimatedClicks = Math.round(totalConversions / 0.077);
+    const bonus = Math.floor(totalConversions / 10) * 10;
+    
+    // Profit net pour le sous-manager = revenus + bonus + commission (ce qu'il gagne en tant que superviseur)
+    const netProfit = totalRevenue + bonus + subManagerCommission;
+
+    console.log(`🔍 DEBUG - getSubManagerStats:`, {
+      sub1: sub1Array,
+      totalConversions,
+      totalRevenue,
+      bonus,
+      subManagerCommission,
+      netProfit
+    });
+
+    return {
+      clicks: estimatedClicks,
+      conversions: totalConversions,
+      revenue: totalRevenue,
+      bonus: bonus,
+      subManagerCommission: subManagerCommission,
+      netProfit: netProfit
+    };
+  },
+
   // Vider le cache (utile pour forcer un rafraîchissement)
   clearCache() {
     apiCache = {

@@ -431,7 +431,16 @@ app.get('/api/stats', requireAuth, async (req, res) => {
       stats = await csvDataAPI.getDashboardStats(period);
     } else if (user.role === 'submanager') {
       // Sous-manager: stats avec commission
-      stats = await csvDataAPI.getSubManagerStats(user.sub1, period);
+      console.log('🔍 DEBUG - Appel getSubManagerStats pour:', user.sub1, period);
+      try {
+        stats = await csvDataAPI.getSubManagerStats(user.sub1, period);
+        console.log('🔍 DEBUG - getSubManagerStats result:', stats);
+      } catch (error) {
+        console.error('❌ Erreur getSubManagerStats:', error);
+        // Fallback sur getAffiliateStats
+        stats = await csvDataAPI.getAffiliateStats(user.sub1, period);
+        console.log('🔍 DEBUG - Fallback getAffiliateStats result:', stats);
+      }
     } else {
       // Affilié: stats uniquement pour son sub1
       stats = await csvDataAPI.getAffiliateStats(user.sub1, period);
