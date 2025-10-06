@@ -95,11 +95,14 @@ async function loadDashboardStats() {
         const bonus = data.bonus || 0;
         const managerProfit = data.managerProfit || 0;
         
-        // Coût total et Profit Manager selon le rôle
-        let totalCost = revenue + bonus;
-        
         // Calculer le profit net pour les affiliés (revenus + bonus)
         const netProfit = revenue + bonus;
+        
+        // Pour les managers, on garde le calcul original
+        const totalCost = revenue + bonus;
+        
+        // Debug pour voir les valeurs
+        console.log(`🔍 DEBUG - Revenue: $${revenue}, Bonus: $${bonus}, Net Profit: $${netProfit}`);
         
         document.getElementById('total-clicks').textContent = formatNumber(clicks);
         document.getElementById('total-conversions').textContent = formatNumber(conversions);
