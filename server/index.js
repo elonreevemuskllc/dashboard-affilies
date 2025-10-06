@@ -293,18 +293,33 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     
     // Pour chaque règle, calculer le bonus basé sur les leads de la source
     const bonusDetails = await Promise.all(applicableRules.map(async (rule) => {
-      const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
-      const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
-      const leads = sourceData ? (parseInt(sourceData.convs) || 0) : 0;
-      const bonus = leads * rule.bonusAmount;
-      
-      return {
-        sourceSub1: rule.sourceSub1,
-        targetSub1: rule.targetSub1,
-        bonusAmount: rule.bonusAmount,
-        leads: leads,
-        totalBonus: bonus
-      };
+      try {
+        const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
+        console.log(`🔍 DEBUG - Data for ${rule.sourceSub1}:`, aggBySub1);
+        
+        const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
+        const leads = sourceData ? (parseInt(sourceData.convs) || 0) : 0;
+        const bonus = leads * rule.bonusAmount;
+        
+        console.log(`🔍 DEBUG - Bonus calculation: ${leads} leads × $${rule.bonusAmount} = $${bonus}`);
+        
+        return {
+          sourceSub1: rule.sourceSub1,
+          targetSub1: rule.targetSub1,
+          bonusAmount: rule.bonusAmount,
+          leads: leads,
+          totalBonus: bonus
+        };
+      } catch (error) {
+        console.error(`❌ Error calculating bonus for ${rule.sourceSub1}:`, error);
+        return {
+          sourceSub1: rule.sourceSub1,
+          targetSub1: rule.targetSub1,
+          bonusAmount: rule.bonusAmount,
+          leads: 0,
+          totalBonus: 0
+        };
+      }
     }));
     
     const totalBonus = bonusDetails.reduce((sum, bonus) => sum + bonus.totalBonus, 0);
@@ -316,7 +331,12 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Erreur bonus utilisateur:', error.message);
-    res.status(500).json({ error: 'Erreur lors du calcul des bonus' });
+    console.error('❌ Stack trace:', error.stack);
+    res.status(500).json({ 
+      error: 'Erreur lors du calcul des bonus',
+      details: error.message,
+      user: user ? `${user.name} (${user.role})` : 'unknown'
+    });
   }
 });
 
