@@ -559,8 +559,8 @@ const csvDataAPI = {
     const estimatedClicks = Math.round(totalConversions / 0.077);
     const bonus = Math.floor(totalConversions / 10) * 10;
     
-    // Profit net = revenus + bonus - commission sous-manager
-    const netProfit = totalRevenue + bonus - subManagerCommission;
+    // Profit net pour le sous-manager = revenus + bonus + commission (ce qu'il gagne en tant que superviseur)
+    const netProfit = totalRevenue + bonus + subManagerCommission;
 
     return {
       clicks: estimatedClicks,
