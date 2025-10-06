@@ -386,7 +386,7 @@ async function loadSub1Leads() {
         if (!data || !data.sub1Leads || data.sub1Leads.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-light);">
+                    <td colspan="6" style="text-align: center; color: var(--text-light);">
                         Aucun sub1 assigné
                     </td>
                 </tr>
@@ -401,6 +401,9 @@ async function loadSub1Leads() {
                 <td>${formatCurrency(item.costAffiliate)}</td>
                 <td>${formatCurrency(item.bonus)}</td>
                 <td>${formatCurrency(item.net)}</td>
+                <td style="color: ${item.epc > 0 ? 'var(--success-color)' : item.epc < 0 ? 'var(--danger-color)' : 'var(--text-secondary)'}; font-weight: 600;">
+                    €${item.epc}
+                </td>
             </tr>
         `).join('');
         
@@ -408,7 +411,7 @@ async function loadSub1Leads() {
         console.error('❌ Erreur lors du chargement des leads par sub1:', error);
         document.getElementById('sub1-leads-body').innerHTML = `
             <tr>
-                <td colspan="5" class="loading-row">
+                <td colspan="6" class="loading-row">
                     ${showError('Impossible de charger les leads par sub1')}
                 </td>
             </tr>

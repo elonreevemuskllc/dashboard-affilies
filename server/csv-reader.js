@@ -556,14 +556,19 @@ const csvDataAPI = {
       // Calculer le net (CA total - gains affilié - bonus = profit manager)
       const net = caTotal - gainsAffiliate - bonus;
       
-      console.log(`🔍 DEBUG - Calculs pour "${sub1}": leads=${leads}, gains=${gainsAffiliate}, bonus=${bonus}, net=${net}`);
+      // Calculer l'EPC pour ce sub1 (profit manager / clics estimés)
+      const estimatedClicks = Math.round(leads / 0.077);
+      const epc = estimatedClicks > 0 ? net / estimatedClicks : 0;
+      
+      console.log(`🔍 DEBUG - Calculs pour "${sub1}": leads=${leads}, gains=${gainsAffiliate}, bonus=${bonus}, net=${net}, epc=${epc}`);
       
       return {
         sub1: sub1,
         leads: leads,
         costAffiliate: gainsAffiliate,
         bonus: bonus,
-        net: net
+        net: net,
+        epc: Math.round(epc * 100) / 100 // Arrondir à 2 décimales
       };
     });
     
@@ -571,14 +576,14 @@ const csvDataAPI = {
     return sub1Leads.sort((a, b) => b.leads - a.leads);
   },
 
-  // Calculer l'EPC global pour un manager (revenu total / clics total)
+  // Calculer l'EPC global pour un manager (profit manager / clics total)
   async getManagerGlobalEPC(sub1Array, period = 'today') {
     const aggBySub1 = await fetchConversionsFromAPI(period);
     
     if (!aggBySub1 || aggBySub1.length === 0) {
       return {
         epc: 0,
-        totalRevenue: 0,
+        totalProfit: 0,
         totalClicks: 0
       };
     }
@@ -586,29 +591,35 @@ const csvDataAPI = {
     // Gérer sub1 comme string ou array
     const sub1List = Array.isArray(sub1Array) ? sub1Array : [sub1Array];
     
-    let totalRevenue = 0;
     let totalConversions = 0;
+    let totalProfit = 0;
     
     // Agréger les données de tous les sub1 du manager
     sub1List.forEach(sub1 => {
       const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
       if (affiliateData) {
         const conversions = parseInt(affiliateData.convs) || 0;
-        const revenue = parseFloat(affiliateData.revenue) || 0;
         totalConversions += conversions;
-        totalRevenue += revenue;
+        
+        // Calculer le profit manager pour ce sub1
+        // Profit = (conversions × marge manager) + bonus
+        const managerMargin = settings.getManagerMargin(); // $25.30
+        const bonus = Math.floor(conversions / 10) * 10; // $10 par tranche de 10
+        const sub1Profit = (conversions * managerMargin) + bonus;
+        
+        totalProfit += sub1Profit;
       }
     });
 
     // Estimer les clics total (ratio conversions/clics ≈ 0.077)
     const totalClicks = Math.round(totalConversions / 0.077);
     
-    // Calculer l'EPC (revenu / clics)
-    const epc = totalClicks > 0 ? totalRevenue / totalClicks : 0;
+    // Calculer l'EPC (profit manager / clics)
+    const epc = totalClicks > 0 ? totalProfit / totalClicks : 0;
 
     return {
       epc: Math.round(epc * 100) / 100, // Arrondir à 2 décimales
-      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalProfit: Math.round(totalProfit * 100) / 100,
       totalClicks: totalClicks,
       totalConversions: totalConversions
     };
