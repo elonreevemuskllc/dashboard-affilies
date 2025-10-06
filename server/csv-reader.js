@@ -569,6 +569,49 @@ const csvDataAPI = {
     
     // Trier par nombre de leads décroissant
     return sub1Leads.sort((a, b) => b.leads - a.leads);
+  },
+
+  // Calculer l'EPC global pour un manager (revenu total / clics total)
+  async getManagerGlobalEPC(sub1Array, period = 'today') {
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return {
+        epc: 0,
+        totalRevenue: 0,
+        totalClicks: 0
+      };
+    }
+
+    // Gérer sub1 comme string ou array
+    const sub1List = Array.isArray(sub1Array) ? sub1Array : [sub1Array];
+    
+    let totalRevenue = 0;
+    let totalConversions = 0;
+    
+    // Agréger les données de tous les sub1 du manager
+    sub1List.forEach(sub1 => {
+      const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
+      if (affiliateData) {
+        const conversions = parseInt(affiliateData.convs) || 0;
+        const revenue = parseFloat(affiliateData.revenue) || 0;
+        totalConversions += conversions;
+        totalRevenue += revenue;
+      }
+    });
+
+    // Estimer les clics total (ratio conversions/clics ≈ 0.077)
+    const totalClicks = Math.round(totalConversions / 0.077);
+    
+    // Calculer l'EPC (revenu / clics)
+    const epc = totalClicks > 0 ? totalRevenue / totalClicks : 0;
+
+    return {
+      epc: Math.round(epc * 100) / 100, // Arrondir à 2 décimales
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalClicks: totalClicks,
+      totalConversions: totalConversions
+    };
   }
 };
 

@@ -228,6 +228,28 @@ app.get('/api/sub1-leads', requireAuth, async (req, res) => {
   }
 });
 
+// Route pour récupérer l'EPC global pour les managers
+app.get('/api/manager-epc', requireAuth, async (req, res) => {
+  try {
+    const user = req.session.user;
+    const period = req.query.period || 'today';
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Utilisateur non authentifié' });
+    }
+    
+    if (user.role !== 'manager') {
+      return res.status(403).json({ error: 'Accès réservé aux managers' });
+    }
+    
+    const epcData = await csvDataAPI.getManagerGlobalEPC(user.sub1, period);
+    res.json(epcData);
+  } catch (error) {
+    console.error('❌ Erreur EPC manager:', error.message);
+    res.status(500).json({ error: 'Erreur lors du calcul de l\'EPC' });
+  }
+});
+
 // Routes API - Stats depuis Everflow API, détails depuis CSV (protégé)
 app.get('/api/stats', requireAuth, async (req, res) => {
   try {

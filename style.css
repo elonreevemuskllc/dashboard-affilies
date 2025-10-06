@@ -228,6 +228,10 @@ main {
     border-left: 4px solid var(--success-color);
 }
 
+.stat-card-cyan {
+    border-left: 4px solid #06b6d4;
+}
+
 .stat-icon {
     font-size: 32px;
     margin-bottom: var(--spacing-md);
@@ -248,6 +252,14 @@ main {
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.003em;
+}
+
+.stat-description {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    margin-bottom: 0;
 }
 
 /* Sections */

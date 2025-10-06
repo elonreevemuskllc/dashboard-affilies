@@ -111,14 +111,19 @@ async function loadDashboardStats() {
                 document.getElementById('manager-profit').textContent = formatCurrency(managerProfit);
             }
             
-            // Afficher la section leads par sub1
+            // Afficher la section leads par sub1 et la carte EPC
             const sub1LeadsSection = document.getElementById('sub1-leads-section');
+            const epcCard = document.getElementById('epc-card');
             if (sub1LeadsSection) {
                 sub1LeadsSection.style.display = 'block';
             }
+            if (epcCard) {
+                epcCard.style.display = 'flex';
+            }
             
-            // Charger les leads par sub1
+            // Charger les données spécifiques aux managers
             loadSub1Leads();
+            loadManagerEPC();
         } else {
             // Affilié : Afficher toutes les cartes sauf profit manager et CA
             const revenueCard = document.getElementById('revenue-card');
@@ -127,6 +132,7 @@ async function loadDashboardStats() {
             const caCard = document.getElementById('ca-card');
             const managerProfitCard = document.getElementById('manager-profit-card');
             const sub1LeadsSection = document.getElementById('sub1-leads-section');
+            const epcCard = document.getElementById('epc-card');
             
             if (revenueCard) revenueCard.style.display = 'flex';
             if (bonusCard) bonusCard.style.display = 'flex';
@@ -134,6 +140,7 @@ async function loadDashboardStats() {
             if (caCard) caCard.style.display = 'none';
             if (managerProfitCard) managerProfitCard.style.display = 'none';
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
+            if (epcCard) epcCard.style.display = 'none';
             
             // Coût Total = ce qu'il va recevoir (revenus + bonus)
             document.getElementById('total-cost').textContent = formatCurrency(totalCost);
@@ -343,6 +350,7 @@ async function refreshAllData() {
     // Ajouter le chargement des leads par sub1 si c'est un manager
     if (currentUserRole === 'manager') {
         promises.push(loadSub1Leads());
+        promises.push(loadManagerEPC());
     }
     
     await Promise.all(promises);
@@ -458,6 +466,40 @@ async function loadCurrentUser() {
         }
     } catch (error) {
         window.location.href = '/login';
+    }
+}
+
+// Fonction pour charger l'EPC global du manager
+async function loadManagerEPC() {
+    // Vérifier que l'utilisateur est bien un manager
+    if (currentUserRole !== 'manager') {
+        console.log('❌ loadManagerEPC appelé mais utilisateur n\'est pas manager:', currentUserRole);
+        return;
+    }
+    
+    try {
+        console.log('🔍 Chargement de l\'EPC global pour manager...');
+        const response = await fetch(`${API_BASE_URL}/api/manager-epc?period=${currentPeriod}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ EPC global récupéré:', data);
+        
+        // Afficher l'EPC dans la carte
+        const epcElement = document.getElementById('global-epc');
+        if (epcElement) {
+            epcElement.textContent = `€${data.epc}`;
+        }
+        
+    } catch (error) {
+        console.error('❌ Erreur lors du chargement de l\'EPC:', error);
+        const epcElement = document.getElementById('global-epc');
+        if (epcElement) {
+            epcElement.textContent = 'Erreur';
+        }
     }
 }
 
