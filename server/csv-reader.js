@@ -78,32 +78,6 @@ function getDateRange(period = 'today') {
 
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
-  console.log(`🔄 TEMPORAIRE: Utilisation du CSV au lieu de l'API pour debug Som`);
-  
-  // TEMPORAIRE: Utiliser directement le CSV pour debug
-  try {
-    const csvData = readCSV(AGG_BY_SUB1_PATH);
-    console.log(`📊 Données CSV lues:`, csvData);
-    
-    if (csvData && csvData.length > 0) {
-      // Convertir en format compatible
-      const result = csvData.map(item => {
-        const payoutPerLead = settings.getDisplayPayoutForSub1(item.sub1);
-        return {
-          sub1: item.sub1,
-          convs: parseInt(item.convs) || 0,
-          revenue: Math.round((parseInt(item.convs) || 0) * payoutPerLead * 100) / 100
-        };
-      });
-      
-      console.log(`✅ Données converties:`, result);
-      return result;
-    }
-  } catch (error) {
-    console.error('❌ Erreur lecture CSV:', error.message);
-  }
-  
-  // Si pas de CSV, utiliser l'API comme avant
   try {
     const { from, to } = getDateRange(period);
 
@@ -158,6 +132,9 @@ async function fetchConversionsFromAPI(period = 'today') {
       aggregated[sub1].convs++;
     });
 
+    console.log(`📊 Agréger par sub1:`, aggregated);
+    console.log(`🎯 Som dans les données:`, aggregated['som']);
+
     // Convertir en tableau avec payout affiché par sub1 (toujours $4 par défaut)
     const result = Object.values(aggregated).map(item => {
       const payoutPerLead = settings.getDisplayPayoutForSub1(item.sub1);
@@ -167,6 +144,8 @@ async function fetchConversionsFromAPI(period = 'today') {
         revenue: Math.round(item.convs * payoutPerLead * 100) / 100
       };
     });
+
+    console.log(`✅ Résultat final:`, result);
 
     // Stocker les conversions brutes pour la fonction getConversions
     latestConversions[period] = allConversions;
