@@ -435,6 +435,7 @@ async function loadUserBonuses() {
         console.log('🔍 DEBUG - User bonuses data:', data);
         console.log('🔍 DEBUG - Total bonus:', data.totalBonus);
         console.log('🔍 DEBUG - Bonuses array:', data.bonuses);
+        console.log('🔍 DEBUG - First bonus details:', data.bonuses[0]);
         
         const commissionSection = document.getElementById('commission-helper-section');
         const totalBonusElement = document.getElementById('total-bonus-received');

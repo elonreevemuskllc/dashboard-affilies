@@ -324,6 +324,9 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     
     const totalBonus = bonusDetails.reduce((sum, bonus) => sum + bonus.totalBonus, 0);
     
+    console.log(`🔍 DEBUG - Bonus details:`, bonusDetails);
+    console.log(`🔍 DEBUG - Total bonus calculated:`, totalBonus);
+    
     res.json({ 
       bonuses: bonusDetails, 
       totalBonus: totalBonus,
