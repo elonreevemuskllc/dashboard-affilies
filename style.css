@@ -118,27 +118,6 @@ body {
     gap: var(--spacing-md);
 }
 
-.logo {
-    height: 40px;
-    width: auto;
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
-    transition: var(--transition);
-}
-
-.logo:hover {
-    opacity: 1;
-    transform: scale(1.05);
-}
-
-.logo-login {
-    height: 60px;
-    width: auto;
-    margin: 0 auto var(--spacing-lg) auto;
-    display: block;
-    filter: none;
-    opacity: 1;
-}
 
 .header h1 {
     font-size: 28px;
@@ -599,14 +578,10 @@ main {
         gap: var(--spacing-md);
     }
     
-    .header-left {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .logo {
-        height: 35px;
-    }
+        .header-left {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
 
     .header h1 {
         font-size: 22px;
