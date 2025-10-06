@@ -500,8 +500,30 @@ const csvDataAPI = {
     const estimatedClicks = Math.round(totalConversions / 0.077);
     const bonus = Math.floor(totalConversions / 10) * 10;
     
-    // Profit net pour le sous-manager = revenus + bonus + commission (ce qu'il gagne en tant que superviseur)
-    const netProfit = totalRevenue + bonus + subManagerCommission;
+    // CORRECTION: Calculer le Commission Helper pour ce sous-manager
+    let commissionHelper = 0;
+    try {
+      const settingsData = settings.getSettings();
+      const subAffiliateRules = settingsData.sub_affiliate_rules || [];
+      
+      // Trouver les règles où cet utilisateur est le superviseur (target)
+      const applicableRules = subAffiliateRules.filter(rule => 
+        sub1Array.includes(rule.targetSub1)
+      );
+      
+      // Calculer le total des bonus
+      for (const rule of applicableRules) {
+        const sourceStats = await this.getAffiliateStats(rule.sourceSub1, period);
+        const leads = sourceStats.conversions || 0;
+        const bonusAmount = rule.bonusAmount || 0;
+        commissionHelper += leads * bonusAmount;
+      }
+    } catch (error) {
+      console.error('❌ Erreur calcul Commission Helper:', error);
+    }
+    
+    // Profit net pour le sous-manager = revenus + bonus + commission + commission helper
+    const netProfit = totalRevenue + bonus + subManagerCommission + commissionHelper;
 
     console.log(`🔍 DEBUG - getSubManagerStats:`, {
       sub1: sub1Array,
@@ -509,7 +531,8 @@ const csvDataAPI = {
       totalRevenue,
       bonus,
       subManagerCommission,
-      netProfit: `Calcul: ${totalRevenue} + ${bonus} + ${subManagerCommission} = ${totalRevenue + bonus + subManagerCommission}`
+      commissionHelper,
+      netProfit: `Calcul: ${totalRevenue} + ${bonus} + ${subManagerCommission} + ${commissionHelper} = ${totalRevenue + bonus + subManagerCommission + commissionHelper}`
     });
 
     return {

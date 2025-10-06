@@ -180,8 +180,6 @@ async function loadDashboardStats() {
             if (data.netProfit !== undefined) {
                 console.log(`🔍 DEBUG - Affichage Profit Net:`, data.netProfit);
                 console.log(`🔍 DEBUG - Formatted:`, formatCurrencyWithEur(data.netProfit));
-                // Stocker la valeur du serveur pour la correction Commission Helper
-                window.lastProfitNetFromServer = data.netProfit;
                 document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(data.netProfit);
             }
         } else {
@@ -461,22 +459,7 @@ async function loadUserBonuses() {
             // Afficher le total des bonus
             totalBonusElement.innerHTML = formatCurrencyWithEur(data.totalBonus);
             
-            // CORRECTION: Mettre à jour le Profit Net pour inclure le Commission Helper
-            if (currentUserRole === 'submanager') {
-                // Utiliser la valeur du serveur au lieu de parser le DOM
-                const serverProfitNet = parseFloat(window.lastProfitNetFromServer) || 0;
-                const commissionHelper = data.totalBonus || 0;
-                const newProfitNet = serverProfitNet + commissionHelper;
-                
-                console.log(`🔍 DEBUG - Correction Profit Net:`, {
-                    serverProfitNet,
-                    commissionHelper,
-                    newProfitNet,
-                    calculation: `${serverProfitNet} + ${commissionHelper} = ${newProfitNet}`
-                });
-                
-                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(newProfitNet);
-            }
+            // Plus besoin de correction côté client - le serveur calcule maintenant le Profit Net avec Commission Helper
         } else {
             // Masquer la carte si pas de bonus et pas sous-manager
             commissionCard.style.display = 'none';
