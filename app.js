@@ -178,6 +178,8 @@ async function loadDashboardStats() {
             
             // Afficher le profit net (avec commission déduite)
             if (data.netProfit !== undefined) {
+                console.log(`🔍 DEBUG - Affichage Profit Net:`, data.netProfit);
+                console.log(`🔍 DEBUG - Formatted:`, formatCurrencyWithEur(data.netProfit));
                 document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(data.netProfit);
             }
         } else {
