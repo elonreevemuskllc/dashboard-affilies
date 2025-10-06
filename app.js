@@ -36,7 +36,7 @@ function formatCurrencyWithEur(amount) {
         style: 'currency',
         currency: 'EUR'
     }).format(eurAmount);
-    return `${usdFormatted}<br><small style="color: var(--text-secondary); font-size: 0.8em;">${eurFormatted}</small>`;
+    return `${usdFormatted}<br><small style="color: var(--text-secondary); font-size: 0.65em; opacity: 0.7;">${eurFormatted}</small>`;
 }
 
 // Fonction pour formater la date
@@ -517,7 +517,7 @@ async function loadManagerEPC() {
                 style: 'currency',
                 currency: 'EUR'
             }).format(eurAmount);
-            epcElement.innerHTML = `€${data.epc}<br><small style="color: var(--text-secondary); font-size: 0.8em;">${eurFormatted}</small>`;
+            epcElement.innerHTML = `€${data.epc}<br><small style="color: var(--text-secondary); font-size: 0.65em; opacity: 0.7;">${eurFormatted}</small>`;
         }
         
     } catch (error) {
