@@ -272,6 +272,7 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     const userSub1s = Array.isArray(user.sub1) ? user.sub1 : [user.sub1];
     
     console.log(`🔍 DEBUG - User: ${user.name}, Sub1s: ${userSub1s.join(', ')}, Role: ${user.role}`);
+    console.log(`🔍 DEBUG - Period: ${period}`);
     
     // Récupérer les règles de sous-affiliés
     const settings = settingsManager.getSettings();
