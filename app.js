@@ -425,12 +425,6 @@ async function loadUserBonuses() {
         console.log('🔍 DEBUG - Loading user bonuses...');
         const timestamp = Date.now();
         
-        // Debug: Appeler l'API stats pour voir les données brutes
-        console.log('🔍 DEBUG - Appel API stats pour debug...');
-        const statsResponse = await fetch(`/api/stats?period=${currentPeriod}&_t=${timestamp}`);
-        const statsData = await statsResponse.json();
-        console.log('🔍 DEBUG - Stats data reçues:', statsData);
-        
         const response = await fetch(`/api/user-bonuses?period=${currentPeriod}&_t=${timestamp}`);
         console.log('🔍 DEBUG - Response status:', response.status);
         
@@ -441,52 +435,23 @@ async function loadUserBonuses() {
         const data = await response.json();
         console.log('🔍 DEBUG - User bonuses data:', data);
         console.log('🔍 DEBUG - Total bonus:', data.totalBonus);
-        console.log('🔍 DEBUG - Bonuses array:', data.bonuses);
-        console.log('🔍 DEBUG - First bonus details:', data.bonuses[0]);
         
-        const commissionSection = document.getElementById('commission-helper-section');
-        const totalBonusElement = document.getElementById('total-bonus-received');
-        const bonusTableBody = document.getElementById('bonus-details-table');
+        const commissionCard = document.getElementById('commission-helper-card');
+        const totalBonusElement = document.getElementById('commission-helper-total');
         
-        console.log('🔍 DEBUG - Commission section element:', commissionSection);
-        console.log('🔍 DEBUG - Total bonus element:', totalBonusElement);
-        console.log('🔍 DEBUG - Bonus table body:', bonusTableBody);
-        
-        // Afficher la section Commission Helper pour tous les sous-managers
+        // Afficher la carte Commission Helper pour tous les sous-managers
         if (data.bonuses.length > 0 || currentUserRole === 'submanager') {
-            commissionSection.style.display = 'block';
+            commissionCard.style.display = 'block';
             
             // Afficher le total des bonus
             totalBonusElement.innerHTML = formatCurrencyWithEur(data.totalBonus);
-            
-            // Afficher les détails des bonus
-            if (data.bonuses.length > 0) {
-                bonusTableBody.innerHTML = data.bonuses.map(bonus => `
-                    <tr>
-                        <td><strong>${bonus.sourceSub1}</strong></td>
-                        <td style="text-align: center;">${formatNumber(bonus.leads)}</td>
-                        <td style="text-align: center;">${formatCurrencyWithEur(bonus.bonusAmount)}</td>
-                        <td style="text-align: center; color: ${bonus.totalBonus > 0 ? 'var(--success-color)' : 'var(--text-secondary)'}; font-weight: 600;">
-                            ${bonus.totalBonus > 0 ? formatCurrencyWithEur(bonus.totalBonus) : '$0.00'}
-                        </td>
-                    </tr>
-                `).join('');
-            } else {
-                bonusTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-secondary);">
-                            Aucun sous-affilié configuré pour cette période
-                        </td>
-                    </tr>
-                `;
-            }
         } else {
-            // Masquer la section si pas de bonus et pas sous-manager
-            commissionSection.style.display = 'none';
+            // Masquer la carte si pas de bonus et pas sous-manager
+            commissionCard.style.display = 'none';
         }
     } catch (error) {
         console.error('Erreur lors du chargement des bonus utilisateur:', error);
-        document.getElementById('commission-helper-section').style.display = 'none';
+        document.getElementById('commission-helper-card').style.display = 'none';
     }
 }
 
