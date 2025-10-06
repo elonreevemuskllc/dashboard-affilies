@@ -21,6 +21,24 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+// Fonction pour convertir USD vers EUR
+function convertUsdToEur(usdAmount) {
+    const usdToEurRate = 0.92; // Taux approximatif
+    return usdAmount * usdToEurRate;
+}
+
+// Fonction pour formater avec USD et EUR
+function formatCurrencyWithEur(amount) {
+    if (amount === null || amount === undefined) return '$0.00';
+    const usdFormatted = formatCurrency(amount);
+    const eurAmount = convertUsdToEur(amount);
+    const eurFormatted = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(eurAmount);
+    return `${usdFormatted}<br><small style="color: var(--text-secondary); font-size: 0.8em;">${eurFormatted}</small>`;
+}
+
 // Fonction pour formater la date
 function formatDate(dateString) {
     if (!dateString) return '--';
@@ -82,8 +100,8 @@ async function loadDashboardStats() {
         
         document.getElementById('total-clicks').textContent = formatNumber(clicks);
         document.getElementById('total-conversions').textContent = formatNumber(conversions);
-        document.getElementById('total-revenue').textContent = formatCurrency(revenue);
-        document.getElementById('conversion-rate').textContent = formatCurrency(bonus);
+        document.getElementById('total-revenue').innerHTML = formatCurrencyWithEur(revenue);
+        document.getElementById('conversion-rate').innerHTML = formatCurrencyWithEur(bonus);
         
         // Afficher différemment selon le rôle
         if (currentUserRole === 'manager') {
@@ -108,7 +126,7 @@ async function loadDashboardStats() {
             const managerProfitCard = document.getElementById('manager-profit-card');
             if (managerProfitCard) {
                 managerProfitCard.style.display = 'flex';
-                document.getElementById('manager-profit').textContent = formatCurrency(managerProfit);
+                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(managerProfit);
             }
             
             // Afficher la section leads par sub1 et la carte EPC
@@ -143,7 +161,7 @@ async function loadDashboardStats() {
             if (epcCard) epcCard.style.display = 'none';
             
             // Coût Total = ce qu'il va recevoir (revenus + bonus)
-            document.getElementById('total-cost').textContent = formatCurrency(totalCost);
+            document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(totalCost);
         }
         
         updateLastUpdate();
@@ -398,10 +416,10 @@ async function loadSub1Leads() {
             <tr>
                 <td><strong>${item.sub1}</strong></td>
                 <td>${formatNumber(item.leads)}</td>
-                <td>${formatCurrency(item.costAffiliate)}</td>
-                <td>${formatCurrency(item.bonus)}</td>
-                <td>${formatCurrency(item.net)}</td>
-                <td style="color: ${item.epc > 0 ? 'var(--success-color)' : item.epc < 0 ? 'var(--danger-color)' : 'var(--text-secondary)'}; font-weight: 600;">
+                <td style="text-align: center;">${formatCurrencyWithEur(item.costAffiliate)}</td>
+                <td style="text-align: center;">${formatCurrencyWithEur(item.bonus)}</td>
+                <td style="text-align: center;">${formatCurrencyWithEur(item.net)}</td>
+                <td style="color: ${item.epc > 0 ? 'var(--success-color)' : item.epc < 0 ? 'var(--danger-color)' : 'var(--text-secondary)'}; font-weight: 600; text-align: center;">
                     €${item.epc}
                 </td>
             </tr>
@@ -494,7 +512,12 @@ async function loadManagerEPC() {
         // Afficher l'EPC dans la carte
         const epcElement = document.getElementById('global-epc');
         if (epcElement) {
-            epcElement.textContent = `€${data.epc}`;
+            const eurAmount = convertUsdToEur(data.epc);
+            const eurFormatted = new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(eurAmount);
+            epcElement.innerHTML = `€${data.epc}<br><small style="color: var(--text-secondary); font-size: 0.8em;">${eurFormatted}</small>`;
         }
         
     } catch (error) {
