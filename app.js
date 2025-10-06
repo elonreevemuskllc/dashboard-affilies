@@ -161,14 +161,21 @@ async function loadDashboardStats() {
             const managerProfitCard = document.getElementById('manager-profit-card');
             const sub1LeadsSection = document.getElementById('sub1-leads-section');
             const epcCard = document.getElementById('epc-card');
+            const profitNetCard = document.getElementById('profit-net-card');
             
             if (revenueCard) revenueCard.style.display = 'flex';
             if (bonusCard) bonusCard.style.display = 'flex';
             if (costCard) costCard.style.display = 'none'; // Cacher le coût total
             if (caCard) caCard.style.display = 'none';
-            if (managerProfitCard) managerProfitCard.style.display = 'none'; // CACHER PROFIT NET
+            if (managerProfitCard) managerProfitCard.style.display = 'none';
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
             if (epcCard) epcCard.style.display = 'none';
+            if (profitNetCard) profitNetCard.style.display = 'flex'; // AFFICHER PROFIT NET
+            
+            // CALCULER LE PROFIT NET : Revenue + Bonus + Commission Helper
+            // On va le calculer après avoir chargé le Commission Helper
+            window.submanagerRevenue = revenue;
+            window.submanagerBonus = bonus;
         } else {
             // Affilié : Afficher toutes les cartes sauf profit manager et CA
             const revenueCard = document.getElementById('revenue-card');
@@ -446,7 +453,26 @@ async function loadUserBonuses() {
             // Afficher le total des bonus
             totalBonusElement.innerHTML = formatCurrencyWithEur(data.totalBonus);
             
-            // Plus besoin de correction côté client - le serveur calcule maintenant le Profit Net avec Commission Helper
+            // CALCULER LE PROFIT NET : Revenue + Bonus + Commission Helper
+            if (currentUserRole === 'submanager') {
+                const revenue = window.submanagerRevenue || 0;
+                const bonus = window.submanagerBonus || 0;
+                const commissionHelper = data.totalBonus || 0;
+                const profitNet = revenue + bonus + commissionHelper;
+                
+                console.log(`💰 PROFIT NET CALCULÉ:`, {
+                    revenue,
+                    bonus,
+                    commissionHelper,
+                    profitNet,
+                    formule: `${revenue} + ${bonus} + ${commissionHelper} = ${profitNet}`
+                });
+                
+                const profitNetElement = document.getElementById('profit-net-total');
+                if (profitNetElement) {
+                    profitNetElement.innerHTML = formatCurrencyWithEur(profitNet);
+                }
+            }
         } else {
             // Masquer la carte si pas de bonus et pas sous-manager
             commissionCard.style.display = 'none';
