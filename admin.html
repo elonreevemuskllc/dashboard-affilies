@@ -737,6 +737,19 @@
         }
 
         loadCurrentUser();
+        // Fonction pour afficher un message
+        function showMessage(message, type) {
+            alert(message);
+        }
+
+        // Fonction pour fermer le modal Sub1
+        function closeSub1Modal() {
+            const modal = document.getElementById('sub1Modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         loadUsers();
         loadSub1List();
         loadSettings();
