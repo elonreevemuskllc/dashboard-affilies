@@ -10,6 +10,33 @@ function getUsers() {
     return JSON.parse(data).users;
   } catch (error) {
     console.error('Erreur lecture users.json:', error.message);
+    
+    // Si le fichier n'existe pas, créer un admin par défaut
+    if (error.code === 'ENOENT') {
+      console.log('🔧 Création d\'un utilisateur admin par défaut...');
+      const defaultUsers = {
+        users: [
+          {
+            id: 1,
+            email: "admin@dashboard.com",
+            password: "admin123",
+            sub1: "admin",
+            role: "admin",
+            name: "admin"
+          }
+        ]
+      };
+      
+      try {
+        fs.writeFileSync(USERS_FILE, JSON.stringify(defaultUsers, null, 2), 'utf-8');
+        console.log('✅ Utilisateur admin créé par défaut');
+        return defaultUsers.users;
+      } catch (writeError) {
+        console.error('Erreur création admin par défaut:', writeError.message);
+        return [];
+      }
+    }
+    
     return [];
   }
 }
