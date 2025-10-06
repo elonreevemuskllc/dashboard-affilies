@@ -423,6 +423,7 @@ app.delete('/api/admin/sub-affiliate-rules/:sourceSub1/:targetSub1', requireAdmi
 // Routes API - Stats depuis Everflow API, détails depuis CSV (protégé)
 app.get('/api/stats', requireAuth, async (req, res) => {
   try {
+    console.log(`🔄 API /api/stats appelée - Version Commission Helper Fix - ${new Date().toISOString()}`);
     const user = req.session.user;
     const period = req.query.period || 'today';
     let stats;
@@ -507,4 +508,5 @@ app.get('/api/affiliates', requireAdmin, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
   console.log(`📊 Dashboard accessible à l'adresse ci-dessus`);
+  console.log(`🔄 VERSION: Commission Helper fix - ${new Date().toISOString()}`);
 });
