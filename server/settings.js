@@ -9,11 +9,11 @@ function getSettings() {
     if (!fs.existsSync(SETTINGS_FILE)) {
       // Créer le fichier avec des valeurs par défaut
       const defaultSettings = { 
-        payout_per_lead: 4, 
+        payout_per_lead: 4.70, 
         payout_by_sub1: {},
-        currency: 'EUR',
-        usd_to_eur_rate: 0.92,
-        manager_margin_per_lead: 1
+        currency: 'USD',
+        usd_to_eur_rate: 1,
+        manager_margin_per_lead: 25.30
       };
       fs.writeFileSync(SETTINGS_FILE, JSON.stringify(defaultSettings, null, 2));
       return defaultSettings;
@@ -21,9 +21,10 @@ function getSettings() {
     const data = fs.readFileSync(SETTINGS_FILE, 'utf-8');
     const parsed = JSON.parse(data);
     // Assurer les valeurs par défaut
-    if (!parsed.currency) parsed.currency = 'EUR';
-    if (!parsed.usd_to_eur_rate) parsed.usd_to_eur_rate = 0.92;
-    if (!parsed.manager_margin_per_lead) parsed.manager_margin_per_lead = 1;
+    if (!parsed.currency) parsed.currency = 'USD';
+    if (!parsed.usd_to_eur_rate) parsed.usd_to_eur_rate = 1;
+    if (!parsed.payout_per_lead) parsed.payout_per_lead = 4.70;
+    if (!parsed.manager_margin_per_lead) parsed.manager_margin_per_lead = 25.30;
     return parsed;
   } catch (error) {
     console.error('Erreur lecture settings:', error.message);
