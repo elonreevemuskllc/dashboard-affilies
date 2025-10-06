@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcryptjs');
 
 const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
 
@@ -27,7 +26,7 @@ function saveUsers(users) {
 }
 
 // Authentifier un utilisateur
-async function authenticateUser(email, password) {
+function authenticateUser(email, password) {
   const users = getUsers();
   const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   
@@ -35,9 +34,8 @@ async function authenticateUser(email, password) {
     return null;
   }
   
-  const isValid = await bcrypt.compare(password, user.password);
-  
-  if (!isValid) {
+  // Vérifier le mot de passe en clair
+  if (user.password !== password) {
     return null;
   }
   
@@ -47,7 +45,7 @@ async function authenticateUser(email, password) {
 }
 
 // Créer un nouvel utilisateur
-async function createUser(email, password, sub1, name, role = 'affiliate') {
+function createUser(email, password, sub1, name, role = 'affiliate') {
   const users = getUsers();
   
   // Vérifier si l'email existe déjà
@@ -55,17 +53,14 @@ async function createUser(email, password, sub1, name, role = 'affiliate') {
     return { error: 'Email déjà utilisé' };
   }
   
-  // Hasher le mot de passe
-  const hashedPassword = await bcrypt.hash(password, 10);
-  
   // sub1 peut être un string ou un array
   const sub1Array = Array.isArray(sub1) ? sub1 : [sub1];
   
-  // Créer le nouvel utilisateur
+  // Créer le nouvel utilisateur (mot de passe en clair)
   const newUser = {
     id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
     email,
-    password: hashedPassword,
+    password: password, // Stockage en clair
     sub1: sub1Array,
     role: role,
     name
@@ -92,7 +87,7 @@ function deleteUser(userId) {
 }
 
 // Ajouter un sub1 à un utilisateur existant
-async function addSub1ToUser(userId, newSub1) {
+function addSub1ToUser(userId, newSub1) {
   const users = getUsers();
   const userIndex = users.findIndex(u => u.id === userId);
   

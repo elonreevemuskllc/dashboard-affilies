@@ -67,10 +67,10 @@ app.get('/', (req, res) => {
 });
 
 // Routes d'authentification
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
   
-  const user = await auth.authenticateUser(email, password);
+  const user = auth.authenticateUser(email, password);
   
   if (!user) {
     return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
@@ -129,9 +129,9 @@ app.post('/api/admin/settings', requireAdmin, (req, res) => {
   res.json(result);
 });
 
-app.post('/api/admin/users', requireAdmin, async (req, res) => {
+app.post('/api/admin/users', requireAdmin, (req, res) => {
   const { email, password, sub1, name, role } = req.body;
-  const result = await auth.createUser(email, password, sub1, name, role);
+  const result = auth.createUser(email, password, sub1, name, role);
   
   if (result.error) {
     return res.status(400).json(result);
@@ -152,7 +152,7 @@ app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
 });
 
 // Route pour ajouter un sub1 à un utilisateur existant
-app.post('/api/admin/users/:id/sub1', requireAdmin, async (req, res) => {
+app.post('/api/admin/users/:id/sub1', requireAdmin, (req, res) => {
   try {
     const userId = parseInt(req.params.id);
     const { sub1 } = req.body;
@@ -161,7 +161,7 @@ app.post('/api/admin/users/:id/sub1', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Sub1 requis' });
     }
     
-    await auth.addSub1ToUser(userId, sub1);
+    auth.addSub1ToUser(userId, sub1);
     res.json({ success: true });
   } catch (error) {
     console.error('Erreur ajout sub1:', error.message);
