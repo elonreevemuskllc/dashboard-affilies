@@ -294,14 +294,12 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     // Pour chaque règle, calculer le bonus basé sur les leads de la source
     const bonusDetails = await Promise.all(applicableRules.map(async (rule) => {
       try {
-        const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
-        console.log(`🔍 DEBUG - All data from API:`, aggBySub1);
-        console.log(`🔍 DEBUG - Looking for ${rule.sourceSub1} in data`);
+        // UTILISER LA MÊME LOGIQUE QUE POUR SOm !
+        // Au lieu de fetchConversionsFromAPI(), utiliser getAffiliateStats()
+        const sourceStats = await csvDataAPI.getAffiliateStats(rule.sourceSub1, period);
+        console.log(`🔍 DEBUG - Stats for ${rule.sourceSub1}:`, sourceStats);
         
-        const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
-        console.log(`🔍 DEBUG - Found data for ${rule.sourceSub1}:`, sourceData);
-        
-        const leads = sourceData ? (parseInt(sourceData.convs) || 0) : 0;
+        const leads = sourceStats.conversions || 0;
         const bonus = leads * rule.bonusAmount;
         
         console.log(`🔍 DEBUG - Bonus calculation: ${leads} leads × $${rule.bonusAmount} = $${bonus}`);
