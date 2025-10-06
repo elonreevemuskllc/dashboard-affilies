@@ -287,6 +287,16 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     
     console.log(`🔍 DEBUG - Applicable rules for ${userSub1s.join(', ')}:`, applicableRules);
     
+    // Debug : vérifier si Som a des leads
+    if (applicableRules.length > 0) {
+      for (const rule of applicableRules) {
+        const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
+        console.log(`🔍 DEBUG - Data for ${rule.sourceSub1}:`, aggBySub1);
+        const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
+        console.log(`🔍 DEBUG - Source data for ${rule.sourceSub1}:`, sourceData);
+      }
+    }
+    
     if (applicableRules.length === 0) {
       return res.json({ bonuses: [], totalBonus: 0 });
     }
