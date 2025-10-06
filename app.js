@@ -85,9 +85,11 @@ function changePeriod(period) {
 // 1. Charger les statistiques du dashboard
 async function loadDashboardStats() {
     try {
+        console.log(`🔍 DEBUG - loadDashboardStats appelé (timestamp: ${Date.now()})`);
         const timestamp = Date.now();
         const response = await fetch(`${API_BASE_URL}/api/stats?period=${currentPeriod}&_t=${timestamp}`);
         const data = await response.json();
+        console.log(`🔍 DEBUG - Data reçue:`, data);
         
         // Exemple de structure de données - adapter selon la réponse réelle de l'API
         const clicks = data.clicks || data.total_clicks || 0;
@@ -198,6 +200,8 @@ async function loadDashboardStats() {
             
             
             // Profit Net = ce qu'il va recevoir (revenus + bonus)
+            console.log(`🔍 DEBUG - Affichage Profit Net: ${netProfit}`);
+            console.log(`🔍 DEBUG - Formatted: ${formatCurrencyWithEur(netProfit)}`);
             document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(netProfit);
         }
         
