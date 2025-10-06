@@ -45,18 +45,18 @@
 
     <header class="header">
         <div class="container">
-            <h1>⚙️ Administration</h1>
+            <h1>Administration</h1>
             <div class="header-info">
                 <span id="admin-name"></span>
-                <button onclick="logout()" class="logout-btn">Déconnexion</button>
+                <button onclick="logout()" class="btn btn-secondary">Déconnexion</button>
             </div>
         </div>
     </header>
 
     <main class="container" style="padding: 2rem 0;">
-        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-            <a href="/" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 6px;">📊 Voir le Dashboard</a>
-            <button onclick="clearCache()" style="padding: 0.5rem 1rem; background: var(--warning-color, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer;">🗑️ Vider le Cache</button>
+        <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+            <a href="/" class="btn btn-primary">Voir le Dashboard</a>
+            <button onclick="clearCache()" class="btn" style="background-color: var(--warning-color); color: white;">Vider le Cache</button>
         </div>
 
         <section class="conversions-section">
@@ -64,19 +64,19 @@
                 <h2>💰 Paramètres du Payout</h2>
             </div>
 
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
-                <h3 style="margin-bottom: 1rem;">Payout par Défaut</h3>
-                <p style="color: var(--text-light); margin-bottom: 1rem;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
-                <form id="settings-form" style="display: flex; gap: 1rem; align-items: end;">
+            <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
+                <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Défaut</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
+                <form id="settings-form" style="display: flex; gap: var(--spacing-md); align-items: end;">
                     <div style="flex: 1;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Payout par défaut ($)</label>
-                        <input type="number" id="payout_per_lead" step="0.01" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1.1rem;">
+                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Payout par défaut ($)</label>
+                        <input type="number" id="payout_per_lead" step="0.01" required style="width: 100%; padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 15px; background-color: var(--bg-card); color: var(--text-primary); min-height: 44px;">
                     </div>
                     <div>
-                        <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Mettre à jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
                 </form>
-                <div id="settings-message" style="margin-top: 1rem; display: none;"></div>
+                <div id="settings-message" style="margin-top: var(--spacing-md); display: none;"></div>
             </div>
 
             <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">

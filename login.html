@@ -11,90 +11,95 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
         }
+        
         .login-box {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
+            background-color: var(--bg-card);
+            padding: var(--spacing-2xl);
+            border-radius: var(--border-radius-lg);
             box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 400px;
+            border: 0.5px solid var(--border-color);
         }
+        
         .login-box h1 {
             text-align: center;
-            margin-bottom: 2rem;
-            color: var(--text-color);
+            margin-bottom: var(--spacing-xl);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.003em;
         }
+        
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-lg);
         }
+        
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--spacing-sm);
             font-weight: 600;
-            color: var(--text-color);
+            color: var(--text-primary);
+            font-size: 15px;
         }
+        
         .form-group input {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
+            padding: var(--spacing-md);
+            border: 0.5px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            min-height: 44px;
         }
+        
         .form-group input:focus {
             outline: none;
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
         }
+        
         .btn-login {
             width: 100%;
-            padding: 0.75rem;
-            background: var(--primary-color);
+            padding: var(--spacing-md);
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: var(--border-radius);
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            min-height: 44px;
         }
+        
         .btn-login:hover {
-            background: var(--secondary-color);
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
         }
+        
         .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--danger-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-md);
             display: none;
+            border-left: 4px solid var(--danger-color);
         }
         
-        /* Responsive Mobile */
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 1rem;
-            }
-            .login-box {
-                padding: 2rem 1.5rem;
-            }
-            .login-box h1 {
-                font-size: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .login-box {
-                padding: 1.5rem 1rem;
-            }
-            .login-box h1 {
-                font-size: 1.25rem;
-            }
-            .form-group input,
-            .btn-login {
-                font-size: 0.9375rem;
-            }
+        .login-footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 0.5px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 13px;
         }
     </style>
 </head>
@@ -106,14 +111,18 @@
             <form id="login-form">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" placeholder="Votre adresse email" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
                 </div>
                 <button type="submit" class="btn-login">Se connecter</button>
             </form>
+            
+            <div class="login-footer">
+                <p>Sécurisé et privé</p>
+            </div>
         </div>
     </div>
 
