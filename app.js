@@ -186,6 +186,8 @@ async function loadDashboardStats() {
             const sub1LeadsSection = document.getElementById('sub1-leads-section');
             const epcCard = document.getElementById('epc-card');
             
+            const profitNetCard = document.getElementById('profit-net-card');
+            
             if (revenueCard) revenueCard.style.display = 'flex';
             if (bonusCard) bonusCard.style.display = 'flex';
             if (costCard) costCard.style.display = 'flex';
@@ -193,12 +195,15 @@ async function loadDashboardStats() {
             if (managerProfitCard) managerProfitCard.style.display = 'none';
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
             if (epcCard) epcCard.style.display = 'none';
-            
+            if (profitNetCard) profitNetCard.style.display = 'none'; // PAS DE PROFIT NET POUR AFFILIÉS SIMPLES
             
             // Profit Net = ce qu'il va recevoir (revenus + bonus)
             console.log(`🔍 DEBUG - Affichage Profit Net: ${netProfit}`);
             console.log(`🔍 DEBUG - Formatted: ${formatCurrencyWithEur(netProfit)}`);
-            document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(netProfit);
+            const costElement = document.getElementById('total-cost');
+            if (costElement) {
+                costElement.innerHTML = formatCurrencyWithEur(netProfit);
+            }
         }
         
         updateLastUpdate();
