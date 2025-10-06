@@ -260,6 +260,9 @@ app.get('/api/stats', requireAuth, async (req, res) => {
     if (user.role === 'admin') {
       // Admin: stats globales moins les masqués
       stats = await csvDataAPI.getDashboardStats(period);
+    } else if (user.role === 'submanager') {
+      // Sous-manager: stats avec commission
+      stats = await csvDataAPI.getSubManagerStats(user.sub1, period);
     } else {
       // Affilié: stats uniquement pour son sub1
       stats = await csvDataAPI.getAffiliateStats(user.sub1, period);

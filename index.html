@@ -128,6 +128,17 @@
                     <p class="stat-description">€ par clic</p>
                 </div>
             </div>
+
+            <div class="stat-card stat-card-purple" id="commission-card" style="display: none;">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>Commission Sous-M</h3>
+                    <p class="stat-value" id="submanager-commission">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                    <p class="stat-description">€ gagnés</p>
+                </div>
+            </div>
         </section>
 
         <!-- Section des leads par sub1 pour les managers -->
@@ -137,19 +148,20 @@
             </div>
             <div class="table-container">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Sub1</th>
-                            <th>Leads</th>
-                            <th>Gains Affilié</th>
-                            <th>Bonus</th>
-                            <th>Net</th>
-                            <th>EPC</th>
-                        </tr>
-                    </thead>
+            <thead>
+                <tr>
+                    <th>Sub1</th>
+                    <th>Leads</th>
+                    <th>Gains Affilié</th>
+                    <th>Bonus</th>
+                    <th>Commission</th>
+                    <th>Net</th>
+                    <th>EPC</th>
+                </tr>
+            </thead>
                     <tbody id="sub1-leads-body">
                         <tr>
-                            <td colspan="6" class="loading-row">
+                            <td colspan="7" class="loading-row">
                                 <span class="loading">Chargement...</span>
                             </td>
                         </tr>

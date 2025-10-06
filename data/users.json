@@ -13,8 +13,10 @@
       "email": "moddingcharo123@gmail.com",
       "password": "losh123",
       "sub1": "losh",
-      "role": "affiliate",
-      "name": "Losh"
+      "role": "submanager",
+      "name": "Losh",
+      "parentManager": 5,
+      "commissionPerLead": 2.00
     },
     {
       "id": 3,
@@ -46,6 +48,15 @@
       ],
       "role": "manager",
       "name": "elon"
+    },
+    {
+      "id": 6,
+      "email": "som@example.com",
+      "password": "som123",
+      "sub1": "som",
+      "role": "affiliate",
+      "name": "Som",
+      "parentSubManager": 2
     }
   ]
 }

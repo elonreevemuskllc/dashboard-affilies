@@ -139,9 +139,48 @@ async function loadDashboardStats() {
                 epcCard.style.display = 'flex';
             }
             
+            // Cacher la carte commission pour les managers
+            const commissionCard = document.getElementById('commission-card');
+            if (commissionCard) commissionCard.style.display = 'none';
+            
             // Charger les données spécifiques aux managers
             loadSub1Leads();
             loadManagerEPC();
+        } else if (currentUserRole === 'submanager') {
+            // Sous-manager : Afficher les stats avec commission
+            const revenueCard = document.getElementById('revenue-card');
+            const bonusCard = document.getElementById('bonus-card');
+            const costCard = document.getElementById('cost-card');
+            const caCard = document.getElementById('ca-card');
+            const managerProfitCard = document.getElementById('manager-profit-card');
+            const sub1LeadsSection = document.getElementById('sub1-leads-section');
+            const epcCard = document.getElementById('epc-card');
+            
+            if (revenueCard) revenueCard.style.display = 'flex';
+            if (bonusCard) bonusCard.style.display = 'flex';
+            if (costCard) costCard.style.display = 'none'; // Cacher le coût total
+            if (caCard) caCard.style.display = 'none';
+            if (managerProfitCard) managerProfitCard.style.display = 'flex';
+            if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
+            if (epcCard) epcCard.style.display = 'none';
+            
+            // Modifier le titre de la carte profit
+            const profitCard = document.querySelector('#manager-profit-card .stat-content h3');
+            if (profitCard) {
+                profitCard.textContent = 'Profit Net';
+            }
+            
+            // Afficher la carte commission
+            const commissionCard = document.getElementById('commission-card');
+            if (commissionCard) {
+                commissionCard.style.display = 'flex';
+                document.getElementById('submanager-commission').innerHTML = formatCurrencyWithEur(stats.subManagerCommission || 0);
+            }
+            
+            // Afficher le profit net (avec commission déduite)
+            if (stats.netProfit !== undefined) {
+                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(stats.netProfit);
+            }
         } else {
             // Affilié : Afficher toutes les cartes sauf profit manager et CA
             const revenueCard = document.getElementById('revenue-card');
@@ -159,6 +198,10 @@ async function loadDashboardStats() {
             if (managerProfitCard) managerProfitCard.style.display = 'none';
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
             if (epcCard) epcCard.style.display = 'none';
+            
+            // Cacher la carte commission pour les affiliés
+            const commissionCard = document.getElementById('commission-card');
+            if (commissionCard) commissionCard.style.display = 'none';
             
             // Coût Total = ce qu'il va recevoir (revenus + bonus)
             document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(totalCost);
@@ -402,13 +445,13 @@ async function loadSub1Leads() {
         const tbody = document.getElementById('sub1-leads-body');
         
         if (!data || !data.sub1Leads || data.sub1Leads.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-light);">
-                        Aucun sub1 assigné
-                    </td>
-                </tr>
-            `;
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-light);">
+                    Aucun sub1 assigné
+                </td>
+            </tr>
+        `;
             return;
         }
         
@@ -418,6 +461,9 @@ async function loadSub1Leads() {
                 <td>${formatNumber(item.leads)}</td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.costAffiliate)}</td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.bonus)}</td>
+                <td style="text-align: center; color: ${item.subManagerCommission > 0 ? 'var(--warning-color)' : 'var(--text-secondary)'};">
+                    ${item.subManagerCommission > 0 ? formatCurrencyWithEur(item.subManagerCommission) : '-'}
+                </td>
                 <td style="text-align: center;">${formatCurrencyWithEur(item.net)}</td>
                 <td style="color: ${item.epc > 0 ? 'var(--success-color)' : item.epc < 0 ? 'var(--danger-color)' : 'var(--text-secondary)'}; font-weight: 600; text-align: center;">
                     €${item.epc}
@@ -429,7 +475,7 @@ async function loadSub1Leads() {
         console.error('❌ Erreur lors du chargement des leads par sub1:', error);
         document.getElementById('sub1-leads-body').innerHTML = `
             <tr>
-                <td colspan="6" class="loading-row">
+                <td colspan="7" class="loading-row">
                     ${showError('Impossible de charger les leads par sub1')}
                 </td>
             </tr>

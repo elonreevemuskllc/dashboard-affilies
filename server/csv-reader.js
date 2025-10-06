@@ -523,6 +523,58 @@ const csvDataAPI = {
     };
   },
 
+  // Obtenir les stats pour un sous-manager
+  async getSubManagerStats(sub1Input, period = 'today') {
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return {
+        clicks: 0,
+        conversions: 0,
+        revenue: 0,
+        bonus: 0,
+        subManagerCommission: 0,
+        netProfit: 0
+      };
+    }
+
+    // Gérer sub1 comme string ou array
+    const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    
+    let totalConversions = 0;
+    let totalRevenue = 0;
+    let subManagerCommission = 0;
+    
+    sub1Array.forEach(sub1 => {
+      const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
+      if (affiliateData) {
+        const conversions = parseInt(affiliateData.convs) || 0;
+        const payoutPerLead = settings.getPayoutForSub1(sub1);
+        totalConversions += conversions;
+        totalRevenue += conversions * payoutPerLead;
+        
+        // Calculer la commission du sous-manager (2€ par lead par défaut)
+        const commissionPerLead = 2.00; // À récupérer depuis la DB utilisateur
+        subManagerCommission += conversions * commissionPerLead;
+      }
+    });
+
+    const estimatedClicks = Math.round(totalConversions / 0.077);
+    const bonus = Math.floor(totalConversions / 10) * 10;
+    
+    // Profit net = revenus + bonus - commission sous-manager
+    const netProfit = totalRevenue + bonus - subManagerCommission;
+
+    return {
+      clicks: estimatedClicks,
+      conversions: totalConversions,
+      revenue: totalRevenue,
+      bonus: bonus,
+      subManagerCommission: subManagerCommission,
+      netProfit: netProfit
+    };
+  },
+
   // Récupérer les leads par sub1 pour un manager
   async getSub1LeadsForManager(sub1Array, period = 'today') {
     const aggBySub1 = await fetchConversionsFromAPI(period);
@@ -553,8 +605,16 @@ const csvDataAPI = {
       // Calculer le CA total (leads × 30$)
       const caTotal = leads * 30;
       
-      // Calculer le net (CA total - gains affilié - bonus = profit manager)
-      const net = caTotal - gainsAffiliate - bonus;
+      // Vérifier si c'est un sous-manager et déduire sa commission
+      let subManagerCommission = 0;
+      // TODO: Récupérer depuis la DB si ce sub1 a un sous-manager
+      // Pour l'instant, on utilise une valeur par défaut
+      if (sub1 === 'losh') { // Exemple: losh est un sous-manager
+        subManagerCommission = leads * 2.00; // 2€ par lead
+      }
+      
+      // Calculer le net (CA total - gains affilié - bonus - commission sous-manager = profit manager)
+      const net = caTotal - gainsAffiliate - bonus - subManagerCommission;
       
       // Calculer l'EPC pour ce sub1 (profit manager / clics estimés)
       const estimatedClicks = Math.round(leads / 0.077);
@@ -567,6 +627,7 @@ const csvDataAPI = {
         leads: leads,
         costAffiliate: gainsAffiliate,
         bonus: bonus,
+        subManagerCommission: subManagerCommission,
         net: net,
         epc: Math.round(epc * 100) / 100 // Arrondir à 2 décimales
       };

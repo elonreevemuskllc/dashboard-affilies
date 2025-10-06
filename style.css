@@ -277,6 +277,11 @@ main {
     border-left: 4px solid #06b6d4;
 }
 
+.stat-card-purple {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    border-left: 4px solid #8B5CF6;
+}
+
 .stat-icon {
     font-size: 32px;
     margin-bottom: var(--spacing-md);
