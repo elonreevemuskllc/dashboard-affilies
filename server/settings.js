@@ -51,10 +51,9 @@ function getDisplayPayoutForSub1(sub1) {
   return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 4.70;
 }
 
-// Obtenir le payout par défaut affiché (toujours $4.70 par défaut)
+// Obtenir le payout par défaut affiché (TOUJOURS $4.70 - FIXE)
 function getDisplayPayoutPerLead() {
-  const settings = getSettings();
-  return settings.payout_per_lead || 4.70; // Défaut $4.70
+  return 4.70; // TOUJOURS $4.70 - NON MODIFIABLE
 }
 
 // Mettre à jour les paramètres
@@ -70,10 +69,9 @@ function updateSettings(newSettings) {
   }
 }
 
-// Obtenir la marge du manager par lead (personnalisable avec défaut $25.30)
+// Obtenir la marge du manager par lead (TOUJOURS $26.30 - FIXE)
 function getManagerMargin() {
-  const settings = getSettings();
-  return settings.manager_margin_per_lead || 25.30; // Défaut $25.30
+  return 26.30; // TOUJOURS $26.30 - NON MODIFIABLE
 }
 
 module.exports = {
