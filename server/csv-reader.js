@@ -461,7 +461,91 @@ const csvDataAPI = {
     })).sort((a, b) => b.revenue - a.revenue);
   },
 
-  // FONCTION TEMPORAIREMENT SUPPRIMÉE POUR FORCER LE REFRESH
+  // Obtenir les stats pour un sous-manager (avec Commission Helper intégré)
+  async getSubManagerStats(sub1Input, period = 'today') {
+    console.log(`🚀 NOUVELLE VERSION - getSubManagerStats appelée pour ${sub1Input}`);
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return {
+        clicks: 0,
+        conversions: 0,
+        revenue: 0,
+        bonus: 0,
+        subManagerCommission: 0,
+        netProfit: 0
+      };
+    }
+
+    // Gérer sub1 comme string ou array
+    const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    
+    let totalConversions = 0;
+    let totalRevenue = 0;
+    let subManagerCommission = 0;
+    
+    sub1Array.forEach(sub1 => {
+      const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
+      if (affiliateData) {
+        const conversions = parseInt(affiliateData.convs) || 0;
+        const payoutPerLead = settings.getPayoutForSub1(sub1);
+        totalConversions += conversions;
+        totalRevenue += conversions * payoutPerLead;
+      }
+    });
+
+    const estimatedClicks = Math.round(totalConversions / 0.077);
+    const bonus = Math.floor(totalConversions / 10) * 10;
+    
+    // CALCULER LE COMMISSION HELPER
+    let commissionHelper = 0;
+    try {
+      const settingsData = settings.getSettings();
+      const subAffiliateRules = settingsData.sub_affiliate_rules || [];
+      
+      console.log(`📋 Règles trouvées:`, subAffiliateRules);
+      
+      // Trouver les règles où cet utilisateur est le superviseur (target)
+      const applicableRules = subAffiliateRules.filter(rule => 
+        sub1Array.includes(rule.targetSub1)
+      );
+      
+      console.log(`✅ Règles applicables pour ${sub1Array}:`, applicableRules);
+      
+      // Calculer le total des bonus
+      for (const rule of applicableRules) {
+        const sourceStats = await this.getAffiliateStats(rule.sourceSub1, period);
+        const leads = sourceStats.conversions || 0;
+        const bonusAmount = rule.bonusAmount || 0;
+        commissionHelper += leads * bonusAmount;
+        
+        console.log(`💰 Bonus de ${rule.sourceSub1}: ${leads} leads × $${bonusAmount} = $${leads * bonusAmount}`);
+      }
+    } catch (error) {
+      console.error('❌ Erreur calcul Commission Helper:', error);
+    }
+    
+    // PROFIT NET = REVENUE + BONUS + COMMISSION HELPER
+    const netProfit = totalRevenue + bonus + subManagerCommission + commissionHelper;
+
+    console.log(`💵 CALCUL FINAL:`, {
+      totalRevenue,
+      bonus,
+      subManagerCommission,
+      commissionHelper,
+      netProfit,
+      formule: `${totalRevenue} + ${bonus} + ${subManagerCommission} + ${commissionHelper} = ${netProfit}`
+    });
+
+    return {
+      clicks: estimatedClicks,
+      conversions: totalConversions,
+      revenue: totalRevenue,
+      bonus: bonus,
+      subManagerCommission: subManagerCommission,
+      netProfit: netProfit
+    };
+  },
 
   // Vider le cache (utile pour forcer un rafraîchissement)
   clearCache() {
