@@ -295,9 +295,12 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     const bonusDetails = await Promise.all(applicableRules.map(async (rule) => {
       try {
         const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
-        console.log(`🔍 DEBUG - Data for ${rule.sourceSub1}:`, aggBySub1);
+        console.log(`🔍 DEBUG - All data from API:`, aggBySub1);
+        console.log(`🔍 DEBUG - Looking for ${rule.sourceSub1} in data`);
         
         const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
+        console.log(`🔍 DEBUG - Found data for ${rule.sourceSub1}:`, sourceData);
+        
         const leads = sourceData ? (parseInt(sourceData.convs) || 0) : 0;
         const bonus = leads * rule.bonusAmount;
         
