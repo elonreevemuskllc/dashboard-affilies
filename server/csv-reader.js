@@ -509,7 +509,7 @@ const csvDataAPI = {
       totalRevenue,
       bonus,
       subManagerCommission,
-      netProfit
+      netProfit: `Calcul: ${totalRevenue} + ${bonus} + ${subManagerCommission} = ${totalRevenue + bonus + subManagerCommission}`
     });
 
     return {

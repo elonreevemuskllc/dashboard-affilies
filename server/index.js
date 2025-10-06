@@ -298,6 +298,7 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
         // Au lieu de fetchConversionsFromAPI(), utiliser getAffiliateStats()
         const sourceStats = await csvDataAPI.getAffiliateStats(rule.sourceSub1, period);
         console.log(`🔍 DEBUG - Stats for ${rule.sourceSub1}:`, sourceStats);
+        console.log(`🔍 DEBUG - Rule bonusAmount:`, rule.bonusAmount);
         
         const leads = sourceStats.conversions || 0;
         const bonus = leads * rule.bonusAmount;
