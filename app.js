@@ -168,8 +168,8 @@ async function loadDashboardStats() {
             }
             
             // Afficher le profit net (avec commission déduite)
-            if (stats.netProfit !== undefined) {
-                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(stats.netProfit);
+            if (data.netProfit !== undefined) {
+                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(data.netProfit);
             }
         } else {
             // Affilié : Afficher toutes les cartes sauf profit manager et CA
