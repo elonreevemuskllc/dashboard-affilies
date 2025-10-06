@@ -27,17 +27,23 @@ function saveUsers(users) {
 
 // Authentifier un utilisateur
 function authenticateUser(email, password) {
+  // Recharger les utilisateurs à chaque tentative de connexion
+  // pour permettre les modifications directes dans users.json
   const users = getUsers();
   const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   
   if (!user) {
+    console.log(`🔍 Tentative de connexion échouée: utilisateur "${email}" non trouvé`);
     return null;
   }
   
   // Vérifier le mot de passe en clair
   if (user.password !== password) {
+    console.log(`🔍 Tentative de connexion échouée: mot de passe incorrect pour "${email}"`);
     return null;
   }
+  
+  console.log(`✅ Connexion réussie: ${user.name} (${user.role})`);
   
   // Ne pas retourner le mot de passe
   const { password: _, ...userWithoutPassword } = user;
