@@ -437,6 +437,17 @@ async function loadUserBonuses() {
         const data = await response.json();
         console.log('🔍 DEBUG - User bonuses data:', data);
         console.log('🔍 DEBUG - Total bonus:', data.totalBonus);
+        console.log('🔍 DEBUG - Bonuses details:', data.bonuses);
+        if (data.bonuses && data.bonuses.length > 0) {
+            const bonus = data.bonuses[0];
+            console.log('🔍 DEBUG - First bonus details:', {
+                sourceSub1: bonus.sourceSub1,
+                leads: bonus.leads,
+                bonusAmount: bonus.bonusAmount,
+                totalBonus: bonus.totalBonus,
+                calculation: `${bonus.leads} × $${bonus.bonusAmount} = $${bonus.totalBonus}`
+            });
+        }
         
         const commissionCard = document.getElementById('commission-helper-card');
         const totalBonusElement = document.getElementById('commission-helper-total');
