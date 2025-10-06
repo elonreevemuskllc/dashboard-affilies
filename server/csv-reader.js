@@ -618,7 +618,8 @@ const csvDataAPI = {
       
            // Calculer les bonus selon les règles de sous-affiliés
            let subAffiliateBonus = 0;
-           const settings = await settingsAPI.getSettings();
+           const settingsManager = require('./settings');
+           const settings = settingsManager.getSettings();
            const subAffiliateRules = settings.sub_affiliate_rules || [];
            
            // Trouver les règles où ce sub1 est la source

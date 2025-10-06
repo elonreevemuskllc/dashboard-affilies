@@ -265,7 +265,7 @@ app.get('/api/losh-bonus', requireAuth, async (req, res) => {
 // Routes pour les sous-affiliés
 app.get('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
   try {
-    const settings = await settingsAPI.getSettings();
+    const settings = settingsManager.getSettings();
     const subAffiliateRules = settings.sub_affiliate_rules || [];
     res.json(subAffiliateRules);
   } catch (error) {
@@ -286,7 +286,7 @@ app.post('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Un Sub1 ne peut pas se superviser lui-même' });
     }
     
-    const settings = await settingsAPI.getSettings();
+    const settings = settingsManager.getSettings();
     const subAffiliateRules = settings.sub_affiliate_rules || [];
     
     // Vérifier si la règle existe déjà
@@ -300,7 +300,7 @@ app.post('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
       subAffiliateRules.push({ sourceSub1, targetSub1, bonusAmount });
     }
     
-    const result = await settingsAPI.updateSettings({ sub_affiliate_rules: subAffiliateRules });
+    const result = settingsManager.updateSettings({ sub_affiliate_rules: subAffiliateRules });
     
     if (result.success) {
       res.json({ success: true, message: 'Règle de sous-affilié ajoutée' });
@@ -317,14 +317,14 @@ app.delete('/api/admin/sub-affiliate-rules/:sourceSub1/:targetSub1', requireAdmi
   try {
     const { sourceSub1, targetSub1 } = req.params;
     
-    const settings = await settingsAPI.getSettings();
+    const settings = settingsManager.getSettings();
     const subAffiliateRules = settings.sub_affiliate_rules || [];
     
     const filteredRules = subAffiliateRules.filter(rule => 
       !(rule.sourceSub1 === sourceSub1 && rule.targetSub1 === targetSub1)
     );
     
-    const result = await settingsAPI.updateSettings({ sub_affiliate_rules: filteredRules });
+    const result = settingsManager.updateSettings({ sub_affiliate_rules: filteredRules });
     
     if (result.success) {
       res.json({ success: true, message: 'Règle de sous-affilié supprimée' });
