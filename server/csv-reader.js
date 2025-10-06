@@ -493,7 +493,7 @@ const csvDataAPI = {
         
         // Calculer la commission du sous-manager (2€ par lead par défaut)
         const commissionPerLead = 2.00; // À récupérer depuis la DB utilisateur
-        subManagerCommission += conversions * commissionPerLead;
+        // subManagerCommission += conversions * commissionPerLead; // DÉSACTIVÉ - pas de commission sur ses propres leads
       }
     });
 
@@ -611,7 +611,7 @@ const csvDataAPI = {
         
         // Calculer la commission du sous-manager (2€ par lead par défaut)
         const commissionPerLead = 2.00; // À récupérer depuis la DB utilisateur
-        subManagerCommission += conversions * commissionPerLead;
+        // subManagerCommission += conversions * commissionPerLead; // DÉSACTIVÉ - pas de commission sur ses propres leads
       }
     });
 
