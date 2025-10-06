@@ -433,10 +433,16 @@ async function loadUserBonuses() {
         
         const data = await response.json();
         console.log('🔍 DEBUG - User bonuses data:', data);
+        console.log('🔍 DEBUG - Total bonus:', data.totalBonus);
+        console.log('🔍 DEBUG - Bonuses array:', data.bonuses);
         
         const commissionSection = document.getElementById('commission-helper-section');
         const totalBonusElement = document.getElementById('total-bonus-received');
         const bonusTableBody = document.getElementById('bonus-details-table');
+        
+        console.log('🔍 DEBUG - Commission section element:', commissionSection);
+        console.log('🔍 DEBUG - Total bonus element:', totalBonusElement);
+        console.log('🔍 DEBUG - Bonus table body:', bonusTableBody);
         
         if (data.totalBonus > 0) {
             // Afficher la section Commission Helper
