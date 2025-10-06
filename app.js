@@ -139,9 +139,6 @@ async function loadDashboardStats() {
                 epcCard.style.display = 'flex';
             }
             
-            // Cacher la carte commission pour les managers
-            const commissionCard = document.getElementById('commission-card');
-            if (commissionCard) commissionCard.style.display = 'none';
             
             // Charger les données spécifiques aux managers
             loadSub1Leads();
@@ -170,13 +167,6 @@ async function loadDashboardStats() {
                 profitCard.textContent = 'Profit Net';
             }
             
-            // Afficher la carte commission
-            const commissionCard = document.getElementById('commission-card');
-            if (commissionCard) {
-                commissionCard.style.display = 'flex';
-                document.getElementById('submanager-commission').innerHTML = formatCurrencyWithEur(stats.subManagerCommission || 0);
-            }
-            
             // Afficher le profit net (avec commission déduite)
             if (stats.netProfit !== undefined) {
                 document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(stats.netProfit);
@@ -199,9 +189,6 @@ async function loadDashboardStats() {
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
             if (epcCard) epcCard.style.display = 'none';
             
-            // Cacher la carte commission pour les affiliés
-            const commissionCard = document.getElementById('commission-card');
-            if (commissionCard) commissionCard.style.display = 'none';
             
             // Coût Total = ce qu'il va recevoir (revenus + bonus)
             document.getElementById('total-cost').innerHTML = formatCurrencyWithEur(totalCost);
