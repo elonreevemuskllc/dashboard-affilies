@@ -222,9 +222,12 @@
                         <td><strong>${sub1Display}</strong></td>
                         <td><span class="status-badge status-${roleBadge}">${roleDisplay}</span></td>
                         <td>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button onclick="addSub1ToUser(${user.id})" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">+ Sub1</button>
-                                ${user.role !== 'admin' ? `<button onclick="deleteUser(${user.id})" style="padding: 0.5rem 1rem; background: var(--danger-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Supprimer</button>` : '<span style="color: var(--text-light);">-</span>'}
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button onclick="addSub1ToUser(${user.id})" class="btn btn-primary" style="font-size: 12px; padding: 4px 8px;">+ Sub1</button>
+                                ${Array.isArray(user.sub1) && user.sub1.length > 0 ? user.sub1.map(sub1 => 
+                                    `<button onclick="removeSub1FromUser(${user.id}, '${sub1}')" class="btn btn-danger" style="font-size: 12px; padding: 4px 8px;" title="Supprimer ${sub1}">- ${sub1}</button>`
+                                ).join('') : ''}
+                                ${user.role !== 'admin' ? `<button onclick="deleteUser(${user.id})" class="btn btn-danger" style="font-size: 12px; padding: 4px 8px;">Supprimer</button>` : '<span style="color: var(--text-secondary);">-</span>'}
                             </div>
                         </td>
                     </tr>
@@ -540,6 +543,28 @@
                         const error = await addResponse.json();
                         alert(error.error || 'Erreur lors de l\'ajout');
                     }
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function removeSub1FromUser(userId, sub1) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le sub1 "${sub1}" de cet utilisateur ?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/sub1/${sub1}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert(`Sub1 "${sub1}" supprimé avec succès !`);
+                    loadUsers();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Erreur lors de la suppression');
                 }
             } catch (error) {
                 alert('Erreur de connexion au serveur');

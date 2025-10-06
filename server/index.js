@@ -179,6 +179,24 @@ app.post('/api/admin/users/:id/sub1', requireAdmin, (req, res) => {
   }
 });
 
+// Route pour supprimer un sub1 d'un utilisateur existant
+app.delete('/api/admin/users/:id/sub1/:sub1', requireAdmin, (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const sub1ToRemove = req.params.sub1;
+    
+    if (!sub1ToRemove) {
+      return res.status(400).json({ error: 'Sub1 requis' });
+    }
+    
+    auth.removeSub1FromUser(userId, sub1ToRemove);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Erreur suppression sub1:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Route pour récupérer les leads par sub1 pour les managers
 app.get('/api/sub1-leads', requireAuth, async (req, res) => {
   try {

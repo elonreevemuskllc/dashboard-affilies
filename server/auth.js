@@ -146,6 +146,35 @@ function addSub1ToUser(userId, newSub1) {
   return true;
 }
 
+// Supprimer un sub1 d'un utilisateur existant
+function removeSub1FromUser(userId, sub1ToRemove) {
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.id === userId);
+  
+  if (userIndex === -1) {
+    throw new Error('Utilisateur non trouvé');
+  }
+  
+  const user = users[userIndex];
+  
+  // Vérifier si le sub1 existe
+  const sub1Index = user.sub1.indexOf(sub1ToRemove);
+  if (sub1Index === -1) {
+    throw new Error('Ce sub1 n\'est pas assigné à cet utilisateur');
+  }
+  
+  // Supprimer le sub1
+  user.sub1.splice(sub1Index, 1);
+  
+  // Sauvegarder
+  const success = saveUsers(users);
+  if (!success) {
+    throw new Error('Erreur lors de la sauvegarde');
+  }
+  
+  return true;
+}
+
 // Lister tous les utilisateurs (sans mots de passe)
 function listUsers() {
   const users = getUsers();
@@ -157,5 +186,6 @@ module.exports = {
   createUser,
   deleteUser,
   addSub1ToUser,
+  removeSub1FromUser,
   listUsers
 };
