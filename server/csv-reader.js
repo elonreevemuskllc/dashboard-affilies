@@ -136,9 +136,9 @@ async function fetchConversionsFromAPI(period = 'today') {
       aggregated[sub1].convs++;
     });
 
-    // Convertir en tableau avec payout personnalisé par sub1
+    // Convertir en tableau avec payout affiché par sub1 (toujours $4 par défaut)
     const result = Object.values(aggregated).map(item => {
-      const payoutPerLead = settings.getPayoutForSub1(item.sub1);
+      const payoutPerLead = settings.getDisplayPayoutForSub1(item.sub1);
       return {
         sub1: item.sub1,
         convs: item.convs,
@@ -233,11 +233,11 @@ const csvDataAPI = {
       // Estimer les clicks en proportion
       const totalClicks = (data.click.today || 0);
       
-      // Calculer le revenu total avec les payouts personnalisés par sub1
+      // Calculer le revenu total avec les payouts affichés par sub1 (toujours $4 par défaut)
       const filtered = aggBySub1.filter(row => !HIDDEN_AFFILIATES.includes(row.sub1));
       const totalRevenue = filtered.reduce((sum, row) => {
         const convs = parseFloat(row.convs) || 0;
-        const payout = settings.getPayoutForSub1(row.sub1);
+        const payout = settings.getDisplayPayoutForSub1(row.sub1);
         return sum + (convs * payout);
       }, 0);
       
@@ -277,10 +277,10 @@ const csvDataAPI = {
       const filtered = aggBySub1.filter(row => !HIDDEN_AFFILIATES.includes(row.sub1));
       const totalConversions = filtered.reduce((sum, row) => sum + (parseFloat(row.convs) || 0), 0);
       
-      // Calculer le revenu total avec les payouts personnalisés par sub1
+      // Calculer le revenu total avec les payouts affichés par sub1 (toujours $4 par défaut)
       const totalRevenue = filtered.reduce((sum, row) => {
         const convs = parseFloat(row.convs) || 0;
-        const payout = settings.getPayoutForSub1(row.sub1);
+        const payout = settings.getDisplayPayoutForSub1(row.sub1);
         return sum + (convs * payout);
       }, 0);
       

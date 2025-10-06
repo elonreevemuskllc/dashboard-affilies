@@ -37,11 +37,28 @@ function getSettings() {
   }
 }
 
-// Obtenir le payout pour un sub1 spécifique
+// Obtenir le payout pour un sub1 spécifique (vrai coût)
 function getPayoutForSub1(sub1) {
   const settings = getSettings();
   // Si un payout spécifique existe pour ce sub1, l'utiliser, sinon utiliser le payout par défaut
   return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 30;
+}
+
+// Obtenir le payout affiché (toujours $4 pour masquer le vrai coût)
+function getDisplayPayoutForSub1(sub1) {
+  const settings = getSettings();
+  // Toujours retourner $4 pour l'affichage, sauf si un payout spécifique est défini pour ce sub1
+  if (settings.payout_by_sub1[sub1] && settings.payout_by_sub1[sub1] !== 4) {
+    // Si un payout spécifique est défini et différent de 4, l'utiliser
+    return settings.payout_by_sub1[sub1];
+  }
+  // Sinon, toujours retourner $4 par défaut
+  return 4;
+}
+
+// Obtenir le payout par défaut affiché (toujours $4)
+function getDisplayPayoutPerLead() {
+  return 4; // Toujours $4 pour l'affichage
 }
 
 // Mettre à jour les paramètres
@@ -67,6 +84,8 @@ module.exports = {
   getSettings,
   updateSettings,
   getPayoutForSub1,
+  getDisplayPayoutForSub1,
+  getDisplayPayoutPerLead,
   getManagerMargin
 };
 
