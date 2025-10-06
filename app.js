@@ -166,22 +166,9 @@ async function loadDashboardStats() {
             if (bonusCard) bonusCard.style.display = 'flex';
             if (costCard) costCard.style.display = 'none'; // Cacher le coût total
             if (caCard) caCard.style.display = 'none';
-            if (managerProfitCard) managerProfitCard.style.display = 'flex';
+            if (managerProfitCard) managerProfitCard.style.display = 'none'; // CACHER PROFIT NET
             if (sub1LeadsSection) sub1LeadsSection.style.display = 'none';
             if (epcCard) epcCard.style.display = 'none';
-            
-            // Modifier le titre de la carte profit
-            const profitCard = document.querySelector('#manager-profit-card .stat-content h3');
-            if (profitCard) {
-                profitCard.textContent = 'Profit Net';
-            }
-            
-            // Afficher le profit net (avec commission déduite)
-            if (data.netProfit !== undefined) {
-                console.log(`🔍 DEBUG - Affichage Profit Net:`, data.netProfit);
-                console.log(`🔍 DEBUG - Formatted:`, formatCurrencyWithEur(data.netProfit));
-                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(data.netProfit);
-            }
         } else {
             // Affilié : Afficher toutes les cartes sauf profit manager et CA
             const revenueCard = document.getElementById('revenue-card');
