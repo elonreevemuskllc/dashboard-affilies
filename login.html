@@ -105,8 +105,12 @@
             <div class="error-message" id="error-message"></div>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" placeholder="Votre nom, email ou ID affilié" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
                 <button type="submit" class="btn-login">Se connecter</button>
             </form>
@@ -117,11 +121,12 @@
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('error-message');
             
-            if (!username.trim()) {
-                errorDiv.textContent = 'Veuillez saisir votre nom d\'utilisateur';
+            if (!email.trim() || !password.trim()) {
+                errorDiv.textContent = 'Veuillez saisir votre email et mot de passe';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -132,7 +137,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username: username.trim() })
+                    body: JSON.stringify({ email: email.trim(), password: password.trim() })
                 });
                 
                 const data = await response.json();
@@ -145,7 +150,7 @@
                         window.location.href = '/';
                     }
                 } else {
-                    errorDiv.textContent = data.error || 'Nom d\'utilisateur incorrect';
+                    errorDiv.textContent = data.error || 'Email ou mot de passe incorrect';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {

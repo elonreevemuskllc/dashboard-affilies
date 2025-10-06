@@ -52,18 +52,20 @@ function saveUsers(users) {
   }
 }
 
-// Authentifier un utilisateur (sans mot de passe, juste username)
-function authenticateUser(username) {
+// Authentifier un utilisateur (email + mot de passe)
+function authenticateUser(email, password) {
   // Recharger les utilisateurs à chaque tentative de connexion
   const users = getUsers();
-  const user = users.find(u => 
-    u.email.toLowerCase() === username.toLowerCase() || 
-    u.name.toLowerCase() === username.toLowerCase() ||
-    (Array.isArray(u.sub1) ? u.sub1.includes(username) : u.sub1 === username)
-  );
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   
   if (!user) {
-    console.log(`🔍 Tentative de connexion échouée: utilisateur "${username}" non trouvé`);
+    console.log(`🔍 Tentative de connexion échouée: email "${email}" non trouvé`);
+    return null;
+  }
+  
+  // Vérifier le mot de passe
+  if (user.password !== password) {
+    console.log(`🔍 Tentative de connexion échouée: mot de passe incorrect pour "${email}"`);
     return null;
   }
   

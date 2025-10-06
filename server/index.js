@@ -68,16 +68,16 @@ app.get('/', (req, res) => {
 
 // Routes d'authentification
 app.post('/api/auth/login', (req, res) => {
-  const { username } = req.body;
+  const { email, password } = req.body;
   
-  if (!username) {
-    return res.status(400).json({ error: 'Username requis' });
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email et mot de passe requis' });
   }
   
-  const user = auth.authenticateUser(username);
+  const user = auth.authenticateUser(email, password);
   
   if (!user) {
-    return res.status(401).json({ error: 'Username incorrect' });
+    return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
   }
   
   req.session.user = user;
