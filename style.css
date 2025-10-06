@@ -1,31 +1,46 @@
-/* Design Apple - Simple, épuré et efficace */
+/* Design moderne - Gradients et animations */
 :root {
-    /* Couleurs Apple */
-    --primary-color: #007AFF;
-    --primary-dark: #0056CC;
-    --secondary-color: #5856D6;
-    --success-color: #34C759;
-    --warning-color: #FF9500;
-    --danger-color: #FF3B30;
+    /* Couleurs modernes avec gradients */
+    --primary-color: #667eea;
+    --primary-dark: #5a6fd8;
+    --secondary-color: #764ba2;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
     
-    /* Couleurs de fond Apple */
-    --bg-primary: #FFFFFF;
-    --bg-secondary: #F2F2F7;
-    --bg-tertiary: #FFFFFF;
-    --bg-card: #FFFFFF;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --gradient-info: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    --gradient-light: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     
-    /* Couleurs de texte Apple */
-    --text-primary: #000000;
-    --text-secondary: #8E8E93;
-    --text-tertiary: #C7C7CC;
+    /* Couleurs de fond */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-card: #ffffff;
     
-    /* Bordures et ombres */
-    --border-color: #E5E5EA;
+    /* Couleurs de texte */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-tertiary: #94a3b8;
+    
+    /* Bordures et ombres modernes */
+    --border-color: #e2e8f0;
+    --border-light: #f1f5f9;
     --border-radius: 12px;
     --border-radius-lg: 16px;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    
+    /* Transitions et animations */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Espacement */
     --spacing-xs: 4px;
@@ -79,14 +94,16 @@ body {
 
 /* Header Apple */
 .header {
-    background-color: var(--bg-primary);
-    border-bottom: 0.5px solid var(--border-color);
+    background: var(--gradient-primary);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding: var(--spacing-lg) 0;
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-lg);
 }
 
 .header .container {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Dashboard Affiliés</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -65,39 +66,35 @@
             </div>
 
             <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
-                <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Lead</h3>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Prix fixe appliqué à tous les affiliés</p>
-                <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Défaut</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
+                <form id="settings-form" style="display: flex; gap: var(--spacing-md); align-items: end;">
                     <div style="flex: 1;">
-                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Prix par lead</label>
-                        <div style="padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 24px; font-weight: 700; color: var(--success-color); background-color: var(--bg-card); text-align: center;">
-                            $4.70
-                        </div>
+                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Payout par défaut ($)</label>
+                        <input type="number" id="payout_per_lead" step="0.01" required style="width: 100%; padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 15px; background-color: var(--bg-card); color: var(--text-primary); min-height: 44px;">
                     </div>
-                    <div style="padding: var(--spacing-md); text-align: center; color: var(--text-secondary); font-size: 14px;">
-                        <div style="margin-bottom: var(--spacing-sm);">🔒</div>
-                        <div>Valeur fixe</div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
-                </div>
+                </form>
+                <div id="settings-message" style="margin-top: var(--spacing-md); display: none;"></div>
             </div>
 
             <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
                 <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Marge Manager</h3>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Marge fixe que les managers gagnent par lead (en plus du payout affilié)</p>
-                <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Définissez la marge que les managers gagnent par lead (en plus du payout affilié)</p>
+                <form id="manager-margin-form" style="display: flex; gap: var(--spacing-md); align-items: end;">
                     <div style="flex: 1;">
-                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Marge par lead</label>
-                        <div style="padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 24px; font-weight: 700; color: var(--success-color); background-color: var(--bg-card); text-align: center;">
-                            $25.30
-                        </div>
+                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Marge par lead ($)</label>
+                        <input type="number" id="manager_margin_per_lead" step="0.01" required style="width: 100%; padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 15px; background-color: var(--bg-card); color: var(--text-primary); min-height: 44px;">
                     </div>
-                    <div style="padding: var(--spacing-md); text-align: center; color: var(--text-secondary); font-size: 14px;">
-                        <div style="margin-bottom: var(--spacing-sm);">🔒</div>
-                        <div>Valeur fixe</div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
-                </div>
+                </form>
+                <div id="manager-margin-message" style="margin-top: var(--spacing-md); display: none;"></div>
                 <p style="font-size: 14px; color: var(--text-secondary); margin-top: var(--spacing-lg); padding: var(--spacing-md); background-color: var(--bg-card); border-radius: var(--border-radius);">
-                    💡 <strong>Exemple :</strong> Si un manager supervise 100 leads, il gagne $2530 (100 × $25.30) en plus des bonus
+                    💡 <strong>Exemple :</strong> Si marge = $25.30 et affilié fait 100 leads, le manager gagne $2530 (en plus de ce que l'affilié touche)
                 </p>
             </div>
 
@@ -330,7 +327,20 @@
             }
         }
 
-        // Fonction loadSettings supprimée car les paramètres sont maintenant fixes
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/admin/settings');
+                const settings = await response.json();
+                // Charger les valeurs actuelles
+                document.getElementById('payout_per_lead').value = settings.payout_per_lead || 4.70;
+                document.getElementById('manager_margin_per_lead').value = settings.manager_margin_per_lead || 25.30;
+                
+                // Charger la liste des sub1 pour les payouts personnalisés
+                await loadPayoutBySub1(settings);
+            } catch (error) {
+                console.error('Erreur chargement settings:', error);
+            }
+        }
 
         async function loadPayoutBySub1(settings) {
             try {
@@ -410,9 +420,89 @@
             }
         }
 
-        // Event listener supprimé car les paramètres de payout sont maintenant fixes à $4.70
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const payout_per_lead = document.getElementById('payout_per_lead').value;
+            const messageDiv = document.getElementById('settings-message');
+            
+            try {
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ payout_per_lead })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `✅ Payout mis à jour : $${payout_per_lead} par lead`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la mise à jour';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
 
-        // Event listener supprimé car la marge manager est maintenant fixe à $25.30
+        document.getElementById('manager-margin-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const manager_margin_per_lead = document.getElementById('manager_margin_per_lead').value;
+            const messageDiv = document.getElementById('manager-margin-message');
+            
+            try {
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ manager_margin_per_lead })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `✅ Marge Manager mise à jour : $${manager_margin_per_lead} par lead`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la mise à jour';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
 
         async function addSub1ToUser(userId) {
             try {
@@ -560,7 +650,7 @@
         loadCurrentUser();
         loadUsers();
         loadSub1List();
-        // loadSettings() supprimé car les paramètres sont fixes
+        loadSettings();
     </script>
 </body>
 </html>

@@ -28,30 +28,33 @@ function getSettings() {
   } catch (error) {
     console.error('Erreur lecture settings:', error.message);
     return { 
-      payout_per_lead: 4, 
+      payout_per_lead: 4.70, 
       payout_by_sub1: {},
-      currency: 'EUR',
-      usd_to_eur_rate: 0.92,
-      manager_margin_per_lead: 1
+      currency: 'USD',
+      usd_to_eur_rate: 1,
+      manager_margin_per_lead: 25.30
     };
   }
 }
 
-// Obtenir le payout pour un sub1 spécifique (toujours $4.70 fixe)
+// Obtenir le payout pour un sub1 spécifique (personnalisable avec défaut $4.70)
 function getPayoutForSub1(sub1) {
-  // Toujours retourner $4.70 - valeur fixe
-  return 4.70;
+  const settings = getSettings();
+  // Si un payout spécifique existe pour ce sub1, l'utiliser, sinon utiliser le payout par défaut
+  return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 4.70;
 }
 
-// Obtenir le payout affiché (toujours $4.70 fixe)
+// Obtenir le payout affiché (personnalisable avec défaut $4.70)
 function getDisplayPayoutForSub1(sub1) {
-  // Toujours retourner $4.70 - valeur fixe
-  return 4.70;
+  const settings = getSettings();
+  // Si un payout spécifique existe pour ce sub1, l'utiliser, sinon utiliser le payout par défaut
+  return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 4.70;
 }
 
-// Obtenir le payout par défaut affiché (toujours $4.70)
+// Obtenir le payout par défaut affiché (toujours $4.70 par défaut)
 function getDisplayPayoutPerLead() {
-  return 4.70; // Toujours $4.70 - valeur fixe
+  const settings = getSettings();
+  return settings.payout_per_lead || 4.70; // Défaut $4.70
 }
 
 // Mettre à jour les paramètres
@@ -67,10 +70,10 @@ function updateSettings(newSettings) {
   }
 }
 
-// Obtenir la marge du manager par lead (toujours $25.30 fixe)
+// Obtenir la marge du manager par lead (personnalisable avec défaut $25.30)
 function getManagerMargin() {
-  // Toujours retourner $25.30 - valeur fixe
-  return 25.30;
+  const settings = getSettings();
+  return settings.manager_margin_per_lead || 25.30; // Défaut $25.30
 }
 
 module.exports = {
