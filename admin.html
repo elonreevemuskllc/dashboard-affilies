@@ -65,18 +65,20 @@
             </div>
 
             <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
-                <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Défaut</h3>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
-                <form id="settings-form" style="display: flex; gap: var(--spacing-md); align-items: end;">
+                <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Lead</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Prix fixe appliqué à tous les affiliés</p>
+                <div style="display: flex; align-items: center; gap: var(--spacing-md);">
                     <div style="flex: 1;">
-                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Payout par défaut ($)</label>
-                        <input type="number" id="payout_per_lead" step="0.01" required style="width: 100%; padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 15px; background-color: var(--bg-card); color: var(--text-primary); min-height: 44px;">
+                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: 15px;">Prix par lead</label>
+                        <div style="padding: var(--spacing-md); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); font-size: 24px; font-weight: 700; color: var(--success-color); background-color: var(--bg-card); text-align: center;">
+                            $4.70
+                        </div>
                     </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    <div style="padding: var(--spacing-md); text-align: center; color: var(--text-secondary); font-size: 14px;">
+                        <div style="margin-bottom: var(--spacing-sm);">🔒</div>
+                        <div>Valeur fixe</div>
                     </div>
-                </form>
-                <div id="settings-message" style="margin-top: var(--spacing-md); display: none;"></div>
+                </div>
             </div>
 
             <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
@@ -509,44 +511,97 @@
                 const sub1List = await response.json();
                 
                 if (sub1List.length === 0) {
-                    alert('Aucun sub1 disponible');
+                    showMessage('Aucun sub1 disponible', 'error');
                     return;
                 }
                 
-                // Créer une liste de sélection
-                let options = sub1List.map(item => 
-                    `<option value="${item.sub1}">${item.sub1} (${item.conversions} conv, $${item.revenue.toFixed(2)})</option>`
-                ).join('');
+                // Créer le modal de sélection
+                showSub1SelectionModal(userId, sub1List);
                 
-                const selectHtml = `
-                    <select id="newSub1Select" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
-                        <option value="">-- Sélectionnez un sub1 --</option>
-                        ${options}
-                    </select>
-                `;
+            } catch (error) {
+                console.error('Erreur:', error);
+                showMessage('Erreur de connexion au serveur', 'error');
+            }
+        }
+
+        function showSub1SelectionModal(userId, sub1List) {
+            // Créer le modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: var(--bg-card); padding: var(--spacing-xl);
+                border-radius: var(--border-radius-lg); max-width: 500px;
+                width: 90%; box-shadow: var(--shadow-lg); border: 0.5px solid var(--border-color);
+            `;
+            
+            modalContent.innerHTML = `
+                <h3 style="margin-bottom: var(--spacing-lg); color: var(--text-primary); font-size: 18px; font-weight: 600;">Ajouter un Sub1</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Sélectionnez le sub1 à ajouter à cet utilisateur :</p>
                 
-                const newSub1 = prompt(`Ajouter un sub1 à cet utilisateur:\n\n${selectHtml}`);
+                <select id="sub1-select" style="width: 100%; padding: var(--spacing-md); 
+                    border: 0.5px solid var(--border-color); border-radius: var(--border-radius); 
+                    font-size: 15px; background-color: var(--bg-secondary); 
+                    color: var(--text-primary); margin-bottom: var(--spacing-lg); min-height: 44px;">
+                    <option value="">-- Sélectionner un sub1 --</option>
+                    ${sub1List.map(sub1 => 
+                        `<option value="${sub1.sub1}">${sub1.sub1} (${sub1.conversions} conv • $${sub1.revenue.toFixed(2)})</option>`
+                    ).join('')}
+                </select>
                 
-                if (newSub1 && newSub1.trim()) {
+                <div style="display: flex; gap: var(--spacing-md); justify-content: flex-end;">
+                    <button onclick="closeSub1Modal()" class="btn btn-secondary">Annuler</button>
+                    <button onclick="confirmAddSub1(${userId})" class="btn btn-primary">Ajouter</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Fonction pour fermer le modal
+            window.closeSub1Modal = () => {
+                document.body.removeChild(modal);
+                delete window.closeSub1Modal;
+                delete window.confirmAddSub1;
+            };
+            
+            // Fonction pour confirmer l'ajout
+            window.confirmAddSub1 = async (userId) => {
+                const select = document.getElementById('sub1-select');
+                const selectedSub1 = select.value;
+                
+                if (!selectedSub1) {
+                    showMessage('Veuillez sélectionner un sub1', 'error');
+                    return;
+                }
+                
+                try {
                     const addResponse = await fetch(`/api/admin/users/${userId}/sub1`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ sub1: newSub1.trim() })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sub1: selectedSub1 })
                     });
                     
+                    closeSub1Modal();
+                    
                     if (addResponse.ok) {
-                        alert('Sub1 ajouté avec succès !');
+                        showMessage('Sub1 ajouté avec succès', 'success');
                         loadUsers();
                     } else {
                         const error = await addResponse.json();
-                        alert(error.error || 'Erreur lors de l\'ajout');
+                        showMessage('Erreur: ' + (error.error || 'Erreur lors de l\'ajout'), 'error');
                     }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    closeSub1Modal();
+                    showMessage('Erreur lors de l\'ajout du sub1', 'error');
                 }
-            } catch (error) {
-                alert('Erreur de connexion au serveur');
-            }
+            };
         }
 
         async function removeSub1FromUser(userId, sub1) {

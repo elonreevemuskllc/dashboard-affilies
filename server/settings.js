@@ -37,28 +37,21 @@ function getSettings() {
   }
 }
 
-// Obtenir le payout pour un sub1 spécifique (vrai coût)
+// Obtenir le payout pour un sub1 spécifique (toujours $4.70 fixe)
 function getPayoutForSub1(sub1) {
-  const settings = getSettings();
-  // Si un payout spécifique existe pour ce sub1, l'utiliser, sinon utiliser le payout par défaut
-  return settings.payout_by_sub1[sub1] || settings.payout_per_lead || 4;
+  // Toujours retourner $4.70 - valeur fixe
+  return 4.70;
 }
 
-// Obtenir le payout affiché (toujours $4 pour masquer le vrai coût)
+// Obtenir le payout affiché (toujours $4.70 fixe)
 function getDisplayPayoutForSub1(sub1) {
-  const settings = getSettings();
-  // Toujours retourner $4 pour l'affichage, sauf si un payout spécifique est défini pour ce sub1
-  if (settings.payout_by_sub1[sub1] && settings.payout_by_sub1[sub1] !== 4) {
-    // Si un payout spécifique est défini et différent de 4, l'utiliser
-    return settings.payout_by_sub1[sub1];
-  }
-  // Sinon, toujours retourner $4 par défaut
-  return 4;
+  // Toujours retourner $4.70 - valeur fixe
+  return 4.70;
 }
 
-// Obtenir le payout par défaut affiché (toujours $4)
+// Obtenir le payout par défaut affiché (toujours $4.70)
 function getDisplayPayoutPerLead() {
-  return 4; // Toujours $4 pour l'affichage
+  return 4.70; // Toujours $4.70 - valeur fixe
 }
 
 // Mettre à jour les paramètres
@@ -74,10 +67,10 @@ function updateSettings(newSettings) {
   }
 }
 
-// Obtenir la marge du manager par lead
+// Obtenir la marge du manager par lead (toujours $25.30 fixe)
 function getManagerMargin() {
-  const settings = getSettings();
-  return settings.manager_margin_per_lead || 1;
+  // Toujours retourner $25.30 - valeur fixe
+  return 25.30;
 }
 
 module.exports = {
