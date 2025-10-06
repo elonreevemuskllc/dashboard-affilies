@@ -130,6 +130,47 @@
 
         </section>
 
+        <!-- Commission Helper Section (visible seulement si l'utilisateur reçoit des bonus) -->
+        <section class="conversions-section" id="commission-helper-section" style="display: none;">
+            <div class="section-header">
+                <h2>🤝 Commission Helper</h2>
+                <p>Bonus reçus pour avoir supervisé d'autres affiliés</p>
+            </div>
+            
+            <div class="commission-summary">
+                <div class="stat-card stat-card-purple" style="max-width: 300px; margin: 0 auto;">
+                    <div class="stat-icon">🎁</div>
+                    <div class="stat-content">
+                        <h3>Bonus Total Reçu</h3>
+                        <p class="stat-value" id="total-bonus-received">
+                            <span class="loading">Chargement...</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="commission-details">
+                <h3>Détails des Bonus</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Supervisé</th>
+                                <th>Leads</th>
+                                <th>Bonus par Lead</th>
+                                <th>Total Bonus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bonus-details-table">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-secondary);">Chargement...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <!-- Section des leads par sub1 pour les managers -->
         <section class="conversions-section" id="sub1-leads-section" style="display: none;">
             <div class="section-header">

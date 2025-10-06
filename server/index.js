@@ -262,6 +262,57 @@ app.get('/api/losh-bonus', requireAuth, async (req, res) => {
   }
 });
 
+// Route pour récupérer les bonus reçus par un utilisateur (Commission Helper)
+app.get('/api/user-bonuses', requireAuth, async (req, res) => {
+  try {
+    const user = req.session.user;
+    const period = req.query.period || 'today';
+    
+    // Récupérer les sub1 de l'utilisateur
+    const userSub1s = Array.isArray(user.sub1) ? user.sub1 : [user.sub1];
+    
+    // Récupérer les règles de sous-affiliés
+    const settings = settingsManager.getSettings();
+    const subAffiliateRules = settings.sub_affiliate_rules || [];
+    
+    // Trouver les règles où cet utilisateur est le superviseur (target)
+    const applicableRules = subAffiliateRules.filter(rule => 
+      userSub1s.includes(rule.targetSub1)
+    );
+    
+    if (applicableRules.length === 0) {
+      return res.json({ bonuses: [], totalBonus: 0 });
+    }
+    
+    // Pour chaque règle, calculer le bonus basé sur les leads de la source
+    const bonusDetails = await Promise.all(applicableRules.map(async (rule) => {
+      const aggBySub1 = await csvDataAPI.fetchConversionsFromAPI(period);
+      const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
+      const leads = sourceData ? (parseInt(sourceData.convs) || 0) : 0;
+      const bonus = leads * rule.bonusAmount;
+      
+      return {
+        sourceSub1: rule.sourceSub1,
+        targetSub1: rule.targetSub1,
+        bonusAmount: rule.bonusAmount,
+        leads: leads,
+        totalBonus: bonus
+      };
+    }));
+    
+    const totalBonus = bonusDetails.reduce((sum, bonus) => sum + bonus.totalBonus, 0);
+    
+    res.json({ 
+      bonuses: bonusDetails, 
+      totalBonus: totalBonus,
+      period: period
+    });
+  } catch (error) {
+    console.error('❌ Erreur bonus utilisateur:', error.message);
+    res.status(500).json({ error: 'Erreur lors du calcul des bonus' });
+  }
+});
+
 // Routes pour les sous-affiliés
 app.get('/api/admin/sub-affiliate-rules', requireAdmin, async (req, res) => {
   try {

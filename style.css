@@ -261,6 +261,23 @@ main {
     border-left: 4px solid #8B5CF6;
 }
 
+/* Commission Helper Section */
+.commission-summary {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.commission-details {
+    margin-top: var(--spacing-xl);
+}
+
+.commission-details h3 {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    font-size: 18px;
+    font-weight: 600;
+}
+
 .stat-icon {
     font-size: 32px;
     margin-bottom: var(--spacing-md);

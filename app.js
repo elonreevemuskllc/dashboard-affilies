@@ -401,7 +401,58 @@ async function refreshAllData() {
         promises.push(loadManagerEPC());
     }
     
+    // Charger les bonus de l'utilisateur (pour tous les rôles)
+    promises.push(loadUserBonuses());
+    
     await Promise.all(promises);
+}
+
+// Fonction pour charger les bonus reçus par l'utilisateur
+async function loadUserBonuses() {
+    try {
+        const response = await fetch(`/api/user-bonuses?period=${currentPeriod}`);
+        const data = await response.json();
+        
+        const commissionSection = document.getElementById('commission-helper-section');
+        const totalBonusElement = document.getElementById('total-bonus-received');
+        const bonusTableBody = document.getElementById('bonus-details-table');
+        
+        if (data.totalBonus > 0) {
+            // Afficher la section Commission Helper
+            commissionSection.style.display = 'block';
+            
+            // Afficher le total des bonus
+            totalBonusElement.innerHTML = formatCurrencyWithEur(data.totalBonus);
+            
+            // Afficher les détails des bonus
+            if (data.bonuses.length > 0) {
+                bonusTableBody.innerHTML = data.bonuses.map(bonus => `
+                    <tr>
+                        <td><strong>${bonus.sourceSub1}</strong></td>
+                        <td style="text-align: center;">${formatNumber(bonus.leads)}</td>
+                        <td style="text-align: center;">${formatCurrencyWithEur(bonus.bonusAmount)}</td>
+                        <td style="text-align: center; color: var(--success-color); font-weight: 600;">
+                            ${formatCurrencyWithEur(bonus.totalBonus)}
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                bonusTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-secondary);">
+                            Aucun bonus reçu pour cette période
+                        </td>
+                    </tr>
+                `;
+            }
+        } else {
+            // Masquer la section si aucun bonus
+            commissionSection.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des bonus utilisateur:', error);
+        document.getElementById('commission-helper-section').style.display = 'none';
+    }
 }
 
 // Fonction logout
