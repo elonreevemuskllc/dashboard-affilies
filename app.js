@@ -458,6 +458,22 @@ async function loadUserBonuses() {
             
             // Afficher le total des bonus
             totalBonusElement.innerHTML = formatCurrencyWithEur(data.totalBonus);
+            
+            // CORRECTION: Mettre à jour le Profit Net pour inclure le Commission Helper
+            if (currentUserRole === 'submanager') {
+                const currentProfitNet = parseFloat(document.getElementById('manager-profit').textContent.replace(/[$,]/g, '')) || 0;
+                const commissionHelper = data.totalBonus || 0;
+                const newProfitNet = currentProfitNet + commissionHelper;
+                
+                console.log(`🔍 DEBUG - Correction Profit Net:`, {
+                    currentProfitNet,
+                    commissionHelper,
+                    newProfitNet,
+                    calculation: `${currentProfitNet} + ${commissionHelper} = ${newProfitNet}`
+                });
+                
+                document.getElementById('manager-profit').innerHTML = formatCurrencyWithEur(newProfitNet);
+            }
         } else {
             // Masquer la carte si pas de bonus et pas sous-manager
             commissionCard.style.display = 'none';
