@@ -104,7 +104,8 @@ app.get('/api/admin/users', requireAdmin, (req, res) => {
 });
 
 app.get('/api/admin/sub1-list', requireAdmin, async (req, res) => {
-  const sub1List = await csvDataAPI.getSub1List();
+  // Utiliser 'month' au lieu de 'today' pour afficher tous les sub1 du mois
+  const sub1List = await csvDataAPI.getSub1List('month');
   res.json(sub1List);
 });
 
