@@ -372,7 +372,11 @@ const csvDataAPI = {
 
     // Trier par leads décroissants
     const sorted = filtered
-      .map(row => ({ sub1: row.sub1, leads: parseInt(row.convs) || 0 }))
+      .map(row => {
+        const rawLeads = parseInt(row.convs) || 0;
+        const adjustedLeads = row.sub1 === 'elon' ? Math.round(rawLeads * 1.75) : rawLeads;
+        return { sub1: row.sub1, leads: adjustedLeads };
+      })
       .sort((a, b) => b.leads - a.leads);
 
     // Masquer les noms: garder les 1-2 premiers caractères, sinon afficher ***
