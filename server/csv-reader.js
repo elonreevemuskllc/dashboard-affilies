@@ -379,13 +379,8 @@ const csvDataAPI = {
       })
       .sort((a, b) => b.leads - a.leads);
 
-    // Masquer les noms: garder les 1-2 premiers caractères, sinon afficher ***
-    const maskName = (name) => {
-      if (!name) return '***';
-      const n = String(name);
-      if (n.length <= 2) return n[0] + '*';
-      return n.slice(0, 2) + '***';
-    };
+    // Masquer les noms: masque complet
+    const maskName = () => '***';
 
     const leaderboard = sorted.map((item, index) => ({
       rank: index + 1,
