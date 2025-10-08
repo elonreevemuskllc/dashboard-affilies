@@ -57,6 +57,14 @@
       "role": "affiliate",
       "name": "Som",
       "parentSubManager": 2
+    },
+    {
+      "id": 7,
+      "email": "shan3898U749@yopmail.com",
+      "password": "Shan1313@",
+      "sub1": "shan",
+      "role": "affiliate",
+      "name": "Shan"
     }
   ]
 }
