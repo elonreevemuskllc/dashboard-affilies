@@ -360,6 +360,38 @@ const csvDataAPI = {
     return { affiliates };
   },
 
+  // Récupérer le classement des affiliés par nombre de leads (avec masquage)
+  async getAffiliatesLeaderboard(period = 'today') {
+    const aggBySub1 = await fetchConversionsFromAPI(period);
+    if (!aggBySub1 || aggBySub1.length === 0) {
+      return { leaderboard: [] };
+    }
+
+    // Filtrer les affiliés masqués
+    const filtered = aggBySub1.filter(row => !HIDDEN_AFFILIATES.includes(row.sub1));
+
+    // Trier par leads décroissants
+    const sorted = filtered
+      .map(row => ({ sub1: row.sub1, leads: parseInt(row.convs) || 0 }))
+      .sort((a, b) => b.leads - a.leads);
+
+    // Masquer les noms: garder les 1-2 premiers caractères, sinon afficher ***
+    const maskName = (name) => {
+      if (!name) return '***';
+      const n = String(name);
+      if (n.length <= 2) return n[0] + '*';
+      return n.slice(0, 2) + '***';
+    };
+
+    const leaderboard = sorted.map((item, index) => ({
+      rank: index + 1,
+      nameMasked: maskName(item.sub1),
+      leads: item.leads
+    }));
+
+    return { leaderboard };
+  },
+
   // Récupérer les offres (générer depuis l'API - chaque affilié = une offre)
   async getOffers(user, period = 'today') {
     const aggBySub1 = await fetchConversionsFromAPI(period);

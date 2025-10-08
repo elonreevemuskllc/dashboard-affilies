@@ -482,6 +482,18 @@ app.get('/api/offers', requireAuth, async (req, res) => {
   }
 });
 
+// Classement des affiliés par leads (protégé)
+app.get('/api/leaderboard', requireAuth, async (req, res) => {
+  try {
+    const period = req.query.period || 'today';
+    const leaderboard = await csvDataAPI.getAffiliatesLeaderboard(period);
+    res.json(leaderboard);
+  } catch (error) {
+    console.error('Erreur leaderboard:', error.message);
+    res.status(500).json({ error: 'Erreur lors de la récupération du classement' });
+  }
+});
+
 app.get('/api/performance', requireAuth, async (req, res) => {
   try {
     const user = req.session.user;

@@ -211,6 +211,31 @@
                 <canvas id="performanceChart"></canvas>
             </div>
         </section>
+
+        <!-- Classement Affiliés (masqué pour tout le monde sauf admin/manager/submanager affichage générique) -->
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>🏆 Classement Affiliés (Leads)</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Affilié</th>
+                            <th>Leads</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="3" class="loading-row">
+                                <span class="loading">Chargement du classement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->

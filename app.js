@@ -400,12 +400,52 @@ async function loadPerformance() {
     }
 }
 
+// 5. Charger le classement d'affiliés par leads (noms masqués)
+async function loadLeaderboard() {
+    try {
+        const timestamp = Date.now();
+        const response = await fetch(`${API_BASE_URL}/api/leaderboard?period=${currentPeriod}&_t=${timestamp}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        const tbody = document.getElementById('leaderboard-body');
+        const list = (data && data.leaderboard) ? data.leaderboard.slice(0, 5) : [];
+        if (list.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align:center; color: var(--text-light);">Aucun lead pour l'instant</td>
+                </tr>
+            `;
+            return;
+        }
+        tbody.innerHTML = list.map(row => `
+            <tr>
+                <td>#${row.rank}</td>
+                <td><strong>${row.nameMasked}</strong></td>
+                <td>${formatNumber(row.leads)}</td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Erreur leaderboard:', error);
+        const tbody = document.getElementById('leaderboard-body');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="loading-row">${showError('Impossible de charger le classement')}</td>
+                </tr>
+            `;
+        }
+    }
+}
+
 // Fonction pour rafraîchir toutes les données
 async function refreshAllData() {
     const promises = [
         loadDashboardStats(),
         loadConversions(),
-        loadPerformance()
+        loadPerformance(),
+        loadLeaderboard()
     ];
     
     // Ajouter le chargement des leads par sub1 si c'est un manager
