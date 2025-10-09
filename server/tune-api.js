@@ -3,7 +3,7 @@ const axios = require('axios');
 // Configuration TUNE/HasOffers
 const TUNE_API_KEY = process.env.TUNE_API_KEY || '17975415225d6f5c3b5ef35459714d15ffb4f624211018480d9f75b78982d671';
 const TUNE_NETWORK_ID = process.env.TUNE_NETWORK_ID || 'ils';
-const TUNE_API_URL = 'https://api.tune.com/v1';
+const TUNE_API_URL = 'https://api.hasoffers.com/v3';
 
 // Configuration axios pour TUNE
 const tuneClient = axios.create({
@@ -26,30 +26,35 @@ const tuneAPI = {
       
       // Calculer les dates selon la période
       const { from, to } = this.getDateRange(period);
+      console.log(`📅 Dates: ${from.split(' ')[0]} → ${to.split(' ')[0]}`);
       
-      const response = await tuneClient.get('/affiliate_report/getConversions', {
+      const response = await tuneClient.get('/Affiliate_Report.json', {
         params: {
+          Method: 'getConversions',
           start_date: from.split(' ')[0], // Format YYYY-MM-DD
           end_date: to.split(' ')[0],
-          fields: 'Stat.conversion_id,Stat.datetime,Stat.offer_id,Stat.offer_name,Stat.goal_id,Stat.goal_name,Stat.payout,Stat.revenue,Stat.currency,Stat.sub1,Stat.sub2,Stat.sub3,Stat.sub4,Stat.sub5',
+          fields: ['Stat.conversion_id', 'Stat.datetime', 'Stat.offer_id', 'Stat.goal_id', 'Stat.conversion_payout', 'Stat.currency', 'Stat.affiliate_info1', 'Stat.affiliate_info2', 'Stat.affiliate_info3', 'Stat.affiliate_info4', 'Stat.affiliate_info5'],
           limit: 1000
         }
       });
 
+      console.log(`🔍 Response status: ${response.status}`);
+      console.log(`🔍 Response data:`, JSON.stringify(response.data, null, 2));
+
       const conversions = response.data.response.data || [];
       console.log(`✅ ${conversions.length} conversions TUNE récupérées`);
 
-      // Agréger par sub1
+      // Agréger par sub1 (utiliser affiliate_info1 comme sub1)
       const aggregated = {};
       conversions.forEach(conv => {
-        const sub1 = conv.sub1 || 'unknown';
+        const sub1 = conv.affiliate_info1 || 'unknown';
         
         if (!aggregated[sub1]) {
           aggregated[sub1] = { sub1, convs: 0, revenue: 0 };
         }
         
         aggregated[sub1].convs++;
-        aggregated[sub1].revenue += parseFloat(conv.payout || 0);
+        aggregated[sub1].revenue += parseFloat(conv.conversion_payout || 0);
       });
 
       console.log(`📊 TUNE agréger par sub1:`, aggregated);
@@ -73,11 +78,12 @@ const tuneAPI = {
     try {
       const { from, to } = this.getDateRange(period);
       
-      const response = await tuneClient.get('/affiliate_report/getStats', {
+      const response = await tuneClient.get('/Affiliate_Report.json', {
         params: {
+          Method: 'getStats',
           start_date: from.split(' ')[0],
           end_date: to.split(' ')[0],
-          fields: 'Stat.clicks,Stat.conversions,Stat.revenue,Stat.payout',
+          fields: ['Stat.clicks', 'Stat.conversions', 'Stat.revenue', 'Stat.payout'],
           group: 'day'
         }
       });

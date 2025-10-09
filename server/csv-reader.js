@@ -80,6 +80,14 @@ function getDateRange(period = 'today') {
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
   try {
+    // Pour l'instant, utiliser seulement Everflow car TUNE a des limitations de dates
+    console.log('⚠️ TUNE temporairement désactivé - limitation de dates API');
+    const everflowData = await fetchEverflowConversions(period);
+    
+    console.log(`✅ Données Everflow uniquement:`, everflowData);
+    return everflowData;
+    
+    /* Code TUNE désactivé temporairement
     // Récupérer les données depuis les deux plateformes
     const [everflowData, tuneData] = await Promise.all([
       fetchEverflowConversions(period),
@@ -91,6 +99,7 @@ async function fetchConversionsFromAPI(period = 'today') {
     
     console.log(`✅ Données fusionnées:`, mergedData);
     return mergedData;
+    */
   } catch (error) {
     console.error('❌ Erreur fusion plateformes:', error.message);
     // Fallback sur Everflow seul
