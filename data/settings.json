@@ -7,6 +7,7 @@
     "lico": 4.70,
     "llico": 4.70,
     "som": 4.70,
+    "shan": 15,
     "lllico": 4.70
   },
   "currency": "USD",
@@ -18,5 +19,7 @@
       "targetSub1": "losh",
       "bonusAmount": 2.00
     }
-  ]
+  ],
+  "platform_mode": "dual",
+  "primary_platform": "everflow"
 }

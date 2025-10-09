@@ -3,6 +3,7 @@ const path = require('path');
 const { parse } = require('csv-parse/sync');
 const axios = require('axios');
 const settings = require('./settings');
+const tuneAPI = require('./tune-api');
 
 // Chemins vers les fichiers CSV - UNIQUEMENT agg_by_sub1.csv est nécessaire
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -79,6 +80,27 @@ function getDateRange(period = 'today') {
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
   try {
+    // Récupérer les données depuis les deux plateformes
+    const [everflowData, tuneData] = await Promise.all([
+      fetchEverflowConversions(period),
+      tuneAPI.getConversions(period)
+    ]);
+
+    // Fusionner les données des deux plateformes
+    const mergedData = mergePlatformData(everflowData, tuneData);
+    
+    console.log(`✅ Données fusionnées:`, mergedData);
+    return mergedData;
+  } catch (error) {
+    console.error('❌ Erreur fusion plateformes:', error.message);
+    // Fallback sur Everflow seul
+    return fetchEverflowConversions(period);
+  }
+}
+
+// Fonction pour récupérer les conversions depuis Everflow uniquement
+async function fetchEverflowConversions(period = 'today') {
+  try {
     const { from, to } = getDateRange(period);
 
     console.log(`🔄 Appel API Everflow [${period}]: ${from} → ${to}`);
@@ -118,7 +140,7 @@ async function fetchConversionsFromAPI(period = 'today') {
       if (page > 20) break; // Garde-fou
     }
 
-    console.log(`✅ ${allConversions.length} conversions récupérées`);
+    console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
 
     // Agréger par sub1
     const aggregated = {};
@@ -156,6 +178,38 @@ async function fetchConversionsFromAPI(period = 'today') {
     // Fallback sur le CSV si l'API échoue
     return readCSV(AGG_BY_SUB1_PATH) || [];
   }
+}
+
+// Fonction pour fusionner les données des deux plateformes
+function mergePlatformData(everflowData, tuneData) {
+  const merged = {};
+  
+  // Ajouter les données Everflow
+  everflowData.forEach(item => {
+    merged[item.sub1] = {
+      sub1: item.sub1,
+      convs: item.convs,
+      revenue: item.revenue
+    };
+  });
+  
+  // Ajouter/fusionner les données TUNE
+  tuneData.forEach(item => {
+    if (merged[item.sub1]) {
+      // Fusionner si le sub1 existe déjà
+      merged[item.sub1].convs += item.convs;
+      merged[item.sub1].revenue += item.revenue;
+    } else {
+      // Ajouter nouveau sub1
+      merged[item.sub1] = {
+        sub1: item.sub1,
+        convs: item.convs,
+        revenue: item.revenue
+      };
+    }
+  });
+  
+  return Object.values(merged);
 }
 
 // Fonction helper pour lire un CSV
