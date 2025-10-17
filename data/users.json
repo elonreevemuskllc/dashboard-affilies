@@ -66,6 +66,14 @@
       "sub1": "shan",
       "role": "affiliate",
       "name": "Shan"
+    },
+    {
+      "id": 8,
+      "email": "kel1270@yopmail.com",
+      "password": "Kel1010@",
+      "sub1": "kel",
+      "role": "affiliate",
+      "name": "Kel"
     }
   ]
 }
