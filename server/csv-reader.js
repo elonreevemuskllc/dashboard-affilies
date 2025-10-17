@@ -60,6 +60,7 @@ function getDateRange(period = 'today') {
       startDate = new Date(effectiveToday.getFullYear(), effectiveToday.getMonth(), 1);
       endDate = new Date(effectiveToday);
       endDate.setDate(endDate.getDate() + 1);
+      console.log(`📅 [MONTH] Date de début: ${startDate.toISOString()}, Date de fin: ${endDate.toISOString()}`);
       break;
       
     case 'today':
@@ -74,32 +75,29 @@ function getDateRange(period = 'today') {
   const from = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')} 02:00:00`;
   const to = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')} 01:59:59`;
   
+  console.log(`📅 [${period.toUpperCase()}] Période calculée: ${from} → ${to}`);
+  
   return { from, to };
 }
 
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
   try {
-    // Pour l'instant, utiliser seulement Everflow car TUNE a des limitations de dates
-    console.log('⚠️ TUNE temporairement désactivé - limitation de dates API');
-    const everflowData = await fetchEverflowConversions(period);
-    
-    console.log(`✅ Données Everflow uniquement:`, everflowData);
-    return everflowData;
-    
-    /* Code TUNE désactivé temporairement
-    // Récupérer les données depuis les deux plateformes
+    // Réactiver TUNE avec les dates corrigées
+    console.log('🔄 Récupération des données des deux plateformes...');
     const [everflowData, tuneData] = await Promise.all([
       fetchEverflowConversions(period),
       tuneAPI.getConversions(period)
     ]);
+
+    console.log(`📊 Everflow: ${everflowData.length} sub1`);
+    console.log(`📊 TUNE: ${tuneData.length} sub1`);
 
     // Fusionner les données des deux plateformes
     const mergedData = mergePlatformData(everflowData, tuneData);
     
     console.log(`✅ Données fusionnées:`, mergedData);
     return mergedData;
-    */
   } catch (error) {
     console.error('❌ Erreur fusion plateformes:', error.message);
     // Fallback sur Everflow seul

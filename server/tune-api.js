@@ -3,7 +3,7 @@ const axios = require('axios');
 // Configuration TUNE/HasOffers
 const TUNE_API_KEY = process.env.TUNE_API_KEY || '17975415225d6f5c3b5ef35459714d15ffb4f624211018480d9f75b78982d671';
 const TUNE_NETWORK_ID = process.env.TUNE_NETWORK_ID || 'ils';
-const TUNE_API_URL = 'https://api.hasoffers.com/v3';
+const TUNE_API_URL = `https://${TUNE_NETWORK_ID}.api.hasoffers.com/Apiv3/json`;
 
 // Configuration axios pour TUNE
 const tuneClient = axios.create({
@@ -12,14 +12,13 @@ const tuneClient = axios.create({
     'Content-Type': 'application/json'
   },
   params: {
-    api_key: TUNE_API_KEY,
-    network_id: TUNE_NETWORK_ID
+    api_key: TUNE_API_KEY
   }
 });
 
 // Wrapper pour les appels API TUNE
 const tuneAPI = {
-  // Récupérer les conversions depuis TUNE
+  // Récupérer les conversions depuis TUNE (utilise getStats pour agrégation optimisée)
   async getConversions(period = 'today') {
     try {
       console.log(`🔄 Appel API TUNE [${period}]`);
@@ -28,43 +27,72 @@ const tuneAPI = {
       const { from, to } = this.getDateRange(period);
       console.log(`📅 Dates: ${from.split(' ')[0]} → ${to.split(' ')[0]}`);
       
-      const response = await tuneClient.get('/Affiliate_Report.json', {
+      // Essayer d'abord avec groupe par affiliate_info1
+      const response = await tuneClient.get('', {
         params: {
-          Method: 'getConversions',
+          Target: 'Affiliate_Report',
+          Method: 'getStats',
           start_date: from.split(' ')[0], // Format YYYY-MM-DD
           end_date: to.split(' ')[0],
-          fields: ['Stat.conversion_id', 'Stat.datetime', 'Stat.offer_id', 'Stat.goal_id', 'Stat.conversion_payout', 'Stat.currency', 'Stat.affiliate_info1', 'Stat.affiliate_info2', 'Stat.affiliate_info3', 'Stat.affiliate_info4', 'Stat.affiliate_info5'],
-          limit: 1000
+          fields: ['Stat.affiliate_info1', 'Stat.conversions', 'Stat.payout'],
+          group: ['Stat.affiliate_info1'] // Grouper par sub1
         }
       });
 
       console.log(`🔍 Response status: ${response.status}`);
-      console.log(`🔍 Response data:`, JSON.stringify(response.data, null, 2));
-
-      const conversions = response.data.response.data || [];
-      console.log(`✅ ${conversions.length} conversions TUNE récupérées`);
-
-      // Agréger par sub1 (utiliser affiliate_info1 comme sub1)
-      const aggregated = {};
-      conversions.forEach(conv => {
-        const sub1 = conv.affiliate_info1 || 'unknown';
+      
+      if (response.data.response.status !== 1) {
+        console.log(`⚠️  TUNE API avec sub1 échoué, fallback sur stats globales`);
+        console.log(`   Erreur:`, response.data.response.errors[0]?.publicMessage);
         
-        if (!aggregated[sub1]) {
-          aggregated[sub1] = { sub1, convs: 0, revenue: 0 };
+        // FALLBACK: Récupérer les stats globales sans sub1
+        const globalResponse = await tuneClient.get('', {
+          params: {
+            Target: 'Affiliate_Report',
+            Method: 'getStats',
+            start_date: from.split(' ')[0],
+            end_date: to.split(' ')[0],
+            fields: ['Stat.conversions', 'Stat.payout']
+          }
+        });
+        
+        if (globalResponse.data.response.status === 1) {
+          const globalData = globalResponse.data.response.data?.data?.[0] || {};
+          const convs = parseInt(globalData.Stat?.conversions) || 0;
+          const payout = parseFloat(globalData.Stat?.payout) || 0;
+          
+          console.log(`✅ TUNE stats globales: ${convs} conversions, $${payout}`);
+          
+          // Retourner avec un sub1 par défaut "tune"
+          if (convs > 0) {
+            return [{
+              sub1: 'tune',
+              convs: convs,
+              revenue: Math.round(payout * 100) / 100
+            }];
+          }
         }
         
-        aggregated[sub1].convs++;
-        aggregated[sub1].revenue += parseFloat(conv.conversion_payout || 0);
-      });
+        return [];
+      }
 
-      console.log(`📊 TUNE agréger par sub1:`, aggregated);
+      const data = response.data.response.data?.data || [];
+      console.log(`✅ ${data.length} lignes TUNE récupérées`);
 
-      // Convertir en tableau
-      const result = Object.values(aggregated).map(item => ({
-        sub1: item.sub1,
-        convs: item.convs,
-        revenue: Math.round(item.revenue * 100) / 100
-      }));
+      // Transformer les stats TUNE en format compatible avec le reste du code
+      const result = data.map(stat => {
+        const sub1 = stat.Stat?.affiliate_info1 || 'tune';
+        const convs = parseInt(stat.Stat?.conversions) || 0;
+        const payout = parseFloat(stat.Stat?.payout) || 0;
+        
+        return {
+          sub1: sub1,
+          convs: convs,
+          revenue: Math.round(payout * 100) / 100
+        };
+      }).filter(item => item.convs > 0); // Filtrer les lignes sans conversions
+
+      console.log(`📊 TUNE agrégé par sub1:`, result);
 
       return result;
     } catch (error) {
@@ -78,8 +106,9 @@ const tuneAPI = {
     try {
       const { from, to } = this.getDateRange(period);
       
-      const response = await tuneClient.get('/Affiliate_Report.json', {
+      const response = await tuneClient.get('', {
         params: {
+          Target: 'Affiliate_Report',
           Method: 'getStats',
           start_date: from.split(' ')[0],
           end_date: to.split(' ')[0],
@@ -106,13 +135,15 @@ const tuneAPI = {
     }
   },
 
-  // Fonction pour calculer les dates selon la période (identique à csv-reader.js)
+  // Fonction pour calculer les dates selon la période (corrigée pour TUNE)
   getDateRange(period = 'today') {
+    // Utiliser la date actuelle
     const now = new Date();
     let startDate, endDate;
     
-    // Déterminer si on est avant 2h du matin (décalage de journée)
     const effectiveToday = new Date(now);
+    
+    // Déterminer si on est avant 2h du matin (décalage de journée)
     if (now.getHours() < 2) {
       effectiveToday.setDate(effectiveToday.getDate() - 1);
     }
@@ -137,6 +168,7 @@ const tuneAPI = {
         startDate = new Date(effectiveToday.getFullYear(), effectiveToday.getMonth(), 1);
         endDate = new Date(effectiveToday);
         endDate.setDate(endDate.getDate() + 1);
+        console.log(`📅 [TUNE-API MONTH] Date de début: ${startDate.toISOString()}, Date de fin: ${endDate.toISOString()}`);
         break;
         
       case 'today':
@@ -149,6 +181,8 @@ const tuneAPI = {
     
     const from = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')} 02:00:00`;
     const to = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')} 01:59:59`;
+    
+    console.log(`📅 [TUNE-API ${period.toUpperCase()}] Période calculée: ${from} → ${to}`);
     
     return { from, to };
   }
