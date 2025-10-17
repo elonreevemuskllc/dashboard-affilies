@@ -566,9 +566,12 @@ const csvDataAPI = {
 
   // Obtenir les stats pour un affilié spécifique
   async getAffiliateStats(sub1Input, period = 'today') {
+    console.log(`🔒 [SECURITY] getAffiliateStats appelé pour sub1: ${JSON.stringify(sub1Input)}, period: ${period}`);
+    
     const aggBySub1 = await fetchConversionsFromAPI(period);
     
     if (!aggBySub1 || aggBySub1.length === 0) {
+      console.log(`🔒 [SECURITY] Aucune donnée trouvée pour ${sub1Input}`);
       return {
         clicks: 0,
         conversions: 0,
@@ -580,6 +583,7 @@ const csvDataAPI = {
 
     // Gérer sub1 comme string ou array
     const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    console.log(`🔒 [SECURITY] Sub1Array à traiter: ${JSON.stringify(sub1Array)}`);
     
     // Agréger les données de tous les sub1
     let totalConversions = 0;
@@ -590,8 +594,11 @@ const csvDataAPI = {
       if (affiliateData) {
         const conversions = parseInt(affiliateData.convs) || 0;
         const payoutPerLead = settings.getPayoutForSub1(sub1);
+        console.log(`🔒 [SECURITY] ${sub1} - Conversions: ${conversions}, Payout: $${payoutPerLead}`);
         totalConversions += conversions;
         totalRevenue += conversions * payoutPerLead;
+      } else {
+        console.log(`🔒 [SECURITY] ${sub1} - Aucune donnée trouvée`);
       }
     });
 
@@ -602,20 +609,27 @@ const csvDataAPI = {
     const managerMargin = settings.getManagerMargin();
     const managerProfit = (totalConversions * managerMargin) + bonus;
 
-    return {
+    const result = {
       clicks: estimatedClicks,
       conversions: totalConversions,
       revenue: totalRevenue,
       bonus: bonus,
       managerProfit: managerProfit
     };
+    
+    console.log(`🔒 [SECURITY] Résultat pour ${JSON.stringify(sub1Array)}: ${JSON.stringify(result)}`);
+    
+    return result;
   },
 
   // Obtenir les stats pour un sous-manager
   async getSubManagerStats(sub1Input, period = 'today') {
+    console.log(`🔒 [SECURITY] getSubManagerStats appelé pour sub1: ${JSON.stringify(sub1Input)}, period: ${period}`);
+    
     const aggBySub1 = await fetchConversionsFromAPI(period);
     
     if (!aggBySub1 || aggBySub1.length === 0) {
+      console.log(`🔒 [SECURITY] Aucune donnée trouvée pour SubManager ${sub1Input}`);
       return {
         clicks: 0,
         conversions: 0,
@@ -628,6 +642,7 @@ const csvDataAPI = {
 
     // Gérer sub1 comme string ou array
     const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    console.log(`🔒 [SECURITY] SubManager Sub1Array à traiter: ${JSON.stringify(sub1Array)}`);
     
     let totalConversions = 0;
     let totalRevenue = 0;
@@ -638,12 +653,15 @@ const csvDataAPI = {
       if (affiliateData) {
         const conversions = parseInt(affiliateData.convs) || 0;
         const payoutPerLead = settings.getPayoutForSub1(sub1);
+        console.log(`🔒 [SECURITY] SubManager ${sub1} - Conversions: ${conversions}, Payout: $${payoutPerLead}`);
         totalConversions += conversions;
         totalRevenue += conversions * payoutPerLead;
         
         // Calculer la commission du sous-manager (2€ par lead par défaut)
         const commissionPerLead = 2.00; // À récupérer depuis la DB utilisateur
         // subManagerCommission += conversions * commissionPerLead; // DÉSACTIVÉ - pas de commission sur ses propres leads
+      } else {
+        console.log(`🔒 [SECURITY] SubManager ${sub1} - Aucune donnée trouvée`);
       }
     });
 
@@ -653,7 +671,7 @@ const csvDataAPI = {
     // Profit net pour le sous-manager = revenus + bonus + commission (ce qu'il gagne en tant que superviseur)
     const netProfit = totalRevenue + bonus + subManagerCommission;
 
-    return {
+    const result = {
       clicks: estimatedClicks,
       conversions: totalConversions,
       revenue: totalRevenue,
@@ -661,6 +679,10 @@ const csvDataAPI = {
       subManagerCommission: subManagerCommission,
       netProfit: netProfit
     };
+    
+    console.log(`🔒 [SECURITY] Résultat SubManager pour ${JSON.stringify(sub1Array)}: ${JSON.stringify(result)}`);
+    
+    return result;
   },
 
   // Récupérer les leads par sub1 pour un manager

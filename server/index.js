@@ -424,33 +424,59 @@ app.delete('/api/admin/sub-affiliate-rules/:sourceSub1/:targetSub1', requireAdmi
 // Routes API - Stats depuis Everflow API, détails depuis CSV (protégé)
 app.get('/api/stats', requireAuth, async (req, res) => {
   try {
-    console.log(`🔄 API /api/stats appelée - Version Commission Helper Fix - ${new Date().toISOString()}`);
     const user = req.session.user;
     const period = req.query.period || 'today';
+    
+    console.log(`🔒🔒🔒 [SECURITY] API /api/stats appelée - ${new Date().toISOString()}`);
+    console.log(`🔒 [SECURITY] User: ${user.email} (ID: ${user.id})`);
+    console.log(`🔒 [SECURITY] Role: ${user.role}`);
+    console.log(`🔒 [SECURITY] Sub1: ${JSON.stringify(user.sub1)}`);
+    console.log(`🔒 [SECURITY] Period: ${period}`);
+    
     let stats;
     
     if (user.role === 'admin') {
       // Admin: stats globales moins les masqués
+      console.log(`🔒 [SECURITY] Admin - Récupération stats globales`);
       stats = await csvDataAPI.getDashboardStats(period);
     } else if (user.role === 'submanager') {
       // Sous-manager: stats avec commission
-      console.log('🔍 DEBUG - Appel getSubManagerStats pour:', user.sub1, period);
-      console.log('🔍 DEBUG - User object:', user);
+      console.log(`🔒 [SECURITY] SubManager - Appel getSubManagerStats pour: ${user.sub1}`);
       try {
         stats = await csvDataAPI.getSubManagerStats(user.sub1, period);
-        console.log('🔍 DEBUG - getSubManagerStats result:', stats);
+        console.log(`🔒 [SECURITY] SubManager - Stats reçues:`, stats);
       } catch (error) {
         console.error('❌ Erreur getSubManagerStats:', error);
-        console.error('❌ Stack trace:', error.stack);
         // Fallback sur getAffiliateStats
         stats = await csvDataAPI.getAffiliateStats(user.sub1, period);
-        console.log('🔍 DEBUG - Fallback getAffiliateStats result:', stats);
+        console.log(`🔒 [SECURITY] SubManager - Fallback stats:`, stats);
       }
     } else {
       // Affilié: stats uniquement pour son sub1
+      console.log(`🔒 [SECURITY] Affiliate - Appel getAffiliateStats pour: ${user.sub1}`);
       stats = await csvDataAPI.getAffiliateStats(user.sub1, period);
     }
     
+    // VALIDATION FINALE: S'assurer que les stats sont cohérentes
+    if (stats.conversions > 5000) {
+      console.error(`🚨🚨🚨 [SECURITY ALERT] Stats anormalement élevées détectées !`);
+      console.error(`🚨 User: ${user.email}, Sub1: ${JSON.stringify(user.sub1)}, Conversions: ${stats.conversions}`);
+      console.error(`🚨 Stats suspectes:`, stats);
+      
+      // Si ce n'est pas un admin, bloquer et retourner 0
+      if (user.role !== 'admin') {
+        console.error(`🚨 PROTECTION ACTIVÉE - Stats remises à 0 pour ${user.email}`);
+        stats = {
+          clicks: 0,
+          conversions: 0,
+          revenue: 0,
+          bonus: 0,
+          managerProfit: 0
+        };
+      }
+    }
+    
+    console.log(`🔒 [SECURITY] Stats finales retournées pour ${user.email}:`, stats);
     res.json(stats);
   } catch (error) {
     console.error('Erreur stats:', error.message);
