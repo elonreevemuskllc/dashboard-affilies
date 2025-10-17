@@ -1,4 +1,4 @@
-/* Modern Design System avec oklch */
+/* Modern Design System - shadcn/ui avec oklch */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.1450 0 0);
@@ -52,23 +52,6 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
-
-  /* Colors for stat cards */
-  --primary-color: #667eea;
-  --primary-dark: #5a6fd8;
-  --secondary-color: #764ba2;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
-  --info-color: #06b6d4;
-
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
 }
 
 .dark {
@@ -188,8 +171,8 @@ body {
     font-family: var(--font-sans);
     background-color: var(--background);
     color: var(--foreground);
-    line-height: 1.6;
-    font-size: 16px;
+    line-height: 1.5;
+    font-size: 14px;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -198,39 +181,39 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    padding: 0 1.5rem;
     width: 100%;
 }
 
-/* Header moderne */
+/* Header moderne shadcn style */
 .header {
     background: var(--card);
-    color: var(--foreground);
+    color: var(--card-foreground);
     border-bottom: 1px solid var(--border);
-    padding: var(--spacing-lg) 0;
+    padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-sm);
 }
 
 .header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
 }
 
 .header-left {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: 1rem;
 }
 
 .header h1 {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 600;
     letter-spacing: -0.025em;
     color: var(--foreground);
 }
@@ -238,157 +221,156 @@ body {
 .header-info {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    font-size: 14px;
+    gap: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--muted-foreground);
 }
 
-/* Boutons modernes */
+/* Boutons shadcn style */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 18px;
+    padding: 0.5rem 1rem;
     border-radius: var(--radius);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 500;
     text-decoration: none;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
     white-space: nowrap;
-    min-height: 40px;
+    height: 2.25rem;
 }
 
 .btn-primary {
     background-color: var(--primary);
     color: var(--primary-foreground);
+    border-color: var(--primary);
 }
 
 .btn-primary:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
-    border: 1px solid var(--border);
+    border-color: var(--border);
 }
 
 .btn-secondary:hover {
     background-color: var(--accent);
-    transform: translateY(-1px);
+    color: var(--accent-foreground);
 }
 
 .btn-danger {
     background-color: var(--destructive);
     color: var(--destructive-foreground);
+    border-color: var(--destructive);
 }
 
 .btn-danger:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .refresh-btn {
-    background-color: var(--success-color);
+    background-color: hsl(142.1 76.2% 36.3%);
     color: white;
+    border-color: hsl(142.1 76.2% 36.3%);
 }
 
 .refresh-btn:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .refresh-btn:disabled {
     background-color: var(--muted);
     color: var(--muted-foreground);
     cursor: not-allowed;
-    transform: none;
+    opacity: 0.5;
 }
 
 /* Main content */
 main {
-    padding: var(--spacing-2xl) 0;
+    padding: 1.5rem 0;
     min-height: calc(100vh - 120px);
 }
 
-/* Stats Grid */
+/* Stats Grid shadcn style */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .stat-card {
     background-color: var(--card);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
+    padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--ring);
+    box-shadow: var(--shadow-md);
 }
 
+/* Couleurs pour les stat cards avec badges sur le côté */
 .stat-card-blue {
-    border-left: 3px solid var(--primary-color);
+    border-left: 3px solid hsl(221.2 83.2% 53.3%);
 }
 
 .stat-card-green {
-    border-left: 3px solid var(--success-color);
+    border-left: 3px solid hsl(142.1 76.2% 36.3%);
 }
 
 .stat-card-purple {
-    border-left: 3px solid var(--secondary-color);
+    border-left: 3px solid hsl(262.1 83.3% 57.8%);
 }
 
 .stat-card-orange {
-    border-left: 3px solid var(--warning-color);
+    border-left: 3px solid hsl(24.6 95% 53.1%);
 }
 
 .stat-card-red {
-    border-left: 3px solid var(--danger-color);
+    border-left: 3px solid var(--destructive);
 }
 
 .stat-card-success {
-    border-left: 3px solid var(--success-color);
+    border-left: 3px solid hsl(142.1 76.2% 36.3%);
 }
 
 .stat-card-cyan {
-    border-left: 3px solid var(--info-color);
+    border-left: 3px solid hsl(198.6 88.7% 48.4%);
 }
 
 .stat-card-info {
-    border-left: 3px solid var(--info-color);
+    border-left: 3px solid hsl(198.6 88.7% 48.4%);
 }
 
 .stat-icon {
-    font-size: 32px;
-    margin-bottom: var(--spacing-md);
-    opacity: 0.8;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
 }
 
 .stat-content h3 {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 500;
     color: var(--muted-foreground);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0.5rem;
 }
 
 .stat-value {
-    font-size: 36px;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--foreground);
     letter-spacing: -0.025em;
@@ -396,34 +378,34 @@ main {
 }
 
 .stat-description {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 0.75rem;
+    font-weight: 400;
     color: var(--muted-foreground);
-    margin-top: var(--spacing-sm);
+    margin-top: 0.25rem;
     margin-bottom: 0;
 }
 
-/* Sections */
+/* Sections shadcn style */
 .chart-section,
 .conversions-section,
 .offers-section {
     background-color: var(--card);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
-    margin-bottom: var(--spacing-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
 }
 
 .section-header {
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-md);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
 }
 
 .section-header h2 {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 1.125rem;
+    font-weight: 600;
     color: var(--foreground);
     letter-spacing: -0.025em;
 }
@@ -434,7 +416,7 @@ main {
     height: 300px;
 }
 
-/* Table moderne */
+/* Table shadcn style */
 .table-container {
     overflow-x: auto;
     border-radius: var(--radius);
@@ -449,21 +431,21 @@ main {
 
 .data-table th {
     background-color: var(--muted);
-    padding: var(--spacing-md);
+    padding: 0.75rem 1rem;
     text-align: left;
-    font-weight: 600;
-    color: var(--foreground);
-    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 1px solid var(--border);
 }
 
 .data-table td {
-    padding: var(--spacing-md);
+    padding: 0.75rem 1rem;
     color: var(--foreground);
     border-bottom: 1px solid var(--border);
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .data-table tbody tr:last-child td {
@@ -476,33 +458,34 @@ main {
 
 .loading-row {
     text-align: center;
-    padding: var(--spacing-2xl) !important;
+    padding: 2rem !important;
 }
 
-/* Status badges */
+/* Status badges shadcn style */
 .status-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: calc(var(--radius) * 2);
-    font-size: 11px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: calc(var(--radius) * 1.5);
+    font-size: 0.6875rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .status-approved {
-    background-color: color-mix(in srgb, var(--success-color) 15%, transparent);
-    color: var(--success-color);
+    background-color: hsl(142.1 76.2% 36.3% / 0.1);
+    color: hsl(142.1 76.2% 36.3%);
 }
 
 .status-pending {
-    background-color: color-mix(in srgb, var(--warning-color) 15%, transparent);
-    color: var(--warning-color);
+    background-color: hsl(24.6 95% 53.1% / 0.1);
+    color: hsl(24.6 95% 53.1%);
 }
 
 .status-rejected {
-    background-color: color-mix(in srgb, var(--danger-color) 15%, transparent);
-    color: var(--danger-color);
+    background-color: hsl(0 84.2% 60.2% / 0.1);
+    color: hsl(0 84.2% 60.2%);
 }
 
 /* Loading */
@@ -520,32 +503,34 @@ main {
     }
 }
 
-/* Error message */
+/* Error message shadcn style */
 .error-message {
-    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
-    color: var(--destructive);
-    padding: var(--spacing-md);
+    background-color: hsl(0 84.2% 60.2% / 0.1);
+    color: hsl(0 84.2% 60.2%);
+    padding: 0.75rem 1rem;
     border-radius: var(--radius);
-    margin-bottom: var(--spacing-md);
-    border-left: 3px solid var(--destructive);
+    margin-bottom: 0.75rem;
+    border-left: 3px solid hsl(0 84.2% 60.2%);
+    font-size: 0.875rem;
 }
 
-/* Boutons de période */
+/* Boutons de période shadcn style */
 .period-btn {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--card);
+    padding: 0.5rem 1rem;
+    background-color: transparent;
     color: var(--foreground);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+    height: 2.25rem;
 }
 
 .period-btn:hover {
     background-color: var(--accent);
-    transform: translateY(-1px);
+    color: var(--accent-foreground);
 }
 
 .period-btn.active {
@@ -554,30 +539,31 @@ main {
     border-color: var(--primary);
 }
 
-/* Form elements */
+/* Form elements shadcn style */
 .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 1rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: var(--spacing-sm);
-    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
     color: var(--foreground);
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: var(--spacing-md);
-    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--input);
     border-radius: var(--radius);
-    font-size: 14px;
-    background-color: var(--background);
+    font-size: 0.875rem;
+    background-color: transparent;
     color: var(--foreground);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
+    height: 2.25rem;
 }
 
 .form-group input:focus,
@@ -585,22 +571,22 @@ main {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--ring);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 10%, transparent);
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
 }
 
-/* Login page */
+/* Login page shadcn style */
 .login-container {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--background);
-    padding: var(--spacing-lg);
+    padding: 1rem;
 }
 
 .login-box {
     background-color: var(--card);
-    padding: var(--spacing-2xl);
+    padding: 2rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     width: 100%;
@@ -610,24 +596,24 @@ main {
 
 .login-box h1 {
     text-align: center;
-    margin-bottom: var(--spacing-xl);
-    font-size: 28px;
-    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--foreground);
 }
 
-/* Footer */
+/* Footer shadcn style */
 .footer {
     background-color: var(--card);
     border-top: 1px solid var(--border);
-    padding: var(--spacing-xl) 0;
+    padding: 1.5rem 0;
     text-align: center;
     color: var(--muted-foreground);
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .footer a {
-    color: var(--primary-color);
+    color: var(--primary);
     text-decoration: none;
     font-weight: 500;
 }
@@ -639,105 +625,105 @@ main {
 /* Responsive */
 @media (max-width: 768px) {
     .container {
-        padding: 0 var(--spacing-md);
+        padding: 0 1rem;
     }
 
     .header {
-        padding: var(--spacing-md) 0;
+        padding: 0.75rem 0;
     }
 
     .header .container {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--spacing-md);
+        gap: 0.75rem;
     }
     
     .header-left {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        gap: 0.5rem;
     }
 
     .header h1 {
-        font-size: 20px;
+        font-size: 1.125rem;
     }
 
     .header-info {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        gap: 0.5rem;
         width: 100%;
     }
 
     main {
-        padding: var(--spacing-lg) 0;
+        padding: 1rem 0;
     }
 
     .stats-grid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-md);
+        gap: 0.75rem;
     }
 
     .stat-card {
-        padding: var(--spacing-lg);
+        padding: 1rem;
     }
 
     .stat-value {
-        font-size: 28px;
+        font-size: 1.5rem;
     }
 
     .chart-section,
     .conversions-section,
     .offers-section {
-        padding: var(--spacing-lg);
-        margin-bottom: var(--spacing-md);
+        padding: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .section-header h2 {
-        font-size: 18px;
+        font-size: 1rem;
     }
 
     .period-btn {
-        padding: var(--spacing-sm);
-        font-size: 13px;
+        padding: 0.5rem;
+        font-size: 0.8125rem;
         flex: 1;
     }
 
     .data-table th,
     .data-table td {
-        padding: var(--spacing-sm);
-        font-size: 13px;
+        padding: 0.5rem;
+        font-size: 0.8125rem;
     }
 
     .login-box {
-        padding: var(--spacing-xl);
+        padding: 1.5rem;
     }
 }
 
 @media (max-width: 480px) {
     .header h1 {
-        font-size: 18px;
+        font-size: 1rem;
     }
 
     .stat-value {
-        font-size: 24px;
+        font-size: 1.25rem;
     }
 
     .section-header h2 {
-        font-size: 16px;
+        font-size: 0.9375rem;
     }
 
     .period-btn {
-        font-size: 12px;
-        padding: 8px;
+        font-size: 0.75rem;
+        padding: 0.5rem;
     }
 
     .data-table th,
     .data-table td {
-        padding: 8px;
-        font-size: 12px;
+        padding: 0.5rem;
+        font-size: 0.75rem;
     }
 
     .login-box {
-        padding: var(--spacing-lg);
+        padding: 1rem;
     }
 }
 
