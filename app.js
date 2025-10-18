@@ -139,7 +139,6 @@ function initializeDatePickers() {
 // 1. Charger les statistiques du dashboard
 async function loadDashboardStats() {
     try {
-        console.log(`🔍 DEBUG - loadDashboardStats appelé (timestamp: ${Date.now()})`);
         const timestamp = Date.now();
         const response = await fetch(`${API_BASE_URL}/api/stats?period=${currentPeriod}&_t=${timestamp}`);
         
@@ -147,7 +146,6 @@ async function loadDashboardStats() {
         if (handle401(response)) return;
         
         const data = await response.json();
-        console.log(`🔍 DEBUG - Data reçue:`, data);
         
         // Exemple de structure de données - adapter selon la réponse réelle de l'API
         const clicks = data.clicks || data.total_clicks || 0;
@@ -161,9 +159,6 @@ async function loadDashboardStats() {
         
         // Pour les managers, on garde le calcul original
         const totalCost = revenue + bonus;
-        
-        // Debug pour voir les valeurs
-        console.log(`🔍 DEBUG - Revenue: $${revenue}, Bonus: $${bonus}, Net Profit: $${netProfit}`);
         
         document.getElementById('total-clicks').textContent = formatNumber(clicks);
         document.getElementById('total-conversions').textContent = formatNumber(conversions);
@@ -256,8 +251,6 @@ async function loadDashboardStats() {
             if (profitNetCard) profitNetCard.style.display = 'none'; // PAS DE PROFIT NET POUR AFFILIÉS SIMPLES
             
             // Profit Net = ce qu'il va recevoir (revenus + bonus)
-            console.log(`🔍 DEBUG - Affichage Profit Net: ${netProfit}`);
-            console.log(`🔍 DEBUG - Formatted: ${formatCurrencyWithEur(netProfit)}`);
             const costElement = document.getElementById('total-cost');
             if (costElement) {
                 costElement.innerHTML = formatCurrencyWithEur(netProfit);
@@ -521,30 +514,15 @@ async function refreshAllData() {
 // Fonction pour charger les bonus reçus par l'utilisateur
 async function loadUserBonuses() {
     try {
-        console.log('🔍 DEBUG - Loading user bonuses...');
         const timestamp = Date.now();
         
         const response = await fetch(`/api/user-bonuses?period=${currentPeriod}&_t=${timestamp}`);
-        console.log('🔍 DEBUG - Response status:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        console.log('🔍 DEBUG - User bonuses data:', data);
-        console.log('🔍 DEBUG - Total bonus:', data.totalBonus);
-        console.log('🔍 DEBUG - Bonuses details:', data.bonuses);
-        if (data.bonuses && data.bonuses.length > 0) {
-            const bonus = data.bonuses[0];
-            console.log('🔍 DEBUG - First bonus details:', {
-                sourceSub1: bonus.sourceSub1,
-                leads: bonus.leads,
-                bonusAmount: bonus.bonusAmount,
-                totalBonus: bonus.totalBonus,
-                calculation: `${bonus.leads} × $${bonus.bonusAmount} = $${bonus.totalBonus}`
-            });
-        }
         
         const commissionCard = document.getElementById('commission-helper-card');
         const totalBonusElement = document.getElementById('commission-helper-total');
@@ -562,14 +540,6 @@ async function loadUserBonuses() {
                 const bonus = window.submanagerBonus || 0;
                 const commissionHelper = data.totalBonus || 0;
                 const profitNet = revenue + bonus + commissionHelper;
-                
-                console.log(`💰 PROFIT NET CALCULÉ:`, {
-                    revenue,
-                    bonus,
-                    commissionHelper,
-                    profitNet,
-                    formule: `${revenue} + ${bonus} + ${commissionHelper} = ${profitNet}`
-                });
                 
                 const profitNetElement = document.getElementById('profit-net-total');
                 if (profitNetElement) {
@@ -596,12 +566,10 @@ async function logout() {
 async function loadSub1Leads() {
     // Vérifier que l'utilisateur est bien un manager
     if (currentUserRole !== 'manager') {
-        console.log('❌ loadSub1Leads appelé mais utilisateur n\'est pas manager:', currentUserRole);
         return;
     }
     
     try {
-        console.log('🔍 Chargement des leads par sub1 pour manager...');
         const timestamp = Date.now();
         const response = await fetch(`${API_BASE_URL}/api/sub1-leads?period=${currentPeriod}&_t=${timestamp}`);
         
@@ -610,7 +578,6 @@ async function loadSub1Leads() {
         }
         
         const data = await response.json();
-        console.log('✅ Données reçues:', data);
         
         const tbody = document.getElementById('sub1-leads-body');
         
@@ -710,12 +677,10 @@ async function loadCurrentUser() {
 async function loadManagerEPC() {
     // Vérifier que l'utilisateur est bien un manager
     if (currentUserRole !== 'manager') {
-        console.log('❌ loadManagerEPC appelé mais utilisateur n\'est pas manager:', currentUserRole);
         return;
     }
     
     try {
-        console.log('🔍 Chargement de l\'EPC global pour manager...');
         const timestamp = Date.now();
         const response = await fetch(`${API_BASE_URL}/api/manager-epc?period=${currentPeriod}&_t=${timestamp}`);
         
@@ -724,7 +689,6 @@ async function loadManagerEPC() {
         }
         
         const data = await response.json();
-        console.log('✅ EPC global récupéré:', data);
         
         // Afficher l'EPC dans la carte
         const epcElement = document.getElementById('global-epc');
@@ -748,7 +712,6 @@ async function loadManagerEPC() {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Dashboard initialisé');
     initializeDatePickers();
     loadCurrentUser();
     refreshAllData();
