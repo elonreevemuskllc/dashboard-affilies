@@ -242,18 +242,20 @@ async function fetchEverflowConversions(period = 'today') {
       const rule = leadCountRules.find(r => r.sub1 === sub1);
       
       if (rule && rule.apply_from_date) {
-        // Règle avec date : leads avant + (leads après × multiplier)
+        // Règle avec date : leads avant + (leads après × multiplier) + bonus manuel
         const beforeCount = aggregated[sub1].convsBeforeRule;
         const afterCount = aggregated[sub1].convsAfterRule;
         const afterMultiplied = Math.round(afterCount * multiplier);
-        aggregated[sub1].convs = beforeCount + afterMultiplied;
+        const manualBonus = rule.manual_bonus_leads || 0;
+        aggregated[sub1].convs = beforeCount + afterMultiplied + manualBonus;
         
-        console.log(`🎯 Règle avec date pour ${sub1}: ${beforeCount} leads (avant ${rule.apply_from_date}) + ${afterCount} leads × ${multiplier} (après) = ${aggregated[sub1].convs} leads`);
+        console.log(`🎯 Règle avec date pour ${sub1}: ${beforeCount} leads (avant ${rule.apply_from_date}) + ${afterCount} leads × ${multiplier} (après) + ${manualBonus} bonus manuel = ${aggregated[sub1].convs} leads`);
       } else if (multiplier !== 1) {
         // Règle sans date : applique à tout
         const totalConvs = aggregated[sub1].totalConvs;
-        aggregated[sub1].convs = Math.round(totalConvs * multiplier);
-        console.log(`🎯 Règle globale pour ${sub1}: ${totalConvs} leads × ${multiplier} = ${aggregated[sub1].convs} leads`);
+        const manualBonus = rule ? (rule.manual_bonus_leads || 0) : 0;
+        aggregated[sub1].convs = Math.round(totalConvs * multiplier) + manualBonus;
+        console.log(`🎯 Règle globale pour ${sub1}: ${totalConvs} leads × ${multiplier} + ${manualBonus} bonus = ${aggregated[sub1].convs} leads`);
       } else {
         // Pas de règle : compte tout normalement
         aggregated[sub1].convs = aggregated[sub1].totalConvs;
