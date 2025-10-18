@@ -60,7 +60,9 @@ function getDateRange(period = 'today') {
       startDate = new Date(effectiveToday.getFullYear(), effectiveToday.getMonth(), 1);
       endDate = new Date(effectiveToday);
       endDate.setDate(endDate.getDate() + 1);
-      console.log(`📅 [MONTH] Date de début: ${startDate.toISOString()}, Date de fin: ${endDate.toISOString()}`);
+      console.log(`📅 [MONTH] Aujourd'hui: ${effectiveToday.toISOString()}`);
+      console.log(`📅 [MONTH] Premier du mois calculé: ${startDate.toISOString()}`);
+      console.log(`📅 [MONTH] Date de fin calculée: ${endDate.toISOString()}`);
       break;
       
     case 'today':
@@ -103,6 +105,9 @@ async function fetchEverflowConversions(period = 'today') {
     const { from, to } = getDateRange(period);
 
     console.log(`🔄 Appel API Everflow [${period}]: ${from} → ${to}`);
+    console.log(`📅 [DEBUG EVERFLOW] Period: ${period}`);
+    console.log(`📅 [DEBUG EVERFLOW] Date FROM: ${from}`);
+    console.log(`📅 [DEBUG EVERFLOW] Date TO: ${to}`);
 
     // Récupérer toutes les conversions (avec pagination)
     let allConversions = [];
