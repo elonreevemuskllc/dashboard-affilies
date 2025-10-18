@@ -20,8 +20,12 @@ app.use(session({
   secret: 'dashboard-everflow-secret-key-2025',
   resave: false,
   saveUninitialized: false,
+  rolling: true, // Renouveler la session à chaque requête
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000 // 24 heures
+    maxAge: 24 * 60 * 60 * 1000, // 24 heures
+    httpOnly: true,
+    secure: false, // Mettre à true si HTTPS
+    sameSite: 'lax'
   }
 }));
 

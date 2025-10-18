@@ -6,6 +6,16 @@ let performanceChart = null;
 let currentPeriod = 'today';
 let currentUserRole = null;
 
+// Fonction globale pour gérer les erreurs 401
+function handle401(response) {
+    if (response.status === 401) {
+        console.error('❌ Session expirée - Redirection vers login');
+        window.location.href = '/login';
+        return true;
+    }
+    return false;
+}
+
 // Fonction pour formater les nombres
 function formatNumber(num) {
     if (num === null || num === undefined) return '0';
@@ -88,6 +98,10 @@ async function loadDashboardStats() {
         console.log(`🔍 DEBUG - loadDashboardStats appelé (timestamp: ${Date.now()})`);
         const timestamp = Date.now();
         const response = await fetch(`${API_BASE_URL}/api/stats?period=${currentPeriod}&_t=${timestamp}`);
+        
+        // Vérifier si la session a expiré
+        if (handle401(response)) return;
+        
         const data = await response.json();
         console.log(`🔍 DEBUG - Data reçue:`, data);
         
