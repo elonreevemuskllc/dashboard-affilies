@@ -458,20 +458,30 @@ app.get('/api/stats', requireAuth, async (req, res) => {
     }
     
     // VALIDATION FINALE: S'assurer que les stats sont cohérentes
-    if (stats.conversions > 5000) {
+    // Seuil adaptatif selon la période
+    let maxConversionsThreshold = 5000;
+    if (period === 'month') {
+      maxConversionsThreshold = 10000; // Plus permissif pour le mois complet
+    } else if (period === 'week') {
+      maxConversionsThreshold = 3000;
+    }
+    
+    if (stats.conversions > maxConversionsThreshold) {
       console.error(`🚨🚨🚨 [SECURITY ALERT] Stats anormalement élevées détectées !`);
       console.error(`🚨 User: ${user.email}, Sub1: ${JSON.stringify(user.sub1)}, Conversions: ${stats.conversions}`);
+      console.error(`🚨 Period: ${period}, Threshold: ${maxConversionsThreshold}`);
       console.error(`🚨 Stats suspectes:`, stats);
       
-      // Si ce n'est pas un admin, bloquer et retourner 0
-      if (user.role !== 'admin') {
+      // Si ce n'est pas un admin/manager, bloquer et retourner 0
+      if (user.role !== 'admin' && user.role !== 'manager') {
         console.error(`🚨 PROTECTION ACTIVÉE - Stats remises à 0 pour ${user.email}`);
         stats = {
           clicks: 0,
           conversions: 0,
           revenue: 0,
           bonus: 0,
-          managerProfit: 0
+          managerProfit: 0,
+          netProfit: 0
         };
       }
     }
