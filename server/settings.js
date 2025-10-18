@@ -89,6 +89,18 @@ function getLeadCountMultiplier(sub1) {
   return rule ? rule.multiplier : 1;
 }
 
+// Obtenir le bonus de leads fixe pour un sub1 spécifique
+function getLeadCountBonus(sub1) {
+  const settings = getSettings();
+  const leadCountRules = settings.lead_count_rules || [];
+  
+  // Chercher une règle pour ce sub1
+  const rule = leadCountRules.find(r => r.sub1 === sub1);
+  
+  // Si une règle existe avec un bonus, le retourner, sinon 0
+  return rule && rule.bonus_leads ? rule.bonus_leads : 0;
+}
+
 module.exports = {
   getSettings,
   updateSettings,
@@ -96,6 +108,7 @@ module.exports = {
   getDisplayPayoutForSub1,
   getDisplayPayoutPerLead,
   getManagerMargin,
-  getLeadCountMultiplier
+  getLeadCountMultiplier,
+  getLeadCountBonus
 };
 

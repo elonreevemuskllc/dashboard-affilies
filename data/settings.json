@@ -26,7 +26,8 @@
     {
       "sub1": "bad",
       "multiplier": 0.5,
-      "comment": "Compte 1 lead sur 2 (50%)"
+      "bonus_leads": 5,
+      "comment": "Compte 1 lead sur 2 (50%) + 5 leads bonus"
     }
   ],
   "platform_mode": "dual",

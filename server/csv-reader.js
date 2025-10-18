@@ -211,10 +211,12 @@ async function fetchEverflowConversions(period = 'today') {
     // Appliquer les règles de comptage de leads
     Object.keys(aggregated).forEach(sub1 => {
       const multiplier = settings.getLeadCountMultiplier(sub1);
-      if (multiplier !== 1) {
+      const bonusLeads = settings.getLeadCountBonus(sub1);
+      
+      if (multiplier !== 1 || bonusLeads !== 0) {
         const originalConvs = aggregated[sub1].convs;
-        aggregated[sub1].convs = Math.round(originalConvs * multiplier);
-        console.log(`🎯 Règle de comptage appliquée pour ${sub1}: ${originalConvs} leads × ${multiplier} = ${aggregated[sub1].convs} leads`);
+        aggregated[sub1].convs = Math.round(originalConvs * multiplier) + bonusLeads;
+        console.log(`🎯 Règle de comptage appliquée pour ${sub1}: ${originalConvs} leads × ${multiplier} + ${bonusLeads} bonus = ${aggregated[sub1].convs} leads`);
       }
     });
 
