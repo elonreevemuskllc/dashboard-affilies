@@ -28,6 +28,21 @@ let latestConversions = {};
 
 // Fonction pour calculer les dates selon la période
 function getDateRange(period = 'today') {
+  // Gérer les dates personnalisées (format: custom:2025-10-01:2025-10-18)
+  if (period.startsWith('custom:')) {
+    const parts = period.split(':');
+    if (parts.length === 3) {
+      const dateFrom = parts[1];
+      const dateTo = parts[2];
+      
+      const from = `${dateFrom} 02:00:00`;
+      const to = `${dateTo} 23:59:59`;
+      
+      console.log(`📅 [CUSTOM] Dates personnalisées: ${from} → ${to}`);
+      return { from, to };
+    }
+  }
+  
   const now = new Date();
   let startDate, endDate;
   

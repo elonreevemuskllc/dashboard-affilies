@@ -92,6 +92,50 @@ function changePeriod(period) {
     refreshAllData();
 }
 
+// Fonction pour appliquer les dates personnalisées
+function applyCustomDates() {
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    if (!dateFrom || !dateTo) {
+        alert('Veuillez sélectionner les deux dates');
+        return;
+    }
+    
+    if (new Date(dateFrom) > new Date(dateTo)) {
+        alert('La date de début doit être avant la date de fin');
+        return;
+    }
+    
+    // Désactiver tous les boutons de période
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Utiliser un format spécial pour les dates personnalisées
+    currentPeriod = `custom:${dateFrom}:${dateTo}`;
+    
+    // Recharger toutes les données
+    refreshAllData();
+}
+
+// Initialiser les dates par défaut
+function initializeDatePickers() {
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    document.getElementById('date-from').value = formatDate(lastWeek);
+    document.getElementById('date-to').value = formatDate(today);
+}
+
 // 1. Charger les statistiques du dashboard
 async function loadDashboardStats() {
     try {
@@ -705,6 +749,7 @@ async function loadManagerEPC() {
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Dashboard initialisé');
+    initializeDatePickers();
     loadCurrentUser();
     refreshAllData();
     

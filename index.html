@@ -33,11 +33,18 @@
     <main class="container">
         <!-- Filtres de période -->
         <section style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
-            <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap; align-items: center;">
                 <button class="period-btn active" data-period="today" onclick="changePeriod('today')">Aujourd'hui</button>
                 <button class="period-btn" data-period="yesterday" onclick="changePeriod('yesterday')">Hier</button>
                 <button class="period-btn" data-period="week" onclick="changePeriod('week')">Cette semaine</button>
                 <!-- <button class="period-btn" data-period="month" onclick="changePeriod('month')">Ce mois-ci</button> -->
+                
+                <div style="display: flex; gap: var(--spacing-sm); align-items: center; margin-left: var(--spacing-md); padding-left: var(--spacing-md); border-left: 1px solid var(--border);">
+                    <input type="date" id="date-from" class="date-input" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); color: var(--foreground);">
+                    <span style="color: var(--muted-foreground);">→</span>
+                    <input type="date" id="date-to" class="date-input" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); color: var(--foreground);">
+                    <button class="btn btn-primary" onclick="applyCustomDates()" style="padding: 8px 16px; font-size: 14px;">Afficher</button>
+                </div>
             </div>
         </section>
 
