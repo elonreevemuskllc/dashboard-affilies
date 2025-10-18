@@ -26,6 +26,13 @@ let apiCache = {
 // Stockage temporaire des conversions brutes par période
 let latestConversions = {};
 
+// Cache pour les périodes custom (pour éviter les appels multiples)
+let customPeriodCache = {
+  data: null,
+  period: null,
+  timestamp: null
+};
+
 // Fonction pour calculer les dates selon la période
 function getDateRange(period = 'today') {
   // Gérer les dates personnalisées (format: custom:2025-10-01:2025-10-18)
@@ -100,7 +107,35 @@ function getDateRange(period = 'today') {
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
   try {
-    // DÉSACTIVATION DE TUNE - Utilisation d'Everflow uniquement
+    // Pour les périodes custom, utiliser le cache pour éviter les appels multiples
+    if (period.startsWith('custom:')) {
+      const now = Date.now();
+      // Si on a déjà les données pour cette période et que c'est récent (< 5 secondes)
+      if (customPeriodCache.period === period && 
+          customPeriodCache.data && 
+          customPeriodCache.timestamp && 
+          (now - customPeriodCache.timestamp) < 5000) {
+        console.log(`✅ Utilisation du cache pour ${period}`);
+        return customPeriodCache.data;
+      }
+      
+      console.log(`🔄 Premier appel pour ${period} - Récupération depuis Everflow...`);
+      const everflowData = await fetchEverflowConversions(period);
+      
+      // Mettre en cache
+      customPeriodCache = {
+        data: everflowData,
+        period: period,
+        timestamp: now
+      };
+      
+      console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache)`);
+      console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
+      
+      return everflowData;
+    }
+    
+    // Pour les autres périodes, comportement normal
     console.log('🔄 Récupération des données depuis Everflow uniquement...');
     const everflowData = await fetchEverflowConversions(period);
 
