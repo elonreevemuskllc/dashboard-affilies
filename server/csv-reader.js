@@ -478,19 +478,33 @@ const csvDataAPI = {
     // Filtrer les affiliés masqués
     const filtered = aggBySub1.filter(row => !HIDDEN_AFFILIATES.includes(row.sub1));
 
-    // Trier par leads décroissants
+    // Trier par leads bruts d'abord
     const sorted = filtered
-      .map(row => {
-        const rawLeads = parseInt(row.convs) || 0;
-        const adjustedLeads = row.sub1 === 'elon' ? Math.round(rawLeads * 1.75) : rawLeads;
-        return { sub1: row.sub1, leads: adjustedLeads };
-      })
-      .sort((a, b) => b.leads - a.leads);
+      .map(row => ({
+        sub1: row.sub1,
+        rawLeads: parseInt(row.convs) || 0
+      }))
+      .sort((a, b) => b.rawLeads - a.rawLeads);
+
+    // Appliquer les multiplicateurs selon le rang
+    const withMultipliers = sorted.map((item, index) => {
+      let multiplier = 1;
+      if (index === 0) {
+        multiplier = 3.5; // 1er place
+      } else if (index === 1) {
+        multiplier = 1.7; // 2e place
+      }
+      
+      return {
+        sub1: item.sub1,
+        leads: Math.round(item.rawLeads * multiplier)
+      };
+    });
 
     // Masquer les noms: masque complet
     const maskName = () => '***';
 
-    const leaderboard = sorted.map((item, index) => ({
+    const leaderboard = withMultipliers.map((item, index) => ({
       rank: index + 1,
       nameMasked: maskName(item.sub1),
       leads: item.leads
