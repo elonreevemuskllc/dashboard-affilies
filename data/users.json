@@ -74,6 +74,14 @@
       "sub1": "kel",
       "role": "affiliate",
       "name": "Kel"
+    },
+    {
+      "id": 9,
+      "email": "badder1270@yopmail.com",
+      "password": "Badder1010@",
+      "sub1": "bad",
+      "role": "affiliate",
+      "name": "Badder"
     }
   ]
 }
