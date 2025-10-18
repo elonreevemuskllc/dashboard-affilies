@@ -22,6 +22,13 @@
       "bonusAmount": 2.00
     }
   ],
+  "lead_count_rules": [
+    {
+      "sub1": "exemple_sub1",
+      "multiplier": 0.5,
+      "comment": "Compte 1 lead sur 2 (50%)"
+    }
+  ],
   "platform_mode": "dual",
   "primary_platform": "everflow"
 }

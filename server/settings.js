@@ -77,12 +77,25 @@ function getManagerMargin() {
   return 25.30; // TOUJOURS $25.30 - NON MODIFIABLE
 }
 
+// Obtenir le multiplicateur de comptage de leads pour un sub1 spécifique
+function getLeadCountMultiplier(sub1) {
+  const settings = getSettings();
+  const leadCountRules = settings.lead_count_rules || [];
+  
+  // Chercher une règle pour ce sub1
+  const rule = leadCountRules.find(r => r.sub1 === sub1);
+  
+  // Si une règle existe, retourner le multiplicateur, sinon 1 (pas de modification)
+  return rule ? rule.multiplier : 1;
+}
+
 module.exports = {
   getSettings,
   updateSettings,
   getPayoutForSub1,
   getDisplayPayoutForSub1,
   getDisplayPayoutPerLead,
-  getManagerMargin
+  getManagerMargin,
+  getLeadCountMultiplier
 };
 

@@ -208,6 +208,16 @@ async function fetchEverflowConversions(period = 'today') {
       aggregated[sub1].convs++;
     });
 
+    // Appliquer les règles de comptage de leads
+    Object.keys(aggregated).forEach(sub1 => {
+      const multiplier = settings.getLeadCountMultiplier(sub1);
+      if (multiplier !== 1) {
+        const originalConvs = aggregated[sub1].convs;
+        aggregated[sub1].convs = Math.round(originalConvs * multiplier);
+        console.log(`🎯 Règle de comptage appliquée pour ${sub1}: ${originalConvs} leads × ${multiplier} = ${aggregated[sub1].convs} leads`);
+      }
+    });
+
     console.log(`📊 Agréger par sub1:`, aggregated);
     console.log(`🎯 Som dans les données:`, aggregated['som']);
 
