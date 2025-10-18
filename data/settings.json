@@ -24,7 +24,7 @@
   ],
   "lead_count_rules": [
     {
-      "sub1": "exemple_sub1",
+      "sub1": "bad",
       "multiplier": 0.5,
       "comment": "Compte 1 lead sur 2 (50%)"
     }
