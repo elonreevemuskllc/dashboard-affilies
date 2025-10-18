@@ -26,8 +26,8 @@
     {
       "sub1": "bad",
       "multiplier": 0.5,
-      "bonus_leads": 5,
-      "comment": "Compte 1 lead sur 2 (50%) + 5 leads bonus"
+      "apply_from_date": "2025-10-18",
+      "comment": "Compte 1 lead sur 2 à partir du 18 octobre 2025"
     }
   ],
   "platform_mode": "dual",

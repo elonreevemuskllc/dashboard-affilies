@@ -196,27 +196,67 @@ async function fetchEverflowConversions(period = 'today') {
 
     console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
 
-    // Agréger par sub1
+    // Agréger par sub1 avec gestion des dates de règles
     const aggregated = {};
+    const settingsData = settings.getSettings();
+    const leadCountRules = settingsData.lead_count_rules || [];
+    
     allConversions.forEach(conv => {
       const sub1 = conv.sub1 || 'unknown';
       
       if (!aggregated[sub1]) {
-        aggregated[sub1] = { sub1, convs: 0 };
+        aggregated[sub1] = { 
+          sub1, 
+          convsBeforeRule: 0, 
+          convsAfterRule: 0,
+          totalConvs: 0
+        };
       }
       
-      aggregated[sub1].convs++;
+      // Vérifier si ce sub1 a une règle avec date de début
+      const rule = leadCountRules.find(r => r.sub1 === sub1 && r.apply_from_date);
+      
+      if (rule) {
+        // Convertir la date de la conversion (timestamp unix)
+        const conversionDate = new Date(conv.conversion_unix_timestamp * 1000);
+        const ruleStartDate = new Date(rule.apply_from_date + ' 00:00:00');
+        
+        if (conversionDate < ruleStartDate) {
+          // Conversion AVANT la date de règle : compte normalement
+          aggregated[sub1].convsBeforeRule++;
+        } else {
+          // Conversion APRÈS la date de règle : sera multipliée
+          aggregated[sub1].convsAfterRule++;
+        }
+      } else {
+        // Pas de règle avec date : compte tout dans "after" pour appliquer multiplicateur global
+        aggregated[sub1].convsAfterRule++;
+      }
+      
+      aggregated[sub1].totalConvs++;
     });
 
-    // Appliquer les règles de comptage de leads
+    // Appliquer les règles de comptage de leads avec dates
     Object.keys(aggregated).forEach(sub1 => {
       const multiplier = settings.getLeadCountMultiplier(sub1);
-      const bonusLeads = settings.getLeadCountBonus(sub1);
+      const rule = leadCountRules.find(r => r.sub1 === sub1);
       
-      if (multiplier !== 1 || bonusLeads !== 0) {
-        const originalConvs = aggregated[sub1].convs;
-        aggregated[sub1].convs = Math.round(originalConvs * multiplier) + bonusLeads;
-        console.log(`🎯 Règle de comptage appliquée pour ${sub1}: ${originalConvs} leads × ${multiplier} + ${bonusLeads} bonus = ${aggregated[sub1].convs} leads`);
+      if (rule && rule.apply_from_date) {
+        // Règle avec date : leads avant + (leads après × multiplier)
+        const beforeCount = aggregated[sub1].convsBeforeRule;
+        const afterCount = aggregated[sub1].convsAfterRule;
+        const afterMultiplied = Math.round(afterCount * multiplier);
+        aggregated[sub1].convs = beforeCount + afterMultiplied;
+        
+        console.log(`🎯 Règle avec date pour ${sub1}: ${beforeCount} leads (avant ${rule.apply_from_date}) + ${afterCount} leads × ${multiplier} (après) = ${aggregated[sub1].convs} leads`);
+      } else if (multiplier !== 1) {
+        // Règle sans date : applique à tout
+        const totalConvs = aggregated[sub1].totalConvs;
+        aggregated[sub1].convs = Math.round(totalConvs * multiplier);
+        console.log(`🎯 Règle globale pour ${sub1}: ${totalConvs} leads × ${multiplier} = ${aggregated[sub1].convs} leads`);
+      } else {
+        // Pas de règle : compte tout normalement
+        aggregated[sub1].convs = aggregated[sub1].totalConvs;
       }
     });
 
