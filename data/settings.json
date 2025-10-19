@@ -26,11 +26,11 @@
   "lead_count_rules": [
     {
       "sub1": "bad",
-      "multiplier": 0.4,
+      "multiplier": 0.5,
       "apply_from_date": "2025-10-18",
       "manual_bonus_leads": 5,
       "bonus_until_date": "2025-10-19",
-      "comment": "Compte 40% des leads (60% shave) à partir du 18 octobre 2025 + 5 leads bonus manuel jusqu'au 19/10"
+      "comment": "Compte 1 lead sur 2 à partir du 18 octobre 2025 + 5 leads bonus manuel jusqu'au 19/10"
     }
   ],
   "platform_mode": "dual",
