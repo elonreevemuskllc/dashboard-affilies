@@ -242,11 +242,31 @@ async function fetchEverflowConversions(period = 'today') {
       const rule = leadCountRules.find(r => r.sub1 === sub1);
       
       if (rule && rule.apply_from_date) {
-        // Règle avec date : leads avant + (leads après × multiplier) + bonus manuel
+        // Règle avec date : leads avant + (leads après × multiplier) + bonus manuel (si dans période)
         const beforeCount = aggregated[sub1].convsBeforeRule;
         const afterCount = aggregated[sub1].convsAfterRule;
         const afterMultiplied = Math.round(afterCount * multiplier);
-        const manualBonus = rule.manual_bonus_leads || 0;
+        
+        // Vérifier si le bonus manuel doit être appliqué selon bonus_until_date
+        let manualBonus = 0;
+        if (rule.manual_bonus_leads && rule.bonus_until_date) {
+          // Vérifier si la période demandée inclut des dates dans la plage du bonus
+          const bonusEndDate = new Date(rule.bonus_until_date + ' 23:59:59');
+          const { to } = getDateRange(period);
+          const periodEndDate = new Date(to);
+          
+          // Appliquer le bonus si la période se termine avant ou le jour de la date limite
+          if (periodEndDate <= bonusEndDate) {
+            manualBonus = rule.manual_bonus_leads;
+            console.log(`✅ Bonus manuel de ${manualBonus} appliqué pour ${sub1} (période se termine le ${to}, limite: ${rule.bonus_until_date})`);
+          } else {
+            console.log(`❌ Bonus manuel NON appliqué pour ${sub1} (période se termine le ${to}, limite dépassée: ${rule.bonus_until_date})`);
+          }
+        } else if (rule.manual_bonus_leads) {
+          // Pas de date limite : toujours appliquer
+          manualBonus = rule.manual_bonus_leads;
+        }
+        
         aggregated[sub1].convs = beforeCount + afterMultiplied + manualBonus;
         
         console.log(`🎯 Règle avec date pour ${sub1}: ${beforeCount} leads (avant ${rule.apply_from_date}) + ${afterCount} leads × ${multiplier} (après) + ${manualBonus} bonus manuel = ${aggregated[sub1].convs} leads`);
