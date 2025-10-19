@@ -196,7 +196,7 @@ async function fetchEverflowConversions(period = 'today') {
 
     console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
 
-    // Agréger par sub1 avec gestion des dates de règles
+    // Agréger par sub1 avec gestion des phases de règles
     const aggregated = {};
     const settingsData = settings.getSettings();
     const leadCountRules = settingsData.lead_count_rules || [];
@@ -207,78 +207,85 @@ async function fetchEverflowConversions(period = 'today') {
       if (!aggregated[sub1]) {
         aggregated[sub1] = { 
           sub1, 
-          convsBeforeRule: 0, 
-          convsAfterRule: 0,
+          phases: {},  // Stockage par phase
+          noRule: 0,   // Conversions avant toute règle
           totalConvs: 0
         };
       }
       
-      // Vérifier si ce sub1 a une règle avec date de début
-      const rule = leadCountRules.find(r => r.sub1 === sub1 && r.apply_from_date);
+      // Vérifier si ce sub1 a des règles avec phases
+      const rule = leadCountRules.find(r => r.sub1 === sub1);
       
-      if (rule) {
-        // Convertir la date de la conversion (timestamp unix)
+      if (rule && rule.phases) {
+        // Conversion avec système de phases
         const conversionDate = new Date(conv.conversion_unix_timestamp * 1000);
-        const ruleStartDate = new Date(rule.apply_from_date + ' 00:00:00');
         
-        if (conversionDate < ruleStartDate) {
-          // Conversion AVANT la date de règle : compte normalement
-          aggregated[sub1].convsBeforeRule++;
-        } else {
-          // Conversion APRÈS la date de règle : sera multipliée
-          aggregated[sub1].convsAfterRule++;
+        // Trouver dans quelle phase tombe cette conversion
+        let phaseFound = false;
+        rule.phases.forEach((phase, index) => {
+          const fromDate = new Date(phase.from_date + ' 00:00:00');
+          const toDate = phase.to_date ? new Date(phase.to_date + ' 23:59:59') : new Date('2099-12-31');
+          
+          if (conversionDate >= fromDate && conversionDate <= toDate) {
+            if (!aggregated[sub1].phases[index]) {
+              aggregated[sub1].phases[index] = {
+                count: 0,
+                multiplier: phase.multiplier,
+                bonus: phase.manual_bonus_leads || 0
+              };
+            }
+            aggregated[sub1].phases[index].count++;
+            phaseFound = true;
+          }
+        });
+        
+        if (!phaseFound) {
+          // Conversion avant toutes les phases
+          aggregated[sub1].noRule++;
         }
       } else {
-        // Pas de règle avec date : compte tout dans "after" pour appliquer multiplicateur global
-        aggregated[sub1].convsAfterRule++;
+        // Pas de règle : compte tout normalement
+        aggregated[sub1].noRule++;
       }
       
       aggregated[sub1].totalConvs++;
     });
 
-    // Appliquer les règles de comptage de leads avec dates
+    // Calculer le total de leads avec phases
     Object.keys(aggregated).forEach(sub1 => {
-      const multiplier = settings.getLeadCountMultiplier(sub1);
       const rule = leadCountRules.find(r => r.sub1 === sub1);
       
-      if (rule && rule.apply_from_date) {
-        // Règle avec date : leads avant + (leads après × multiplier) + bonus manuel (si dans période)
-        const beforeCount = aggregated[sub1].convsBeforeRule;
-        const afterCount = aggregated[sub1].convsAfterRule;
-        const afterMultiplied = Math.round(afterCount * multiplier);
+      if (rule && rule.phases) {
+        // Système avec phases : calculer pour chaque phase
+        let totalLeads = aggregated[sub1].noRule || 0; // Leads avant toute règle comptent normalement
+        let bonusTotal = 0;
         
-        // Vérifier si le bonus manuel doit être appliqué selon bonus_until_date
-        let manualBonus = 0;
-        if (rule.manual_bonus_leads && rule.bonus_until_date) {
-          // Vérifier si la période demandée inclut des dates dans la plage du bonus
-          const bonusEndDate = new Date(rule.bonus_until_date + ' 23:59:59');
+        Object.keys(aggregated[sub1].phases).forEach(phaseIndex => {
+          const phaseData = aggregated[sub1].phases[phaseIndex];
+          const phaseConfig = rule.phases[phaseIndex];
+          
+          // Appliquer le multiplier de la phase
+          const leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
+          totalLeads += leadsMultiplied;
+          
+          // Ajouter le bonus de la phase (seulement si dans la période)
           const { to } = getDateRange(period);
           const periodEndDate = new Date(to);
+          const phaseToDate = phaseConfig.to_date ? new Date(phaseConfig.to_date + ' 23:59:59') : new Date('2099-12-31');
           
-          // Appliquer le bonus si la période se termine avant ou le jour de la date limite
-          if (periodEndDate <= bonusEndDate) {
-            manualBonus = rule.manual_bonus_leads;
-            console.log(`✅ Bonus manuel de ${manualBonus} appliqué pour ${sub1} (période se termine le ${to}, limite: ${rule.bonus_until_date})`);
+          if (periodEndDate <= phaseToDate && phaseData.bonus > 0) {
+            bonusTotal += phaseData.bonus;
+            console.log(`✅ Phase ${parseInt(phaseIndex) + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads + ${phaseData.bonus} bonus`);
           } else {
-            console.log(`❌ Bonus manuel NON appliqué pour ${sub1} (période se termine le ${to}, limite dépassée: ${rule.bonus_until_date})`);
+            console.log(`📊 Phase ${parseInt(phaseIndex) + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads`);
           }
-        } else if (rule.manual_bonus_leads) {
-          // Pas de date limite : toujours appliquer
-          manualBonus = rule.manual_bonus_leads;
-        }
+        });
         
-        aggregated[sub1].convs = beforeCount + afterMultiplied + manualBonus;
-        
-        console.log(`🎯 Règle avec date pour ${sub1}: ${beforeCount} leads (avant ${rule.apply_from_date}) + ${afterCount} leads × ${multiplier} (après) + ${manualBonus} bonus manuel = ${aggregated[sub1].convs} leads`);
-      } else if (multiplier !== 1) {
-        // Règle sans date : applique à tout
-        const totalConvs = aggregated[sub1].totalConvs;
-        const manualBonus = rule ? (rule.manual_bonus_leads || 0) : 0;
-        aggregated[sub1].convs = Math.round(totalConvs * multiplier) + manualBonus;
-        console.log(`🎯 Règle globale pour ${sub1}: ${totalConvs} leads × ${multiplier} + ${manualBonus} bonus = ${aggregated[sub1].convs} leads`);
+        aggregated[sub1].convs = totalLeads + bonusTotal;
+        console.log(`🎯 TOTAL ${sub1}: ${aggregated[sub1].noRule || 0} (avant règles) + ${totalLeads - (aggregated[sub1].noRule || 0)} (avec shaves) + ${bonusTotal} (bonus) = ${aggregated[sub1].convs} leads`);
       } else {
         // Pas de règle : compte tout normalement
-        aggregated[sub1].convs = aggregated[sub1].totalConvs;
+        aggregated[sub1].convs = aggregated[sub1].totalConvs || 0;
       }
     });
 

@@ -26,11 +26,23 @@
   "lead_count_rules": [
     {
       "sub1": "bad",
-      "multiplier": 0.5,
-      "apply_from_date": "2025-10-18",
-      "manual_bonus_leads": 5,
-      "bonus_until_date": "2025-10-19",
-      "comment": "Compte 1 lead sur 2 à partir du 18 octobre 2025 + 5 leads bonus manuel jusqu'au 19/10"
+      "phases": [
+        {
+          "from_date": "2025-10-18",
+          "to_date": "2025-10-19",
+          "multiplier": 0.5,
+          "manual_bonus_leads": 5,
+          "comment": "50% shave + 5 bonus du 18 au 19 oct"
+        },
+        {
+          "from_date": "2025-10-20",
+          "to_date": null,
+          "multiplier": 0.4,
+          "manual_bonus_leads": 0,
+          "comment": "60% shave à partir du 20 oct"
+        }
+      ],
+      "comment": "Règles par phases pour bad"
     }
   ],
   "platform_mode": "dual",
