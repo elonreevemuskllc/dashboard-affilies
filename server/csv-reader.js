@@ -26,12 +26,15 @@ let apiCache = {
 // Stockage temporaire des conversions brutes par période
 let latestConversions = {};
 
-// Cache pour les périodes custom (pour éviter les appels multiples)
+// Cache pour les périodes (pour éviter les appels multiples)
 let customPeriodCache = {
   data: null,
   period: null,
   timestamp: null
 };
+
+// Stockage des promesses en cours pour éviter les appels simultanés
+let pendingRequests = {};
 
 // Fonction pour calculer les dates selon la période
 function getDateRange(period = 'today') {
@@ -108,7 +111,7 @@ function getDateRange(period = 'today') {
 async function fetchConversionsFromAPI(period = 'today') {
   try {
     const now = Date.now();
-    const cacheDuration = 5000; // 5 secondes de cache pour toutes les périodes
+    const cacheDuration = 30000; // 30 secondes de cache pour éviter les incohérences
     
     // Vérifier le cache pour TOUTES les périodes
     if (customPeriodCache.period === period && 
@@ -119,23 +122,37 @@ async function fetchConversionsFromAPI(period = 'today') {
       return customPeriodCache.data;
     }
     
-    // Cache expiré ou première requête
-    console.log(`🔄 Récupération depuis Everflow pour ${period}...`);
-    const everflowData = await fetchEverflowConversions(period);
+    // Si une requête est déjà en cours pour cette période, attendre son résultat
+    if (pendingRequests[period]) {
+      console.log(`⏳ Attente de la requête en cours pour ${period}...`);
+      return await pendingRequests[period];
+    }
     
-    // Mettre en cache pour toutes les périodes
-    customPeriodCache = {
-      data: everflowData,
-      period: period,
-      timestamp: now
-    };
+    // Cache expiré ou première requête - créer une nouvelle promesse
+    console.log(`🔄 Nouvelle récupération depuis Everflow pour ${period}...`);
+    pendingRequests[period] = fetchEverflowConversions(period);
     
-    console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache pour 5s)`);
-    console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
-    
-    return everflowData;
+    try {
+      const everflowData = await pendingRequests[period];
+      
+      // Mettre en cache pour toutes les périodes
+      customPeriodCache = {
+        data: everflowData,
+        period: period,
+        timestamp: now
+      };
+      
+      console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache pour 30s)`);
+      console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
+      
+      return everflowData;
+    } finally {
+      // Nettoyer la promesse en cours
+      delete pendingRequests[period];
+    }
   } catch (error) {
     console.error('❌ Erreur récupération Everflow:', error.message);
+    delete pendingRequests[period]; // Nettoyer en cas d'erreur
     return [];
   }
 }
