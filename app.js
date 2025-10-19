@@ -132,8 +132,14 @@ function initializeDatePickers() {
         return `${year}-${month}-${day}`;
     };
     
-    document.getElementById('date-from').value = formatDate(lastWeek);
-    document.getElementById('date-to').value = formatDate(today);
+    // Vérifier si les éléments existent avant de les initialiser
+    const dateFromElement = document.getElementById('date-from');
+    const dateToElement = document.getElementById('date-to');
+    
+    if (dateFromElement && dateToElement) {
+        dateFromElement.value = formatDate(lastWeek);
+        dateToElement.value = formatDate(today);
+    }
 }
 
 // 1. Charger les statistiques du dashboard
