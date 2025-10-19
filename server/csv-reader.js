@@ -107,39 +107,30 @@ function getDateRange(period = 'today') {
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
 async function fetchConversionsFromAPI(period = 'today') {
   try {
-    // Pour les périodes custom, utiliser le cache pour éviter les appels multiples
-    if (period.startsWith('custom:')) {
-      const now = Date.now();
-      // Si on a déjà les données pour cette période et que c'est récent (< 5 secondes)
-      if (customPeriodCache.period === period && 
-          customPeriodCache.data && 
-          customPeriodCache.timestamp && 
-          (now - customPeriodCache.timestamp) < 5000) {
-        console.log(`✅ Utilisation du cache pour ${period}`);
-        return customPeriodCache.data;
-      }
-      
-      console.log(`🔄 Premier appel pour ${period} - Récupération depuis Everflow...`);
-      const everflowData = await fetchEverflowConversions(period);
-      
-      // Mettre en cache
-      customPeriodCache = {
-        data: everflowData,
-        period: period,
-        timestamp: now
-      };
-      
-      console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache)`);
-      console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
-      
-      return everflowData;
+    const now = Date.now();
+    const cacheDuration = 5000; // 5 secondes de cache pour toutes les périodes
+    
+    // Vérifier le cache pour TOUTES les périodes
+    if (customPeriodCache.period === period && 
+        customPeriodCache.data && 
+        customPeriodCache.timestamp && 
+        (now - customPeriodCache.timestamp) < cacheDuration) {
+      console.log(`✅ Cache utilisé pour ${period} (${Math.round((now - customPeriodCache.timestamp)/1000)}s)`);
+      return customPeriodCache.data;
     }
     
-    // Pour les autres périodes, comportement normal
-    console.log('🔄 Récupération des données depuis Everflow uniquement...');
+    // Cache expiré ou première requête
+    console.log(`🔄 Récupération depuis Everflow pour ${period}...`);
     const everflowData = await fetchEverflowConversions(period);
-
-    console.log(`📊 Everflow: ${everflowData.length} sub1`);
+    
+    // Mettre en cache pour toutes les périodes
+    customPeriodCache = {
+      data: everflowData,
+      period: period,
+      timestamp: now
+    };
+    
+    console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache pour 5s)`);
     console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
     
     return everflowData;

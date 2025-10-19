@@ -119,6 +119,35 @@ function applyCustomDates() {
     refreshAllData();
 }
 
+// Appliquer une période personnalisée
+function applyCustomPeriod() {
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    if (!dateFrom || !dateTo) {
+        alert('Veuillez sélectionner une date de début et une date de fin');
+        return;
+    }
+    
+    if (dateFrom > dateTo) {
+        alert('La date de début doit être antérieure à la date de fin');
+        return;
+    }
+    
+    // Désactiver tous les boutons de période
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Utiliser le format custom:YYYY-MM-DD:YYYY-MM-DD
+    currentPeriod = `custom:${dateFrom}:${dateTo}`;
+    
+    console.log(`📅 Période personnalisée appliquée: ${dateFrom} → ${dateTo}`);
+    
+    // Recharger toutes les données
+    refreshAllData();
+}
+
 // Initialiser les dates par défaut
 function initializeDatePickers() {
     const today = new Date();
