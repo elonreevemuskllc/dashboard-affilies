@@ -26,12 +26,8 @@ let apiCache = {
 // Stockage temporaire des conversions brutes par période
 let latestConversions = {};
 
-// Cache pour les périodes (pour éviter les appels multiples)
-let customPeriodCache = {
-  data: null,
-  period: null,
-  timestamp: null
-};
+// Cache pour les périodes (pour éviter les appels multiples) - maintenant par clé unique
+let cacheStore = {};
 
 // Stockage des promesses en cours pour éviter les appels simultanés
 let pendingRequests = {};
@@ -108,57 +104,74 @@ function getDateRange(period = 'today') {
 }
 
 // Fonction pour récupérer les conversions depuis l'API et les agréger par sub1
-async function fetchConversionsFromAPI(period = 'today') {
+async function fetchConversionsFromAPI(period = 'today', sub1Filter = null) {
+  const callId = Math.random().toString(36).substring(7);
+  // Créer une clé de cache INCLUANT le sub1Filter pour éviter le mélange des caches
+  const sub1Key = sub1Filter ? (Array.isArray(sub1Filter) ? sub1Filter.join(',') : sub1Filter) : 'ALL';
+  const cacheKey = `${period}:${sub1Key}`;
+  
+  console.log(`\n🔵 [${callId}] ===== DÉBUT fetchConversionsFromAPI =====`);
+  console.log(`🔵 [${callId}] Period: ${period}, Sub1Filter: ${sub1Filter || 'NONE (GLOBAL)'}`);
+  console.log(`🔵 [${callId}] CacheKey: ${cacheKey}`);
+  
   try {
     const now = Date.now();
-    const cacheDuration = 30000; // 30 secondes de cache pour éviter les incohérences
+    const cacheDuration = 30000; // 30 secondes de cache
     
-    // Vérifier le cache pour TOUTES les périodes
-    if (customPeriodCache.period === period && 
-        customPeriodCache.data && 
-        customPeriodCache.timestamp && 
-        (now - customPeriodCache.timestamp) < cacheDuration) {
-      console.log(`✅ Cache utilisé pour ${period} (${Math.round((now - customPeriodCache.timestamp)/1000)}s)`);
-      return customPeriodCache.data;
+    const cache = cacheStore[cacheKey];
+    console.log(`🔵 [${callId}] Vérification cache pour clé: ${cacheKey}`);
+    
+    // Vérifier le cache
+    if (cache && cache.data && cache.timestamp && (now - cache.timestamp) < cacheDuration) {
+      const age = Math.round((now - cache.timestamp)/1000);
+      console.log(`✅ [${callId}] CACHE HIT (${age}s) - ${cache.data.length} sub1`);
+      console.log(`🔵 [${callId}] ===== FIN (CACHE) =====\n`);
+      return cache.data;
     }
     
-    // Si une requête est déjà en cours pour cette période, attendre son résultat
-    if (pendingRequests[period]) {
-      console.log(`⏳ Attente de la requête en cours pour ${period}...`);
-      return await pendingRequests[period];
+    console.log(`🔵 [${callId}] Cache MISS ou expiré`);
+    
+    // Si une requête est déjà en cours, attendre
+    if (pendingRequests[cacheKey]) {
+      console.log(`⏳ [${callId}] Attente requête en cours...`);
+      const result = await pendingRequests[cacheKey];
+      console.log(`⏳ [${callId}] Requête terminée: ${result.length} sub1`);
+      console.log(`🔵 [${callId}] ===== FIN (WAIT) =====\n`);
+      return result;
     }
     
-    // Cache expiré ou première requête - créer une nouvelle promesse
-    console.log(`🔄 Nouvelle récupération depuis Everflow pour ${period}...`);
-    pendingRequests[period] = fetchEverflowConversions(period);
+    // Nouvelle requête AVEC le filtre sub1
+    console.log(`🔄 [${callId}] NOUVELLE REQUÊTE Everflow (filtre=${sub1Filter ? 'OUI' : 'NON'})...`);
+    pendingRequests[cacheKey] = fetchEverflowConversions(period, sub1Filter);
     
     try {
-      const everflowData = await pendingRequests[period];
+      const everflowData = await pendingRequests[cacheKey];
+      console.log(`🔄 [${callId}] Everflow retourné: ${everflowData.length} sub1`);
       
-      // Mettre en cache pour toutes les périodes
-      customPeriodCache = {
+      // Mettre en cache
+      cacheStore[cacheKey] = {
         data: everflowData,
-        period: period,
         timestamp: now
       };
       
-      console.log(`📊 Everflow: ${everflowData.length} sub1 (mis en cache pour 30s)`);
-      console.log(`✅ TUNE désactivé - Utilisation Everflow seul`);
+      console.log(`📊 [${callId}] Cache mis à jour (30s) - timestamp=${now}`);
+      console.log(`🔵 [${callId}] ===== FIN (NEW DATA) =====\n`);
       
       return everflowData;
     } finally {
-      // Nettoyer la promesse en cours
-      delete pendingRequests[period];
+      delete pendingRequests[cacheKey];
+      console.log(`🧹 [${callId}] Promesse nettoyée`);
     }
   } catch (error) {
-    console.error('❌ Erreur récupération Everflow:', error.message);
-    delete pendingRequests[period]; // Nettoyer en cas d'erreur
+    console.error(`❌ [${callId}] Erreur:`, error.message);
+    delete pendingRequests[cacheKey];
+    console.log(`🔵 [${callId}] ===== FIN (ERROR) =====\n`);
     return [];
   }
 }
 
 // Fonction pour récupérer les conversions depuis Everflow uniquement
-async function fetchEverflowConversions(period = 'today') {
+async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
   try {
     const { from, to } = getDateRange(period);
 
@@ -166,43 +179,51 @@ async function fetchEverflowConversions(period = 'today') {
     console.log(`📅 [DEBUG EVERFLOW] Period: ${period}`);
     console.log(`📅 [DEBUG EVERFLOW] Date FROM: ${from}`);
     console.log(`📅 [DEBUG EVERFLOW] Date TO: ${to}`);
+    console.log(`📅 [DEBUG EVERFLOW] Sub1Filter: ${sub1Filter || 'AUCUN (TOUS)'}`);
 
-    // Récupérer toutes les conversions (avec pagination)
-    let allConversions = [];
-    let page = 1;
-    const limit = 500;
-
-    while (true) {
-      const response = await axios.post(
-        `${EVERFLOW_API_URL}/affiliates/reporting/conversions`,
-        {
-          from: from,
-          to: to,
-          timezone_id: 67,
-          show_conversions: true,
-          show_events: false,
-          page: page,
-          limit: limit
-        },
-        {
-          headers: {
-            'X-Eflow-API-Key': EVERFLOW_API_KEY,
-            'Content-Type': 'application/json'
-          }
+    // Récupérer les conversions
+    // Pour les périodes custom, on récupère 1 seule page (max 5000) car la pagination Everflow est cassée
+    const isCustomPeriod = period.startsWith('custom:');
+    const requestBody = {
+      from: from,
+      to: to,
+      timezone_id: 67,
+      show_conversions: true,
+      show_events: false,
+      page: 1,
+      limit: isCustomPeriod ? 5000 : 500  // Max pour custom, pagination normale pour le reste
+    };
+    
+    console.log(`🔍 [EVERFLOW REQUEST]:`, JSON.stringify(requestBody, null, 2));
+    
+    const response = await axios.post(
+      `${EVERFLOW_API_URL}/affiliates/reporting/conversions`,
+      requestBody,
+      {
+        headers: {
+          'X-Eflow-API-Key': EVERFLOW_API_KEY,
+          'Content-Type': 'application/json'
         }
-      );
+      }
+    );
 
-      const conversions = response.data.conversions || [];
-      if (conversions.length === 0) break;
-      
-      allConversions = allConversions.concat(conversions);
-      
-      if (conversions.length < limit) break;
-      page++;
-      if (page > 20) break; // Garde-fou
+    let allConversions = response.data.conversions || [];
+    console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
+    
+    // Si pas custom ET qu'il y a 500 conversions, il y en a peut-être plus (pagination)
+    if (!isCustomPeriod && allConversions.length === 500) {
+      console.log(`⚠️ 500 conversions = max par page. Il y en a peut-être plus, mais on limite à 500 pour éviter les doublons Everflow.`);
     }
 
     console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
+
+    // FILTRAGE côté serveur si sub1Filter fourni (Everflow ignore le filtre API)
+    if (sub1Filter) {
+      const sub1Array = Array.isArray(sub1Filter) ? sub1Filter : [sub1Filter];
+      const beforeFilter = allConversions.length;
+      allConversions = allConversions.filter(conv => sub1Array.includes(conv.sub1));
+      console.log(`🔍 FILTRAGE SERVEUR: ${beforeFilter} → ${allConversions.length} conversions (sub1=${sub1Array.join(',')})`);
+    }
 
     // Agréger par sub1 avec gestion des phases de règles
     const aggregated = {};
@@ -718,7 +739,8 @@ const csvDataAPI = {
   async getAffiliateStats(sub1Input, period = 'today') {
     console.log(`🔒 [SECURITY] getAffiliateStats appelé pour sub1: ${JSON.stringify(sub1Input)}, period: ${period}`);
     
-    const aggBySub1 = await fetchConversionsFromAPI(period);
+    // FILTRER DIRECTEMENT PAR SUB1 dans l'API au lieu de tout récupérer
+    const aggBySub1 = await fetchConversionsFromAPI(period, sub1Input);
     
     if (!aggBySub1 || aggBySub1.length === 0) {
       console.log(`🔒 [SECURITY] Aucune donnée trouvée pour ${sub1Input}`);
