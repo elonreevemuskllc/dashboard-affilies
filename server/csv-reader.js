@@ -885,7 +885,7 @@ const csvDataAPI = {
     // Calculer les clics estimés
     let estimatedClicks = Math.round(totalConversions / 0.077);
     
-    // ✨ BONUS MANUELS : Ajouter les bonus de leads et clics pour aujourd'hui seulement
+    // ✨ BONUS MANUELS DE CLICS : Ajouter uniquement les clics manuels (les leads sont déjà dans fetchEverflowConversions)
     const settingsData = settings.getSettings();
     const leadCountRules = settingsData.lead_count_rules || [];
     const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -903,17 +903,10 @@ const csvDataAPI = {
           
           if (todayDate >= fromDate && todayDate <= toDate) {
             // Phase active trouvée
-            const manualLeads = phase.manual_bonus_leads || 0;
             const manualClicks = phase.manual_bonus_clicks || 0;
             
-            if (manualLeads > 0) {
-              console.log(`✨ [MANUAL BONUS] +${manualLeads} leads manuels pour ${sub1}`);
-              totalConversions += manualLeads;
-              
-              // Ajouter les revenus des leads manuels
-              const payoutPerLead = settings.getPayoutForSub1(sub1);
-              totalRevenue += manualLeads * payoutPerLead;
-            }
+            // NOTE: Les manual_bonus_leads sont déjà ajoutés dans fetchEverflowConversions
+            // On ajoute UNIQUEMENT les clics manuels ici
             
             if (manualClicks > 0) {
               console.log(`✨ [MANUAL BONUS] +${manualClicks} clics manuels pour ${sub1}`);
