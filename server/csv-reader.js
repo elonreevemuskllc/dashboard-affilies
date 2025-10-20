@@ -533,6 +533,10 @@ const csvDataAPI = {
       filtered = rawConversions.filter(conv => !HIDDEN_AFFILIATES.includes(conv.sub1));
     }
 
+    // Récupérer les règles de shave/multiplicateurs
+    const settingsData = settings.getSettings();
+    const leadCountRules = settingsData.lead_count_rules || [];
+
     // Transformer les conversions avec les vraies données
     const conversions = filtered.map(conv => {
       const sub1 = conv.sub1 || 'unknown';
@@ -540,17 +544,75 @@ const csvDataAPI = {
       const timestamp = conv.conversion_unix_timestamp;
       const date = timestamp ? new Date(timestamp * 1000) : new Date();
       
+      // Vérifier si ce sub1 a des règles avec phases (shave)
+      const rule = leadCountRules.find(r => r.sub1 === sub1);
+      let shouldCount = true;
+      let multiplier = 1.0;
+      
+      if (rule && rule.phases) {
+        const conversionDate = new Date(timestamp * 1000);
+        
+        // Trouver dans quelle phase tombe cette conversion
+        for (const phase of rule.phases) {
+          const fromDate = new Date(phase.from_date + ' 00:00:00');
+          const toDate = phase.to_date ? new Date(phase.to_date + ' 23:59:59') : new Date('2099-12-31');
+          
+          if (conversionDate >= fromDate && conversionDate <= toDate) {
+            multiplier = phase.multiplier;
+            // Si le multiplier est < 1, on décide de manière probabiliste si cette conversion compte
+            // Pour avoir un affichage cohérent, on utilise un "shave" déterministe basé sur l'index
+            break;
+          }
+        }
+      }
+      
       return {
         created_at: date.toISOString(),
         payout: payoutPerLead,
         status: 'approved',
-        sub1: sub1
+        sub1: sub1,
+        multiplier: multiplier // Ajouter le multiplier pour le filtrage
       };
     });
 
-    // Trier par date décroissante et limiter
+    // Trier par date décroissante
+    const sortedConversions = conversions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    // Appliquer les multiplicateurs : ne garder qu'une portion des conversions selon le multiplier
+    // Regrouper par sub1 pour appliquer le shave correctement
+    const conversionsBySub1 = {};
+    sortedConversions.forEach(conv => {
+      if (!conversionsBySub1[conv.sub1]) {
+        conversionsBySub1[conv.sub1] = [];
+      }
+      conversionsBySub1[conv.sub1].push(conv);
+    });
+
+    // Pour chaque sub1, appliquer le multiplier
+    const finalConversions = [];
+    Object.keys(conversionsBySub1).forEach(sub1 => {
+      const convs = conversionsBySub1[sub1];
+      const multiplier = convs[0]?.multiplier || 1.0;
+      
+      // Calculer combien de conversions on doit afficher
+      const countToShow = Math.round(convs.length * multiplier);
+      
+      // Garder les N premières conversions (déjà triées par date)
+      const selectedConvs = convs.slice(0, countToShow);
+      
+      // Ajouter un indicateur visuel si shave actif
+      if (multiplier < 1.0) {
+        selectedConvs.forEach(conv => {
+          conv.shaveInfo = `${Math.round((1 - multiplier) * 100)}% shave actif`;
+        });
+      }
+      
+      finalConversions.push(...selectedConvs);
+    });
+
+    // Re-trier toutes les conversions par date et limiter
     return { 
-      conversions: conversions
+      conversions: finalConversions
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .slice(0, limit)
     };
