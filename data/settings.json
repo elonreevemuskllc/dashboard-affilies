@@ -57,12 +57,12 @@
         {
           "from_date": "2025-10-20",
           "to_date": null,
-          "multiplier": 0.9,
+          "multiplier": 0.7,
           "manual_bonus_leads": 0,
-          "comment": "10% shave pour ran"
+          "comment": "30% shave pour ran"
         }
       ],
-      "comment": "Shave 10% pour ran"
+      "comment": "Shave 30% pour ran"
     }
   ],
   "platform_mode": "dual",

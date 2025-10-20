@@ -537,8 +537,8 @@ const csvDataAPI = {
     const settingsData = settings.getSettings();
     const leadCountRules = settingsData.lead_count_rules || [];
 
-    // Transformer les conversions avec les vraies données
-    const conversions = filtered.map(conv => {
+    // 🔧 NOUVELLE LOGIQUE : Transformer TOUTES les conversions d'abord, puis appliquer le filtrage par phase
+    const conversionsWithPhaseInfo = filtered.map(conv => {
       const sub1 = conv.sub1 || 'unknown';
       const payoutPerLead = settings.getPayoutForSub1(sub1);
       const timestamp = conv.conversion_unix_timestamp;
@@ -548,19 +548,20 @@ const csvDataAPI = {
       const rule = leadCountRules.find(r => r.sub1 === sub1);
       let shouldCount = true;
       let multiplier = 1.0;
+      let phaseIndex = -1;
       
       if (rule && rule.phases) {
         const conversionDate = new Date(timestamp * 1000);
         
         // Trouver dans quelle phase tombe cette conversion
-        for (const phase of rule.phases) {
+        for (let i = 0; i < rule.phases.length; i++) {
+          const phase = rule.phases[i];
           const fromDate = new Date(phase.from_date + ' 00:00:00');
           const toDate = phase.to_date ? new Date(phase.to_date + ' 23:59:59') : new Date('2099-12-31');
           
           if (conversionDate >= fromDate && conversionDate <= toDate) {
             multiplier = phase.multiplier;
-            // Si le multiplier est < 1, on décide de manière probabiliste si cette conversion compte
-            // Pour avoir un affichage cohérent, on utilise un "shave" déterministe basé sur l'index
+            phaseIndex = i;
             break;
           }
         }
@@ -571,30 +572,38 @@ const csvDataAPI = {
         payout: payoutPerLead,
         status: 'approved',
         sub1: sub1,
-        multiplier: multiplier // Ajouter le multiplier pour le filtrage
+        multiplier: multiplier,
+        phaseIndex: phaseIndex,
+        timestamp: timestamp
       };
     });
 
     // Trier par date décroissante
-    const sortedConversions = conversions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const sortedConversions = conversionsWithPhaseInfo.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    // Appliquer les multiplicateurs : ne garder qu'une portion des conversions selon le multiplier
-    // Regrouper par sub1 pour appliquer le shave correctement
-    const conversionsBySub1 = {};
+    // 🔧 NOUVELLE LOGIQUE : Appliquer le filtrage par phase de manière cohérente avec fetchEverflowConversions
+    // On regroupe par sub1 et par phase, puis on applique le multiplier sur chaque groupe
+    const conversionsByPhase = {};
     sortedConversions.forEach(conv => {
-      if (!conversionsBySub1[conv.sub1]) {
-        conversionsBySub1[conv.sub1] = [];
+      const key = `${conv.sub1}:${conv.phaseIndex}`;
+      if (!conversionsByPhase[key]) {
+        conversionsByPhase[key] = {
+          sub1: conv.sub1,
+          phaseIndex: conv.phaseIndex,
+          multiplier: conv.multiplier,
+          conversions: []
+        };
       }
-      conversionsBySub1[conv.sub1].push(conv);
+      conversionsByPhase[key].conversions.push(conv);
     });
 
-    // Pour chaque sub1, appliquer le multiplier
+    // Pour chaque groupe (sub1 + phase), appliquer le multiplier
     const finalConversions = [];
-    Object.keys(conversionsBySub1).forEach(sub1 => {
-      const convs = conversionsBySub1[sub1];
-      const multiplier = convs[0]?.multiplier || 1.0;
+    Object.values(conversionsByPhase).forEach(group => {
+      const multiplier = group.multiplier;
+      const convs = group.conversions;
       
-      // Calculer combien de conversions on doit afficher
+      // Calculer combien de conversions on doit afficher pour ce groupe
       const countToShow = Math.round(convs.length * multiplier);
       
       // Garder les N premières conversions (déjà triées par date)
@@ -611,10 +620,14 @@ const csvDataAPI = {
     });
 
     // Re-trier toutes les conversions par date et limiter
+    const result = finalConversions
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, limit);
+
+    console.log(`📊 [CONVERSIONS RÉCENTES] ${result.length} conversions affichées (sur ${filtered.length} brutes)`);
+
     return { 
-      conversions: finalConversions
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .slice(0, limit)
+      conversions: result
     };
   },
 
