@@ -44,9 +44,9 @@
           "from_date": "2025-10-20",
           "to_date": null,
           "multiplier": 0.35,
-          "manual_bonus_leads": 14,
+          "manual_bonus_leads": 16,
           "manual_bonus_clicks": 224,
-          "comment": "65% shave à partir du 20 oct + 14 leads et 224 clics manuels pour le 20/10"
+          "comment": "65% shave + 16 leads bonus = 18 leads total pour le 20/10"
         }
       ],
       "comment": "Règles par phases pour bad"
