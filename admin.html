@@ -213,6 +213,54 @@
                 </table>
             </div>
         </section>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>💰 Comptabilité - Balance des Paiements</h2>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">💵 Balance des Affiliés</h3>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                    Balance = Revenus totaux depuis le début • Reste à payer = Balance - Paiements
+                </p>
+                
+                <div id="accounting-container" style="display: grid; gap: 1.5rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">➕ Enregistrer un Paiement</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Affilié:</label>
+                        <select id="payment-affiliate" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="bad">bad</option>
+                            <option value="ran">ran</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Montant ($):</label>
+                        <input type="number" id="payment-amount" step="0.01" placeholder="100.00" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Note (optionnelle):</label>
+                        <input type="text" id="payment-note" placeholder="Ex: Paiement semaine 42" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <button onclick="recordPayment()" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">📜 Historique des Paiements</h3>
+                <div id="payments-history-container" style="display: grid; gap: 0.75rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <script>
@@ -753,6 +801,142 @@
         loadUsers();
         loadSub1List();
         loadSettings();
+        loadAccounting();
+
+        // Comptabilité - Fonctions
+        async function loadAccounting() {
+            try {
+                const response = await fetch('/api/admin/accounting');
+                const data = await response.json();
+                
+                const container = document.getElementById('accounting-container');
+                
+                if (!data || !data.affiliates) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+                    return;
+                }
+                
+                container.innerHTML = Object.keys(data.affiliates).map(affiliate => {
+                    const acc = data.affiliates[affiliate];
+                    return `
+                    <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; font-size: 1.3rem; color: var(--text-primary);">${affiliate}</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Affilié</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Balance Totale</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);">$${acc.totalEarned.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.totalEarned * 0.92).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Paiements Effectués</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$${acc.totalPaid.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.totalPaid * 0.92).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Reste à Payer</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: ${acc.remaining > 0 ? 'var(--warning-color)' : 'var(--success-color)'};">$${acc.remaining.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.remaining * 0.92).toFixed(2)} €</p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+                // Charger l'historique
+                loadPaymentsHistory(data.payments);
+                
+            } catch (error) {
+                console.error('Erreur chargement comptabilité:', error);
+                document.getElementById('accounting-container').innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+            }
+        }
+
+        function loadPaymentsHistory(payments) {
+            const container = document.getElementById('payments-history-container');
+            
+            if (!payments || payments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun paiement enregistré</p>';
+                return;
+            }
+            
+            // Trier par date (plus récent en premier)
+            const sortedPayments = payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            container.innerHTML = sortedPayments.map(payment => `
+                <div style="display: grid; grid-template-columns: 120px 100px 1fr auto auto; gap: 1rem; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: 6px; border: 1px solid var(--border-color);">
+                    <div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">${new Date(payment.date).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-primary);">${payment.affiliate}</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">${payment.note || '-'}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: var(--success-color); font-size: 1.1rem;">$${payment.amount.toFixed(2)}</strong>
+                    </div>
+                    <div>
+                        <button onclick="deletePayment('${payment.id}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function recordPayment() {
+            const affiliate = document.getElementById('payment-affiliate').value;
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+            const note = document.getElementById('payment-note').value;
+            
+            if (!affiliate || isNaN(amount) || amount <= 0) {
+                alert('Veuillez remplir tous les champs correctement');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/payments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ affiliate, amount, note })
+                });
+                
+                if (response.ok) {
+                    alert('✅ Paiement enregistré avec succès !');
+                    document.getElementById('payment-amount').value = '';
+                    document.getElementById('payment-note').value = '';
+                    loadAccounting();
+                } else {
+                    const error = await response.json();
+                    alert('❌ Erreur: ' + (error.error || 'Erreur lors de l\'enregistrement'));
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        async function deletePayment(paymentId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/payments/${paymentId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('✅ Paiement supprimé !');
+                    loadAccounting();
+                } else {
+                    alert('❌ Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
     </script>
 </body>
 </html>

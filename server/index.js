@@ -557,6 +557,128 @@ app.get('/api/affiliates', requireAdmin, async (req, res) => {
   }
 });
 
+// Routes pour la comptabilité
+const fs = require('fs').promises;
+const paymentsPath = path.join(__dirname, '../data/payments.json');
+
+app.get('/api/admin/accounting', requireAdmin, async (req, res) => {
+  try {
+    // Lire les paiements
+    const paymentsData = JSON.parse(await fs.readFile(paymentsPath, 'utf8'));
+    const payments = paymentsData.payments || [];
+    
+    // Calculer la balance totale pour chaque affilié depuis le début
+    // On va chercher toutes les conversions sans filtre de période
+    const allTimeStats = {};
+    
+    // Pour "bad" et "ran", on calcule les revenus depuis le début
+    for (const affiliate of ['bad', 'ran']) {
+      try {
+        // Récupérer toutes les stats depuis la création du compte
+        // On utilise une période custom très large
+        const stats = await csvDataAPI.getAffiliateStats(affiliate, 'custom:2025-01-01:2099-12-31');
+        allTimeStats[affiliate] = stats.revenue || 0;
+      } catch (error) {
+        console.error(`Erreur calcul balance ${affiliate}:`, error);
+        allTimeStats[affiliate] = 0;
+      }
+    }
+    
+    // Calculer les paiements par affilié
+    const paymentsByAffiliate = {};
+    ['bad', 'ran'].forEach(affiliate => {
+      paymentsByAffiliate[affiliate] = payments
+        .filter(p => p.affiliate === affiliate)
+        .reduce((sum, p) => sum + p.amount, 0);
+    });
+    
+    // Construire la réponse
+    const accounting = {
+      affiliates: {},
+      payments: payments
+    };
+    
+    ['bad', 'ran'].forEach(affiliate => {
+      const totalEarned = allTimeStats[affiliate] || 0;
+      const totalPaid = paymentsByAffiliate[affiliate] || 0;
+      const remaining = totalEarned - totalPaid;
+      
+      accounting.affiliates[affiliate] = {
+        totalEarned,
+        totalPaid,
+        remaining
+      };
+    });
+    
+    res.json(accounting);
+  } catch (error) {
+    console.error('Erreur comptabilité:', error);
+    res.status(500).json({ error: 'Erreur lors du chargement de la comptabilité' });
+  }
+});
+
+app.post('/api/admin/payments', requireAdmin, async (req, res) => {
+  try {
+    const { affiliate, amount, note } = req.body;
+    
+    if (!affiliate || !amount || amount <= 0) {
+      return res.status(400).json({ error: 'Données invalides' });
+    }
+    
+    if (!['bad', 'ran'].includes(affiliate)) {
+      return res.status(400).json({ error: 'Affilié invalide' });
+    }
+    
+    // Lire les paiements existants
+    const paymentsData = JSON.parse(await fs.readFile(paymentsPath, 'utf8'));
+    
+    // Créer le nouveau paiement
+    const newPayment = {
+      id: Date.now().toString(),
+      affiliate,
+      amount: parseFloat(amount),
+      note: note || '',
+      date: new Date().toISOString()
+    };
+    
+    // Ajouter le paiement
+    paymentsData.payments.push(newPayment);
+    
+    // Sauvegarder
+    await fs.writeFile(paymentsPath, JSON.stringify(paymentsData, null, 2), 'utf8');
+    
+    res.json({ success: true, payment: newPayment });
+  } catch (error) {
+    console.error('Erreur enregistrement paiement:', error);
+    res.status(500).json({ error: 'Erreur lors de l\'enregistrement du paiement' });
+  }
+});
+
+app.delete('/api/admin/payments/:id', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Lire les paiements existants
+    const paymentsData = JSON.parse(await fs.readFile(paymentsPath, 'utf8'));
+    
+    // Filtrer pour supprimer le paiement
+    const originalLength = paymentsData.payments.length;
+    paymentsData.payments = paymentsData.payments.filter(p => p.id !== id);
+    
+    if (paymentsData.payments.length === originalLength) {
+      return res.status(404).json({ error: 'Paiement non trouvé' });
+    }
+    
+    // Sauvegarder
+    await fs.writeFile(paymentsPath, JSON.stringify(paymentsData, null, 2), 'utf8');
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Erreur suppression paiement:', error);
+    res.status(500).json({ error: 'Erreur lors de la suppression du paiement' });
+  }
+});
+
 // Démarrer le serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
