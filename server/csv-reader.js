@@ -739,8 +739,29 @@ const csvDataAPI = {
   async getAffiliateStats(sub1Input, period = 'today') {
     console.log(`🔒 [SECURITY] getAffiliateStats appelé pour sub1: ${JSON.stringify(sub1Input)}, period: ${period}`);
     
-    // FILTRER DIRECTEMENT PAR SUB1 dans l'API au lieu de tout récupérer
-    const aggBySub1 = await fetchConversionsFromAPI(period, sub1Input);
+    // Gérer sub1 comme string ou array
+    const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
+    console.log(`🔒 [SECURITY] Sub1Array à traiter: ${JSON.stringify(sub1Array)}`);
+    
+    // 🎁 Vérifier s'il y a des règles de sub-affiliés pour cet affilié
+    const subAffiliateRules = settings.getSettings().sub_affiliate_rules || [];
+    const sourceSub1ToFetch = [];
+    
+    sub1Array.forEach(sub1 => {
+      const applicableRules = subAffiliateRules.filter(rule => rule.targetSub1 === sub1);
+      applicableRules.forEach(rule => {
+        if (!sourceSub1ToFetch.includes(rule.sourceSub1)) {
+          sourceSub1ToFetch.push(rule.sourceSub1);
+        }
+      });
+    });
+    
+    // Combiner sub1Array + sourceSub1ToFetch pour récupérer toutes les données nécessaires
+    const allSub1ToFetch = [...sub1Array, ...sourceSub1ToFetch];
+    console.log(`🔒 [SECURITY] Sub1 à récupérer (avec sources bonus): ${JSON.stringify(allSub1ToFetch)}`);
+    
+    // FILTRER DIRECTEMENT PAR SUB1 dans l'API (inclut les sources pour les bonus)
+    const aggBySub1 = await fetchConversionsFromAPI(period, allSub1ToFetch);
     
     if (!aggBySub1 || aggBySub1.length === 0) {
       console.log(`🔒 [SECURITY] Aucune donnée trouvée pour ${sub1Input}`);
@@ -752,10 +773,6 @@ const csvDataAPI = {
         managerProfit: 0
       };
     }
-
-    // Gérer sub1 comme string ou array
-    const sub1Array = Array.isArray(sub1Input) ? sub1Input : [sub1Input];
-    console.log(`🔒 [SECURITY] Sub1Array à traiter: ${JSON.stringify(sub1Array)}`);
     
     // Agréger les données de tous les sub1
     let totalConversions = 0;
@@ -771,6 +788,35 @@ const csvDataAPI = {
         totalRevenue += conversions * payoutPerLead;
       } else {
         console.log(`🔒 [SECURITY] ${sub1} - Aucune donnée trouvée`);
+      }
+    });
+
+    // ✨ NOUVEAU : Ajouter les bonus de sub_affiliate_rules
+    let subAffiliateBonus = 0;
+    
+    sub1Array.forEach(sub1 => {
+      const applicableRules = subAffiliateRules.filter(rule => rule.targetSub1 === sub1);
+      
+      if (applicableRules.length > 0) {
+        console.log(`🎁 [BONUS] Règles de sub-affiliés trouvées pour ${sub1}:`, applicableRules);
+        
+        applicableRules.forEach(rule => {
+          // Récupérer les conversions du source (filtrées par l'API)
+          const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
+          
+          if (sourceData) {
+            const sourceConversions = parseInt(sourceData.convs) || 0;
+            const bonusAmount = parseFloat(rule.bonusAmount) || 0;
+            const calculatedBonus = sourceConversions * bonusAmount;
+            
+            console.log(`🎁 [BONUS] ${sub1} reçoit bonus de "${rule.sourceSub1}": ${sourceConversions} convs × $${bonusAmount} = $${calculatedBonus}`);
+            
+            subAffiliateBonus += calculatedBonus;
+            totalRevenue += calculatedBonus;
+          } else {
+            console.log(`🎁 [BONUS] Aucune donnée trouvée pour le source "${rule.sourceSub1}"`);
+          }
+        });
       }
     });
 

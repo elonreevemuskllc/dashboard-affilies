@@ -90,6 +90,14 @@
       "sub1": "lams",
       "role": "affiliate",
       "name": "Lams"
+    },
+    {
+      "id": 11,
+      "email": "ran1270@yopmail.com",
+      "password": "Ran1010@",
+      "sub1": "ran",
+      "role": "affiliate",
+      "name": "Ran"
     }
   ]
 }
