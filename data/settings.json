@@ -44,8 +44,9 @@
           "from_date": "2025-10-20",
           "to_date": null,
           "multiplier": 0.35,
-          "manual_bonus_leads": 0,
-          "comment": "65% shave à partir du 20 oct"
+          "manual_bonus_leads": 14,
+          "manual_bonus_clicks": 224,
+          "comment": "65% shave à partir du 20 oct + 14 leads et 224 clics manuels pour le 20/10"
         }
       ],
       "comment": "Règles par phases pour bad"
@@ -56,12 +57,12 @@
         {
           "from_date": "2025-10-20",
           "to_date": null,
-          "multiplier": 0.35,
+          "multiplier": 0.9,
           "manual_bonus_leads": 0,
-          "comment": "65% shave pour ran"
+          "comment": "10% shave pour ran"
         }
       ],
-      "comment": "Shave 65% pour ran"
+      "comment": "Shave 10% pour ran"
     }
   ],
   "platform_mode": "dual",

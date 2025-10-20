@@ -882,7 +882,50 @@ const csvDataAPI = {
       }
     });
 
-    const estimatedClicks = Math.round(totalConversions / 0.077);
+    // Calculer les clics estimés
+    let estimatedClicks = Math.round(totalConversions / 0.077);
+    
+    // ✨ BONUS MANUELS : Ajouter les bonus de leads et clics pour aujourd'hui seulement
+    const settingsData = settings.getSettings();
+    const leadCountRules = settingsData.lead_count_rules || [];
+    const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    
+    sub1Array.forEach(sub1 => {
+      const rule = leadCountRules.find(r => r.sub1 === sub1);
+      
+      if (rule && rule.phases && period === 'today') {
+        console.log(`📋 [MANUAL BONUS] Vérification des bonus manuels pour ${sub1} (date: ${todayDate})`);
+        
+        // Trouver la phase active aujourd'hui
+        for (const phase of rule.phases) {
+          const fromDate = phase.from_date; // Format: YYYY-MM-DD
+          const toDate = phase.to_date || '2099-12-31';
+          
+          if (todayDate >= fromDate && todayDate <= toDate) {
+            // Phase active trouvée
+            const manualLeads = phase.manual_bonus_leads || 0;
+            const manualClicks = phase.manual_bonus_clicks || 0;
+            
+            if (manualLeads > 0) {
+              console.log(`✨ [MANUAL BONUS] +${manualLeads} leads manuels pour ${sub1}`);
+              totalConversions += manualLeads;
+              
+              // Ajouter les revenus des leads manuels
+              const payoutPerLead = settings.getPayoutForSub1(sub1);
+              totalRevenue += manualLeads * payoutPerLead;
+            }
+            
+            if (manualClicks > 0) {
+              console.log(`✨ [MANUAL BONUS] +${manualClicks} clics manuels pour ${sub1}`);
+              estimatedClicks += manualClicks;
+            }
+            
+            break; // Une seule phase active à la fois
+          }
+        }
+      }
+    });
+    
     const bonus = Math.floor(totalConversions / 10) * 10;
     
     // Calcul du profit manager (marge × conversions + bonus)
