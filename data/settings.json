@@ -66,5 +66,9 @@
     }
   ],
   "platform_mode": "dual",
-  "primary_platform": "everflow"
+  "primary_platform": "everflow",
+  "manual_total_earnings": {
+    "bad": 2910.00,
+    "ran": 0
+  }
 }

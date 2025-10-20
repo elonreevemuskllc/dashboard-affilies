@@ -568,16 +568,25 @@ app.get('/api/admin/accounting', requireAdmin, async (req, res) => {
     const payments = paymentsData.payments || [];
     
     // Calculer la balance totale pour chaque affilié depuis le début
-    // On va chercher toutes les conversions sans filtre de période
+    // Utiliser les totaux manuels si définis dans settings
+    const settingsData = settingsManager.getSettings();
+    const manualTotals = settingsData.manual_total_earnings || {};
+    
     const allTimeStats = {};
     
-    // Pour "bad" et "ran", on calcule les revenus depuis le début
+    // Pour "bad" et "ran", on utilise le total manuel ou on calcule
     for (const affiliate of ['bad', 'ran']) {
       try {
-        // Récupérer toutes les stats depuis la création du compte
-        // On utilise une période custom très large
-        const stats = await csvDataAPI.getAffiliateStats(affiliate, 'custom:2025-01-01:2099-12-31');
-        allTimeStats[affiliate] = stats.revenue || 0;
+        // Si un total manuel est défini, l'utiliser
+        if (manualTotals[affiliate] !== undefined && manualTotals[affiliate] > 0) {
+          allTimeStats[affiliate] = manualTotals[affiliate];
+          console.log(`✅ [ACCOUNTING] Utilisation du total manuel pour ${affiliate}: $${manualTotals[affiliate]}`);
+        } else {
+          // Sinon, calculer depuis l'API
+          const stats = await csvDataAPI.getAffiliateStats(affiliate, 'custom:2025-01-01:2099-12-31');
+          allTimeStats[affiliate] = stats.revenue || 0;
+          console.log(`📊 [ACCOUNTING] Calcul automatique pour ${affiliate}: $${allTimeStats[affiliate]}`);
+        }
       } catch (error) {
         console.error(`Erreur calcul balance ${affiliate}:`, error);
         allTimeStats[affiliate] = 0;
