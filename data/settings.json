@@ -12,7 +12,8 @@
     "kel": 4.70,
     "bad": 30,
     "lams": 4.70,
-    "ran": 15
+    "ran": 15,
+    "tito": 15
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -25,6 +26,11 @@
     },
     {
       "sourceSub1": "ran",
+      "targetSub1": "bad",
+      "bonusAmount": 15.00
+    },
+    {
+      "sourceSub1": "tito",
       "targetSub1": "bad",
       "bonusAmount": 15.00
     }
@@ -63,12 +69,26 @@
         }
       ],
       "comment": "Shave 30% pour ran"
+    },
+    {
+      "sub1": "tito",
+      "phases": [
+        {
+          "from_date": "2025-10-20",
+          "to_date": null,
+          "multiplier": 0.7,
+          "manual_bonus_leads": 0,
+          "comment": "30% shave pour tito"
+        }
+      ],
+      "comment": "Shave 30% pour tito"
     }
   ],
   "platform_mode": "dual",
   "primary_platform": "everflow",
   "manual_total_earnings": {
     "bad": 2910.00,
-    "ran": 0
+    "ran": 0,
+    "tito": 0
   }
 }

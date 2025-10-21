@@ -99,6 +99,14 @@
       "sub1": "ran",
       "role": "affiliate",
       "name": "Ran"
+    },
+    {
+      "id": 12,
+      "email": "titouan1270@yopmail.com",
+      "password": "Titou1010",
+      "sub1": "tito",
+      "role": "affiliate",
+      "name": "Titouan"
     }
   ]
 }
