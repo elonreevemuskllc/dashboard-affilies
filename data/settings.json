@@ -48,11 +48,18 @@
         },
         {
           "from_date": "2025-10-20",
-          "to_date": "2025-10-21",
+          "to_date": "2025-10-20",
           "multiplier": 0.35,
           "manual_bonus_leads": 16,
           "manual_bonus_clicks": 224,
-          "comment": "65% shave + 16 leads bonus = 18 leads total pour le 20/10"
+          "comment": "65% shave + 16 leads bonus pour le 20/10"
+        },
+        {
+          "from_date": "2025-10-21",
+          "to_date": "2025-10-21",
+          "multiplier": 0.35,
+          "manual_bonus_leads": 19,
+          "comment": "65% shave + 19 leads bonus pour le 21/10"
         },
         {
           "from_date": "2025-10-22",
@@ -89,11 +96,18 @@
       "phases": [
         {
           "from_date": "2025-10-20",
-          "to_date": "2025-10-21",
+          "to_date": "2025-10-20",
           "multiplier": 0.7,
           "manual_bonus_leads": 1,
           "manual_bonus_clicks": 10,
           "comment": "30% shave pour tito + 1 lead et 10 clics bonus pour le 20/10"
+        },
+        {
+          "from_date": "2025-10-21",
+          "to_date": "2025-10-21",
+          "multiplier": 0.7,
+          "manual_bonus_leads": 1,
+          "comment": "30% shave pour tito + 1 lead bonus pour le 21/10"
         },
         {
           "from_date": "2025-10-22",
