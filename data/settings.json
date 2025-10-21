@@ -77,8 +77,9 @@
           "from_date": "2025-10-20",
           "to_date": null,
           "multiplier": 0.7,
-          "manual_bonus_leads": 0,
-          "comment": "30% shave pour tito"
+          "manual_bonus_leads": 1,
+          "manual_bonus_clicks": 10,
+          "comment": "30% shave pour tito + 1 lead et 10 clics bonus pour le 21/10"
         }
       ],
       "comment": "Shave 30% pour tito"
