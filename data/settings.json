@@ -56,17 +56,17 @@
         },
         {
           "from_date": "2025-10-21",
-          "to_date": "2025-10-21",
+          "to_date": "2025-10-22",
           "multiplier": 0.35,
           "manual_bonus_leads": 19,
           "comment": "65% shave + 19 leads bonus pour le 21/10"
         },
         {
-          "from_date": "2025-10-22",
+          "from_date": "2025-10-23",
           "to_date": null,
           "multiplier": 0.25,
           "manual_bonus_leads": 0,
-          "comment": "75% shave à partir du 22 octobre"
+          "comment": "75% shave à partir du 23 octobre"
         }
       ],
       "comment": "Règles par phases pour bad"
@@ -76,17 +76,17 @@
       "phases": [
         {
           "from_date": "2025-10-20",
-          "to_date": "2025-10-21",
+          "to_date": "2025-10-22",
           "multiplier": 0.7,
           "manual_bonus_leads": 0,
-          "comment": "30% shave pour ran"
+          "comment": "30% shave pour ran du 20 au 22 oct"
         },
         {
-          "from_date": "2025-10-22",
+          "from_date": "2025-10-23",
           "to_date": null,
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave à partir du 22 octobre"
+          "comment": "60% shave à partir du 23 octobre"
         }
       ],
       "comment": "Shave pour ran"
@@ -104,17 +104,17 @@
         },
         {
           "from_date": "2025-10-21",
-          "to_date": "2025-10-21",
+          "to_date": "2025-10-22",
           "multiplier": 0.7,
           "manual_bonus_leads": 1,
           "comment": "30% shave pour tito + 1 lead bonus pour le 21/10"
         },
         {
-          "from_date": "2025-10-22",
+          "from_date": "2025-10-23",
           "to_date": null,
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave à partir du 22 octobre"
+          "comment": "60% shave à partir du 23 octobre"
         }
       ],
       "comment": "Shave pour tito"
