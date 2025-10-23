@@ -107,6 +107,14 @@
       "sub1": "tito",
       "role": "affiliate",
       "name": "Titouan"
+    },
+    {
+      "id": 13,
+      "email": "anatol1270@yopmail.com",
+      "password": "Anatol1414",
+      "sub1": "anat",
+      "role": "affiliate",
+      "name": "Anatol"
     }
   ]
 }

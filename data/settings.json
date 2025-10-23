@@ -13,7 +13,8 @@
     "bad": 30,
     "lams": 4.70,
     "ran": 15,
-    "tito": 15
+    "tito": 15,
+    "anat": 10
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -33,6 +34,11 @@
       "sourceSub1": "tito",
       "targetSub1": "bad",
       "bonusAmount": 15.00
+    },
+    {
+      "sourceSub1": "anat",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
     }
   ],
   "lead_count_rules": [
@@ -118,6 +124,26 @@
         }
       ],
       "comment": "Shave pour tito"
+    },
+    {
+      "sub1": "anat",
+      "phases": [
+        {
+          "from_date": "2025-10-23",
+          "to_date": "2025-10-23",
+          "multiplier": 0.5,
+          "manual_bonus_leads": 0,
+          "comment": "50% shave pour anat le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": null,
+          "multiplier": 0.4,
+          "manual_bonus_leads": 0,
+          "comment": "60% shave pour anat à partir du 24 octobre"
+        }
+      ],
+      "comment": "Shave pour anat"
     }
   ],
   "platform_mode": "dual",
