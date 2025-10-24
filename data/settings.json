@@ -14,7 +14,8 @@
     "lams": 4.70,
     "ran": 15,
     "tito": 15,
-    "anat": 10
+    "anat": 10,
+    "matt": 4.70
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -186,6 +187,19 @@
         }
       ],
       "comment": "Shave pour anat"
+    },
+    {
+      "sub1": "matt",
+      "phases": [
+        {
+          "from_date": "2025-10-24",
+          "to_date": null,
+          "multiplier": 0.6,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave pour matt à partir du 24 octobre"
+        }
+      ],
+      "comment": "Shave pour matt"
     }
   ],
   "platform_mode": "dual",
