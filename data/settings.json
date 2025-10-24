@@ -69,10 +69,17 @@
         },
         {
           "from_date": "2025-10-23",
-          "to_date": "2025-10-24",
+          "to_date": "2025-10-23",
           "multiplier": 0.25,
           "manual_bonus_leads": 0,
-          "comment": "75% shave du 23 au 24 octobre"
+          "comment": "75% shave le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.25,
+          "manual_bonus_leads": 2,
+          "comment": "75% shave + 2 leads bonus exceptionnels pour le 24/10"
         },
         {
           "from_date": "2025-10-25",
@@ -131,10 +138,17 @@
         },
         {
           "from_date": "2025-10-23",
-          "to_date": "2025-10-24",
+          "to_date": "2025-10-23",
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave du 23 au 24 octobre"
+          "comment": "60% shave le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.4,
+          "manual_bonus_leads": 10,
+          "comment": "60% shave + 10 leads bonus exceptionnels pour le 24/10"
         },
         {
           "from_date": "2025-10-25",
