@@ -15,7 +15,7 @@
     "ran": 15,
     "tito": 15,
     "anat": 10,
-    "matt": 4.70
+    "matt": 10
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -38,6 +38,11 @@
     },
     {
       "sourceSub1": "anat",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "matt",
       "targetSub1": "bad",
       "bonusAmount": 20.00
     }
