@@ -69,10 +69,17 @@
         },
         {
           "from_date": "2025-10-23",
-          "to_date": null,
+          "to_date": "2025-10-24",
           "multiplier": 0.25,
           "manual_bonus_leads": 0,
-          "comment": "75% shave à partir du 23 octobre"
+          "comment": "75% shave du 23 au 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.45,
+          "manual_bonus_leads": 0,
+          "comment": "55% shave à partir du 25 octobre"
         }
       ],
       "comment": "Règles par phases pour bad"
@@ -89,10 +96,17 @@
         },
         {
           "from_date": "2025-10-23",
-          "to_date": null,
+          "to_date": "2025-10-24",
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave à partir du 23 octobre"
+          "comment": "60% shave du 23 au 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.45,
+          "manual_bonus_leads": 0,
+          "comment": "55% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour ran"
@@ -117,10 +131,17 @@
         },
         {
           "from_date": "2025-10-23",
-          "to_date": null,
+          "to_date": "2025-10-24",
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave à partir du 23 octobre"
+          "comment": "60% shave du 23 au 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.45,
+          "manual_bonus_leads": 0,
+          "comment": "55% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour tito"
@@ -137,10 +158,17 @@
         },
         {
           "from_date": "2025-10-24",
-          "to_date": null,
+          "to_date": "2025-10-24",
           "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "60% shave pour anat à partir du 24 octobre"
+          "comment": "60% shave pour anat le 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.45,
+          "manual_bonus_leads": 0,
+          "comment": "55% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour anat"
@@ -153,4 +181,8 @@
     "ran": 0,
     "tito": 0
   }
+}
+}
+}
+}
 }
