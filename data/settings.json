@@ -213,8 +213,8 @@
           "from_date": "2025-10-25",
           "to_date": "2025-10-25",
           "multiplier": 0.6,
-          "manual_bonus_leads": 2,
-          "comment": "40% shave + 2 leads bonus pour matt le 25 octobre"
+          "manual_bonus_leads": 3,
+          "comment": "40% shave + 3 leads bonus pour matt le 25 octobre"
         },
         {
           "from_date": "2025-10-26",
