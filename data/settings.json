@@ -15,7 +15,8 @@
     "ran": 15,
     "tito": 15,
     "anat": 10,
-    "matt": 10
+    "matt": 10,
+    "ais": 10
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -219,6 +220,19 @@
         }
       ],
       "comment": "Shave pour matt"
+    },
+    {
+      "sub1": "ais",
+      "phases": [
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave à partir du 25 octobre"
+        }
+      ],
+      "comment": "Shave pour ais"
     }
   ],
   "platform_mode": "dual",

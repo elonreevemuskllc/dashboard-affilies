@@ -123,6 +123,14 @@
       "sub1": "matt",
       "role": "affiliate",
       "name": "Matt"
+    },
+    {
+      "id": 15,
+      "email": "ais1270@yopmail.com",
+      "password": "Ais1010",
+      "sub1": "ais",
+      "role": "affiliate",
+      "name": "Ais"
     }
   ]
 }
