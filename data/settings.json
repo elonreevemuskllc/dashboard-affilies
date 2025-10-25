@@ -198,10 +198,24 @@
       "phases": [
         {
           "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.6,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave pour matt le 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": "2025-10-25",
+          "multiplier": 0.6,
+          "manual_bonus_leads": 2,
+          "comment": "40% shave + 2 leads bonus pour matt le 25 octobre"
+        },
+        {
+          "from_date": "2025-10-26",
           "to_date": null,
           "multiplier": 0.6,
           "manual_bonus_leads": 0,
-          "comment": "40% shave pour matt à partir du 24 octobre"
+          "comment": "40% shave pour matt à partir du 26 octobre"
         }
       ],
       "comment": "Shave pour matt"
