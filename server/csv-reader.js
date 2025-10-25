@@ -318,6 +318,44 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
       }
     });
 
+    // ✨ AJOUT : Gérer les sub1 qui ont des bonus manuels mais AUCUNE conversion réelle
+    // Cela permet d'afficher les sub1 qui ont seulement des leads bonus
+    leadCountRules.forEach(rule => {
+      if (rule.phases && !aggregated[rule.sub1]) {
+        // Ce sub1 a des règles mais n'apparaît pas dans les données (0 conversions réelles)
+        // Vérifier s'il y a des bonus manuels dans les phases actives pour cette période
+        const { from, to } = getDateRange(period);
+        const periodStartDate = new Date(from);
+        const periodEndDate = new Date(to);
+        
+        let totalBonus = 0;
+        
+        rule.phases.forEach((phase, index) => {
+          const phaseFromDate = new Date(phase.from_date + ' 00:00:00');
+          const phaseToDate = phase.to_date ? new Date(phase.to_date + ' 23:59:59') : new Date('2099-12-31');
+          const manualBonus = phase.manual_bonus_leads || 0;
+          
+          // Vérifier si la phase est active pendant cette période
+          if (phaseFromDate <= periodEndDate && phaseToDate >= periodStartDate && manualBonus > 0) {
+            totalBonus += manualBonus;
+            console.log(`✨ [BONUS ONLY] ${rule.sub1} - Phase ${index + 1}: +${manualBonus} leads bonus (aucune conversion réelle)`);
+          }
+        });
+        
+        if (totalBonus > 0) {
+          // Créer une entrée avec seulement les bonus
+          aggregated[rule.sub1] = {
+            sub1: rule.sub1,
+            phases: {},
+            noRule: 0,
+            totalConvs: 0,
+            convs: totalBonus
+          };
+          console.log(`🎯 [BONUS ONLY] ${rule.sub1}: ${totalBonus} leads (100% bonus, 0 conversions réelles)`);
+        }
+      }
+    });
+
     console.log(`📊 Agréger par sub1:`, aggregated);
     console.log(`🎯 Som dans les données:`, aggregated['som']);
 
