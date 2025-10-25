@@ -46,6 +46,11 @@
       "sourceSub1": "matt",
       "targetSub1": "bad",
       "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "ais",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
     }
   ],
   "lead_count_rules": [
