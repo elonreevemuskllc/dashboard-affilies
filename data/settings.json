@@ -164,10 +164,24 @@
         },
         {
           "from_date": "2025-10-25",
+          "to_date": "2025-10-27",
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave du 25 au 27 octobre"
+        },
+        {
+          "from_date": "2025-10-28",
+          "to_date": "2025-10-28",
+          "multiplier": 0.60,
+          "manual_bonus_leads": 4,
+          "comment": "40% shave + 4 leads bonus manuels pour le 28/10"
+        },
+        {
+          "from_date": "2025-10-29",
           "to_date": null,
           "multiplier": 0.60,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 25 octobre"
+          "comment": "40% shave à partir du 29 octobre"
         }
       ],
       "comment": "Shave pour tito"
