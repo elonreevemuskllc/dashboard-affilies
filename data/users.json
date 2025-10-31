@@ -131,6 +131,21 @@
       "sub1": "ais",
       "role": "affiliate",
       "name": "Ais"
+    },
+    {
+      "id": 16,
+      "email": "master1270@yopmail.com",
+      "password": "Master1010",
+      "sub1": "mast",
+      "role": "affiliate",
+      "name": "Master",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
     }
   ]
 }
