@@ -146,6 +146,36 @@
         "affiliateSub1": "bad",
         "commissionPerLead": 20
       }
+    },
+    {
+      "id": 17,
+      "email": "landy1270@yopmail.com",
+      "password": "Landy1010",
+      "sub1": "land",
+      "role": "affiliate",
+      "name": "Landy",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 18,
+      "email": "gabin1270@yopmail.com",
+      "password": "Gabin1010",
+      "sub1": "Gab",
+      "role": "affiliate",
+      "name": "Gabin",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
     }
   ]
 }
