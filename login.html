@@ -94,6 +94,16 @@
             border-left: 3px solid var(--destructive);
         }
         
+        .test-banner {
+            background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+            color: var(--primary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+            font-weight: 600;
+        }
+        
         .login-footer {
             text-align: center;
             margin-top: var(--spacing-xl);
@@ -108,6 +118,7 @@
     <div class="login-container">
         <div class="login-box">
         <h1>📊 Dashboard Affiliés</h1>
+            <div class="test-banner">✅ Déploiement test à jour (09/11/2025)</div>
             <div class="error-message" id="error-message"></div>
             <form id="login-form">
                 <div class="form-group">
