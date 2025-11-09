@@ -1,0 +1,209 @@
+{
+  "payout_per_lead": 4.70,
+  "payout_by_sub1": {
+    "losh": 4.70,
+    "elon": 4.70,
+    "fian": 4.70,
+    "lico": 4.70,
+    "llico": 4.70,
+    "som": 4.70,
+    "shan": 15,
+    "lllico": 4.70,
+    "kel": 4.70,
+    "bad": 30,
+    "lams": 4.70,
+    "ran": 15,
+    "tito": 15,
+    "anat": 10,
+    "matt": 10,
+    "ais": 10,
+    "mast": 10,
+    "land": 10,
+    "Gab": 10
+  },
+  "currency": "USD",
+  "usd_to_eur_rate": 1,
+  "manager_margin_per_lead": 25.30,
+  "sub_affiliate_rules": [
+    {
+      "sourceSub1": "som",
+      "targetSub1": "losh",
+      "bonusAmount": 2.00
+    },
+    {
+      "sourceSub1": "ran",
+      "targetSub1": "bad",
+      "bonusAmount": 15.00
+    },
+    {
+      "sourceSub1": "tito",
+      "targetSub1": "bad",
+      "bonusAmount": 15.00
+    },
+    {
+      "sourceSub1": "anat",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "matt",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "ais",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "mast",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "land",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    },
+    {
+      "sourceSub1": "Gab",
+      "targetSub1": "bad",
+      "bonusAmount": 20.00
+    }
+  ],
+  "lead_count_rules": [
+    {
+      "sub1": "bad",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour bad"
+    },
+    {
+      "sub1": "ran",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour ran"
+    },
+    {
+      "sub1": "tito",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour tito"
+    },
+    {
+      "sub1": "anat",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour anat"
+    },
+    {
+      "sub1": "matt",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour matt"
+    },
+    {
+      "sub1": "ais",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour ais"
+    },
+    {
+      "sub1": "mast",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour mast"
+    },
+    {
+      "sub1": "land",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour land"
+    },
+    {
+      "sub1": "Gab",
+      "phases": [
+        {
+          "from_date": "2025-11-10",
+          "to_date": null,
+          "multiplier": 0.5,
+          "threshold": 0,
+          "manual_bonus_leads": 0,
+          "comment": "Shave 50/50 simple a partir du 10 novembre"
+        }
+      ],
+      "comment": "Shave 50/50 pour Gab"
+    }
+  ],
+  "platform_mode": "dual",
+  "primary_platform": "everflow",
+  "manual_total_earnings": {
+    "bad": 2910.00,
+    "ran": 0,
+    "tito": 0
+  }
+}

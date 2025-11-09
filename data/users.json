@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@dashboard.com",
+      "password": "admin123",
+      "sub1": "admin",
+      "role": "admin",
+      "name": "Administrateur"
+    }
+  ]
+}
+
+
+
