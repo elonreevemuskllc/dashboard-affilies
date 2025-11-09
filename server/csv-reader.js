@@ -293,19 +293,8 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
           const phaseData = aggregated[sub1].phases[phaseIndex];
           const phaseConfig = rule.phases[phaseIndex];
           
-          // Appliquer le multiplier de la phase avec threshold
-          const threshold = phaseConfig.threshold || 0;
-          let leadsMultiplied = 0;
-          
-          if (threshold > 0 && phaseData.count > threshold) {
-            // Leads avant threshold : 100%
-            // Leads apres threshold : multiplier
-            const multiplierAbove = phaseConfig.multiplier_above_threshold || phaseData.multiplier;
-            leadsMultiplied = threshold + Math.round((phaseData.count - threshold) * multiplierAbove);
-          } else {
-            // Pas de threshold ou pas atteint : multiplier normal
-            leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
-          }
+          // Appliquer le multiplier de la phase
+          const leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
           totalLeads += leadsMultiplied;
           
           // Ajouter le bonus de la phase (seulement si dans la période)
@@ -589,7 +578,7 @@ const csvDataAPI = {
     // 🔧 NOUVELLE LOGIQUE : Transformer TOUTES les conversions d'abord, puis appliquer le filtrage par phase
     const conversionsWithPhaseInfo = filtered.map(conv => {
       const sub1 = conv.sub1 || 'unknown';
-      const payoutPerLead = settings.getDisplayPayoutForSub1(sub1);
+      const payoutPerLead = settings.getPayoutForSub1(sub1);
       const timestamp = conv.conversion_unix_timestamp;
       const date = timestamp ? new Date(timestamp * 1000) : new Date();
       
@@ -906,7 +895,7 @@ const csvDataAPI = {
       const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
       if (affiliateData) {
         const conversions = parseInt(affiliateData.convs) || 0;
-        const payoutPerLead = settings.getDisplayPayoutForSub1(sub1);
+        const payoutPerLead = settings.getPayoutForSub1(sub1);
         console.log(`🔒 [SECURITY] ${sub1} - Conversions: ${conversions}, Payout: $${payoutPerLead}`);
         totalConversions += conversions;
         totalRevenue += conversions * payoutPerLead;
@@ -1030,7 +1019,7 @@ const csvDataAPI = {
       const affiliateData = aggBySub1.find(row => row.sub1 === sub1);
       if (affiliateData) {
         const conversions = parseInt(affiliateData.convs) || 0;
-        const payoutPerLead = settings.getDisplayPayoutForSub1(sub1);
+        const payoutPerLead = settings.getPayoutForSub1(sub1);
         console.log(`🔒 [SECURITY] SubManager ${sub1} - Conversions: ${conversions}, Payout: $${payoutPerLead}`);
         totalConversions += conversions;
         totalRevenue += conversions * payoutPerLead;

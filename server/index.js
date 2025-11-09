@@ -694,6 +694,3 @@ app.listen(PORT, () => {
   console.log(`📊 Dashboard accessible à l'adresse ci-dessus`);
   console.log(`🔄 VERSION: Commission Helper fix - ${new Date().toISOString()}`);
 });
-
-
-

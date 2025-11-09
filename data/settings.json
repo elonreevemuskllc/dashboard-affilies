@@ -76,127 +76,200 @@
       "sub1": "bad",
       "phases": [
         {
-          "from_date": "2025-11-10",
-          "to_date": null,
+          "from_date": "2025-10-18",
+          "to_date": "2025-10-19",
           "multiplier": 0.5,
-          "threshold": 0,
+          "manual_bonus_leads": 5,
+          "comment": "50% shave + 5 bonus du 18 au 19 oct"
+        },
+        {
+          "from_date": "2025-10-20",
+          "to_date": "2025-10-20",
+          "multiplier": 0.35,
+          "manual_bonus_leads": 16,
+          "manual_bonus_clicks": 224,
+          "comment": "65% shave + 16 leads bonus pour le 20/10"
+        },
+        {
+          "from_date": "2025-10-21",
+          "to_date": "2025-10-22",
+          "multiplier": 0.35,
+          "manual_bonus_leads": 19,
+          "comment": "65% shave + 19 leads bonus pour le 21/10"
+        },
+        {
+          "from_date": "2025-10-23",
+          "to_date": "2025-10-23",
+          "multiplier": 0.25,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "75% shave le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.25,
+          "manual_bonus_leads": 2,
+          "comment": "75% shave + 2 leads bonus exceptionnels pour le 24/10"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave à partir du 25 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour bad"
+      "comment": "Règles par phases pour bad"
     },
     {
       "sub1": "ran",
       "phases": [
         {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
+          "from_date": "2025-10-20",
+          "to_date": "2025-10-22",
+          "multiplier": 0.7,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "30% shave pour ran du 20 au 22 oct"
+        },
+        {
+          "from_date": "2025-10-23",
+          "to_date": "2025-10-24",
+          "multiplier": 0.4,
+          "manual_bonus_leads": 0,
+          "comment": "60% shave du 23 au 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave à partir du 25 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour ran"
+      "comment": "Shave pour ran"
     },
     {
       "sub1": "tito",
       "phases": [
         {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
+          "from_date": "2025-10-20",
+          "to_date": "2025-10-20",
+          "multiplier": 0.7,
+          "manual_bonus_leads": 1,
+          "manual_bonus_clicks": 10,
+          "comment": "30% shave pour tito + 1 lead et 10 clics bonus pour le 20/10"
+        },
+        {
+          "from_date": "2025-10-21",
+          "to_date": "2025-10-22",
+          "multiplier": 0.7,
+          "manual_bonus_leads": 1,
+          "comment": "30% shave pour tito + 1 lead bonus pour le 21/10"
+        },
+        {
+          "from_date": "2025-10-23",
+          "to_date": "2025-10-23",
+          "multiplier": 0.4,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "60% shave le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.4,
+          "manual_bonus_leads": 10,
+          "comment": "60% shave + 10 leads bonus exceptionnels pour le 24/10"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": "2025-10-27",
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave du 25 au 27 octobre"
+        },
+        {
+          "from_date": "2025-10-28",
+          "to_date": "2025-10-28",
+          "multiplier": 0.60,
+          "manual_bonus_leads": 4,
+          "comment": "40% shave + 4 leads bonus manuels pour le 28/10"
+        },
+        {
+          "from_date": "2025-10-29",
+          "to_date": null,
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave à partir du 29 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour tito"
+      "comment": "Shave pour tito"
     },
     {
       "sub1": "anat",
       "phases": [
         {
-          "from_date": "2025-11-10",
-          "to_date": null,
+          "from_date": "2025-10-23",
+          "to_date": "2025-10-23",
           "multiplier": 0.5,
-          "threshold": 0,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "50% shave pour anat le 23 octobre"
+        },
+        {
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.4,
+          "manual_bonus_leads": 0,
+          "comment": "60% shave pour anat le 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": null,
+          "multiplier": 0.60,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave à partir du 25 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour anat"
+      "comment": "Shave pour anat"
     },
     {
       "sub1": "matt",
       "phases": [
         {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
+          "from_date": "2025-10-24",
+          "to_date": "2025-10-24",
+          "multiplier": 0.6,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "40% shave pour matt le 24 octobre"
+        },
+        {
+          "from_date": "2025-10-25",
+          "to_date": "2025-10-25",
+          "multiplier": 0.6,
+          "manual_bonus_leads": 3,
+          "comment": "40% shave + 3 leads bonus pour matt le 25 octobre"
+        },
+        {
+          "from_date": "2025-10-26",
+          "to_date": null,
+          "multiplier": 0.6,
+          "manual_bonus_leads": 0,
+          "comment": "40% shave pour matt à partir du 26 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour matt"
+      "comment": "Shave pour matt"
     },
     {
       "sub1": "ais",
       "phases": [
         {
-          "from_date": "2025-11-10",
+          "from_date": "2025-10-25",
           "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
+          "multiplier": 0.60,
           "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
+          "comment": "40% shave à partir du 25 octobre"
         }
       ],
-      "comment": "Shave 50/50 pour ais"
-    },
-    {
-      "sub1": "mast",
-      "phases": [
-        {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
-          "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
-        }
-      ],
-      "comment": "Shave 50/50 pour mast"
-    },
-    {
-      "sub1": "land",
-      "phases": [
-        {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
-          "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
-        }
-      ],
-      "comment": "Shave 50/50 pour land"
-    },
-    {
-      "sub1": "Gab",
-      "phases": [
-        {
-          "from_date": "2025-11-10",
-          "to_date": null,
-          "multiplier": 0.5,
-          "threshold": 0,
-          "manual_bonus_leads": 0,
-          "comment": "Shave 50/50 simple a partir du 10 novembre"
-        }
-      ],
-      "comment": "Shave 50/50 pour Gab"
+      "comment": "Shave pour ais"
     }
   ],
   "platform_mode": "dual",

@@ -1,6 +1,18 @@
 {
-  "payments": []
+  "payments": [
+    {
+      "id": "1760921635803",
+      "affiliate": "bad",
+      "amount": 752.34,
+      "note": "1er payout 18/10",
+      "date": "2025-10-20T00:53:55.803Z"
+    },
+    {
+      "id": "1760921671426",
+      "affiliate": "bad",
+      "amount": 985.49,
+      "note": "2e paiment 19/10",
+      "date": "2025-10-20T00:54:31.426Z"
+    }
+  ]
 }
-
-
-

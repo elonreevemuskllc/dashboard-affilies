@@ -189,6 +189,3 @@ module.exports = {
   removeSub1FromUser,
   listUsers
 };
-
-
-
