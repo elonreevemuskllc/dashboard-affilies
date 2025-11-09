@@ -1,17 +1,17 @@
 {
-  "payout_per_lead": 4.70,
+  "payout_per_lead": 4.7,
   "payout_by_sub1": {
-    "losh": 4.70,
-    "elon": 4.70,
-    "fian": 4.70,
-    "lico": 4.70,
-    "llico": 4.70,
-    "som": 4.70,
+    "losh": 4.7,
+    "elon": 4.7,
+    "fian": 4.7,
+    "lico": 4.7,
+    "llico": 4.7,
+    "som": 4.7,
     "shan": 15,
-    "lllico": 4.70,
-    "kel": 4.70,
+    "lllico": 4.7,
+    "kel": 4.7,
     "bad": 30,
-    "lams": 4.70,
+    "lams": 4.7,
     "ran": 15,
     "tito": 15,
     "anat": 10,
@@ -23,52 +23,52 @@
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
-  "manager_margin_per_lead": 25.30,
+  "manager_margin_per_lead": 25.3,
   "sub_affiliate_rules": [
     {
       "sourceSub1": "som",
       "targetSub1": "losh",
-      "bonusAmount": 2.00
+      "bonusAmount": 2
     },
     {
       "sourceSub1": "ran",
       "targetSub1": "bad",
-      "bonusAmount": 15.00
+      "bonusAmount": 15
     },
     {
       "sourceSub1": "tito",
       "targetSub1": "bad",
-      "bonusAmount": 15.00
+      "bonusAmount": 15
     },
     {
       "sourceSub1": "anat",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     },
     {
       "sourceSub1": "matt",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     },
     {
       "sourceSub1": "ais",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     },
     {
       "sourceSub1": "mast",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     },
     {
       "sourceSub1": "land",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     },
     {
       "sourceSub1": "Gab",
       "targetSub1": "bad",
-      "bonusAmount": 20.00
+      "bonusAmount": 20
     }
   ],
   "lead_count_rules": [
@@ -114,9 +114,9 @@
         {
           "from_date": "2025-10-25",
           "to_date": null,
-          "multiplier": 0.60,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 25 octobre"
+          "comment": "50% shave à partir du 25 octobre"
         }
       ],
       "comment": "Règles par phases pour bad"
@@ -141,9 +141,9 @@
         {
           "from_date": "2025-10-25",
           "to_date": null,
-          "multiplier": 0.60,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 25 octobre"
+          "comment": "50% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour ran"
@@ -183,23 +183,23 @@
         {
           "from_date": "2025-10-25",
           "to_date": "2025-10-27",
-          "multiplier": 0.60,
+          "multiplier": 0.6,
           "manual_bonus_leads": 0,
           "comment": "40% shave du 25 au 27 octobre"
         },
         {
           "from_date": "2025-10-28",
           "to_date": "2025-10-28",
-          "multiplier": 0.60,
+          "multiplier": 0.6,
           "manual_bonus_leads": 4,
           "comment": "40% shave + 4 leads bonus manuels pour le 28/10"
         },
         {
           "from_date": "2025-10-29",
           "to_date": null,
-          "multiplier": 0.60,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 29 octobre"
+          "comment": "50% shave à partir du 29 octobre"
         }
       ],
       "comment": "Shave pour tito"
@@ -224,9 +224,9 @@
         {
           "from_date": "2025-10-25",
           "to_date": null,
-          "multiplier": 0.60,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 25 octobre"
+          "comment": "50% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour anat"
@@ -251,9 +251,9 @@
         {
           "from_date": "2025-10-26",
           "to_date": null,
-          "multiplier": 0.6,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave pour matt à partir du 26 octobre"
+          "comment": "50% shave pour matt à partir du 26 octobre"
         }
       ],
       "comment": "Shave pour matt"
@@ -264,9 +264,9 @@
         {
           "from_date": "2025-10-25",
           "to_date": null,
-          "multiplier": 0.60,
+          "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "40% shave à partir du 25 octobre"
+          "comment": "50% shave à partir du 25 octobre"
         }
       ],
       "comment": "Shave pour ais"
@@ -275,7 +275,7 @@
   "platform_mode": "dual",
   "primary_platform": "everflow",
   "manual_total_earnings": {
-    "bad": 2910.00,
+    "bad": 2910,
     "ran": 0,
     "tito": 0
   }
