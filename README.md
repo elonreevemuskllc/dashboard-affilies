@@ -236,3 +236,4 @@ Le dashboard est entièrement responsive et fonctionne sur :
 **Dashboard prêt à l'emploi ! 🚀**
 
 Pour toute question, consultez les fichiers dans le projet.
+Test deploy 2025-11-09
