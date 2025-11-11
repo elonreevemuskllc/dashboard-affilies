@@ -238,13 +238,23 @@ async function refreshAllData() {
 // Fonction logout (retour à la page normale)
 async function logout() {
     sessionStorage.removeItem('demoAuth');
+    sessionStorage.removeItem('demoEmail');
     window.location.href = '/demo-login';
 }
 
 // Charger l'utilisateur
 async function loadCurrentUser() {
     if (!demoData) return;
-    document.getElementById('user-name').textContent = `👤 ${demoData.user.name} (DEMO)`;
+    
+    // Récupérer l'email depuis sessionStorage
+    const email = sessionStorage.getItem('demoEmail') || 'demo@aprileads.com';
+    
+    // Extraire le prénom de l'email (ex: alex.martin@yopmail.com → Alex)
+    const username = email.split('@')[0];
+    const firstName = username.split('.')[0];
+    const displayName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    
+    document.getElementById('user-name').textContent = `👤 ${displayName}`;
 }
 
 // Initialisation au chargement de la page
