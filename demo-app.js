@@ -83,10 +83,16 @@ async function loadDashboardStats() {
     document.getElementById('total-revenue').innerHTML = formatCurrencyWithEur(stats.revenue);
     document.getElementById('conversion-rate').innerHTML = formatCurrencyWithEur(stats.bonus);
     
-    const netProfit = stats.revenue + stats.bonus;
+    // Calculer le profit net en EUR
+    const netProfitUSD = stats.revenue + stats.bonus;
+    const netProfitEUR = convertUsdToEur(netProfitUSD);
     const costElement = document.getElementById('total-cost');
     if (costElement) {
-        costElement.innerHTML = formatCurrencyWithEur(netProfit);
+        const eurFormatted = new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(netProfitEUR);
+        costElement.innerHTML = `${eurFormatted}<br><small style="color: var(--text-secondary); font-size: 0.65em; opacity: 0.7;">${formatCurrency(netProfitUSD)}</small>`;
     }
     
     updateLastUpdate();
@@ -231,7 +237,8 @@ async function refreshAllData() {
 
 // Fonction logout (retour à la page normale)
 async function logout() {
-    window.location.href = '/login';
+    sessionStorage.removeItem('demoAuth');
+    window.location.href = '/demo-login';
 }
 
 // Charger l'utilisateur
@@ -242,6 +249,13 @@ async function loadCurrentUser() {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async () => {
+    // Vérifier l'authentification demo
+    const demoAuth = sessionStorage.getItem('demoAuth');
+    if (!demoAuth) {
+        window.location.href = '/demo-login';
+        return;
+    }
+    
     await loadDemoData();
     loadCurrentUser();
     refreshAllData();

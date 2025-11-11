@@ -54,6 +54,11 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'login.html'));
 });
 
+// Route demo login page
+app.get('/demo-login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'demo-login.html'));
+});
+
 // Route demo page (accessible sans authentification)
 app.get('/demo', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'demo.html'));
