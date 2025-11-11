@@ -307,10 +307,11 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
               const leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
               totalLeads += leadsMultiplied;
               
-              // Ajouter le bonus de la phase
-              if (phaseData.bonus > 0) {
-                bonusTotal += phaseData.bonus;
-                console.log(`✅ Phase ${phaseIndex + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads + ${phaseData.bonus} bonus`);
+              // Ajouter le bonus de la phase (vérifier phaseConfig directement pour être sûr)
+              const manualBonus = phaseConfig.manual_bonus_leads || phaseData.bonus || 0;
+              if (manualBonus > 0) {
+                bonusTotal += manualBonus;
+                console.log(`✅ Phase ${phaseIndex + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads + ${manualBonus} bonus`);
               } else {
                 console.log(`📊 Phase ${phaseIndex + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads`);
               }
