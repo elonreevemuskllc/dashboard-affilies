@@ -289,24 +289,39 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
         let totalLeads = aggregated[sub1].noRule || 0; // Leads avant toute règle comptent normalement
         let bonusTotal = 0;
         
-        Object.keys(aggregated[sub1].phases).forEach(phaseIndex => {
-          const phaseData = aggregated[sub1].phases[phaseIndex];
-          const phaseConfig = rule.phases[phaseIndex];
-          
-          // Appliquer le multiplier de la phase
-          const leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
-          totalLeads += leadsMultiplied;
-          
-          // Ajouter le bonus de la phase (seulement si dans la période)
-          const { to } = getDateRange(period);
-          const periodEndDate = new Date(to);
+        const { from, to } = getDateRange(period);
+        const periodStartDate = new Date(from);
+        const periodEndDate = new Date(to);
+        
+        // Parcourir toutes les phases de la règle pour vérifier les bonus actifs
+        rule.phases.forEach((phaseConfig, phaseIndex) => {
+          const phaseFromDate = new Date(phaseConfig.from_date + ' 00:00:00');
           const phaseToDate = phaseConfig.to_date ? new Date(phaseConfig.to_date + ' 23:59:59') : new Date('2099-12-31');
           
-          if (periodEndDate <= phaseToDate && phaseData.bonus > 0) {
-            bonusTotal += phaseData.bonus;
-            console.log(`✅ Phase ${parseInt(phaseIndex) + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads + ${phaseData.bonus} bonus`);
-          } else {
-            console.log(`📊 Phase ${parseInt(phaseIndex) + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads`);
+          // Vérifier si cette phase est active pendant la période demandée
+          if (phaseFromDate <= periodEndDate && phaseToDate >= periodStartDate) {
+            const phaseData = aggregated[sub1].phases[phaseIndex];
+            
+            if (phaseData) {
+              // Phase avec conversions réelles
+              const leadsMultiplied = Math.round(phaseData.count * phaseData.multiplier);
+              totalLeads += leadsMultiplied;
+              
+              // Ajouter le bonus de la phase
+              if (phaseData.bonus > 0) {
+                bonusTotal += phaseData.bonus;
+                console.log(`✅ Phase ${phaseIndex + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads + ${phaseData.bonus} bonus`);
+              } else {
+                console.log(`📊 Phase ${phaseIndex + 1} pour ${sub1}: ${phaseData.count} leads × ${phaseData.multiplier} = ${leadsMultiplied} leads`);
+              }
+            } else {
+              // Phase active mais sans conversions réelles - vérifier si elle a un bonus manuel
+              const manualBonus = phaseConfig.manual_bonus_leads || 0;
+              if (manualBonus > 0) {
+                bonusTotal += manualBonus;
+                console.log(`✨ Phase ${phaseIndex + 1} pour ${sub1}: 0 leads réels + ${manualBonus} bonus manuels`);
+              }
+            }
           }
         });
         
