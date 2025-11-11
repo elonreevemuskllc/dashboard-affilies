@@ -151,29 +151,6 @@
                 return;
             }
             
-            // VÉRIFIER SI C'EST UN LOGIN DEMO (@yopmail.com)
-            const demoAccounts = [
-                'alex.martin@yopmail.com',
-                'sophie.dubois@yopmail.com',
-                'thomas.bernard@yopmail.com',
-                'marie.petit@yopmail.com',
-                'lucas.robert@yopmail.com',
-                'emma.moreau@yopmail.com',
-                'julien.laurent@yopmail.com',
-                'chloe.simon@yopmail.com'
-            ];
-            
-            // Si c'est un compte demo avec le bon mot de passe
-            if (demoAccounts.includes(email.trim()) && password.trim() === 'demo2024') {
-                // Stocker la session demo
-                sessionStorage.setItem('demoAuth', 'true');
-                sessionStorage.setItem('demoEmail', email.trim());
-                // Rediriger vers le dashboard principal
-                window.location.href = '/';
-                return;
-            }
-            
-            // SINON : Authentification normale via API
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
