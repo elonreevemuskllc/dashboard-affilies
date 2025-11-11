@@ -290,8 +290,8 @@
           "from_date": "2025-11-09",
           "to_date": "2025-11-09",
           "multiplier": 0.5,
-          "manual_bonus_leads": 3,
-          "comment": "50% shave + 3 leads bonus manuels pour le 09 novembre 2025"
+          "manual_bonus_leads": 5,
+          "comment": "50% shave + 5 leads bonus manuels pour le 09 novembre 2025"
         },
         {
           "from_date": "2025-11-10",
