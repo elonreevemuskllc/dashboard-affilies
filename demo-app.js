@@ -239,7 +239,7 @@ async function refreshAllData() {
 async function logout() {
     sessionStorage.removeItem('demoAuth');
     sessionStorage.removeItem('demoEmail');
-    window.location.href = '/demo-login';
+    window.location.href = '/login';
 }
 
 // Charger l'utilisateur
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Vérifier l'authentification demo
     const demoAuth = sessionStorage.getItem('demoAuth');
     if (!demoAuth) {
-        window.location.href = '/demo-login';
+        window.location.href = '/login';
         return;
     }
     
