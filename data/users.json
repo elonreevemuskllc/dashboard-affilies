@@ -176,6 +176,51 @@
         "affiliateSub1": "bad",
         "commissionPerLead": 20
       }
+    },
+    {
+      "id": 19,
+      "email": "kris1270@yopmail.com",
+      "password": "Kris1010@",
+      "sub1": "kris",
+      "role": "affiliate",
+      "name": "Kris",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 20,
+      "email": "leo1270@yopmail.com",
+      "password": "Leo1010@",
+      "sub1": "leo",
+      "role": "affiliate",
+      "name": "Léo",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 21,
+      "email": "tom1270@yopmail.com",
+      "password": "Tom1010@",
+      "sub1": "tom",
+      "role": "affiliate",
+      "name": "Tom",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
     }
   ]
 }

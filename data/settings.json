@@ -19,7 +19,10 @@
     "ais": 10,
     "mast": 10,
     "land": 10,
-    "Gab": 10
+    "Gab": 10,
+    "kris": 10,
+    "leo": 10,
+    "tom": 10
   },
   "currency": "USD",
   "usd_to_eur_rate": 1,
@@ -67,6 +70,21 @@
     },
     {
       "sourceSub1": "Gab",
+      "targetSub1": "bad",
+      "bonusAmount": 20
+    },
+    {
+      "sourceSub1": "kris",
+      "targetSub1": "bad",
+      "bonusAmount": 20
+    },
+    {
+      "sourceSub1": "leo",
+      "targetSub1": "bad",
+      "bonusAmount": 20
+    },
+    {
+      "sourceSub1": "tom",
       "targetSub1": "bad",
       "bonusAmount": 20
     }
@@ -270,6 +288,45 @@
         }
       ],
       "comment": "Shave pour ais"
+    },
+    {
+      "sub1": "kris",
+      "phases": [
+        {
+          "from_date": "2025-11-09",
+          "to_date": null,
+          "multiplier": 0.5,
+          "manual_bonus_leads": 0,
+          "comment": "50% shave à partir du 09 novembre 2025"
+        }
+      ],
+      "comment": "Shave pour kris"
+    },
+    {
+      "sub1": "leo",
+      "phases": [
+        {
+          "from_date": "2025-11-09",
+          "to_date": null,
+          "multiplier": 0.5,
+          "manual_bonus_leads": 0,
+          "comment": "50% shave à partir du 09 novembre 2025"
+        }
+      ],
+      "comment": "Shave pour leo"
+    },
+    {
+      "sub1": "tom",
+      "phases": [
+        {
+          "from_date": "2025-11-09",
+          "to_date": null,
+          "multiplier": 0.5,
+          "manual_bonus_leads": 0,
+          "comment": "50% shave à partir du 09 novembre 2025"
+        }
+      ],
+      "comment": "Shave pour tom"
     }
   ],
   "platform_mode": "dual",
