@@ -4,6 +4,7 @@ const API_BASE_URL = window.location.origin;
 // Variables globales
 let performanceChart = null;
 let demoData = null;
+let currentPeriod = 'today';
 
 // Fonction pour formater les nombres
 function formatNumber(num) {
@@ -224,6 +225,94 @@ async function loadLeaderboard() {
     `).join('');
 }
 
+// Fonction pour changer la période (non-fonctionnelle en demo, juste visuelle)
+function changePeriod(period) {
+    currentPeriod = period;
+    
+    // Mettre à jour les boutons actifs
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    const btn = document.querySelector(`[data-period="${period}"]`);
+    if (btn) {
+        btn.classList.add('active');
+    }
+    
+    // En demo, on ne recharge pas les données (elles sont statiques)
+    console.log(`Période changée en mode demo: ${period}`);
+}
+
+// Fonction pour appliquer les dates personnalisées (non-fonctionnelle en demo)
+function applyCustomDates() {
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    if (!dateFrom || !dateTo) {
+        alert('Veuillez sélectionner les deux dates');
+        return;
+    }
+    
+    // Désactiver tous les boutons de période
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    console.log(`Dates personnalisées en mode demo: ${dateFrom} → ${dateTo}`);
+}
+
+// Fonction pour appliquer une période personnalisée
+function applyCustomPeriod() {
+    applyCustomDates();
+}
+
+// Fonction d'actualisation manuelle (recharge les données demo)
+async function manualRefresh() {
+    const refreshBtn = document.getElementById('refresh-btn');
+    
+    // Désactiver le bouton
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '🔄 Actualisation...';
+    
+    try {
+        await refreshAllData();
+        // Message de succès
+        refreshBtn.textContent = '✅ Mis à jour !';
+        setTimeout(() => {
+            refreshBtn.textContent = '🔄 Actualiser';
+            refreshBtn.disabled = false;
+        }, 1500);
+    } catch (error) {
+        // Message d'erreur
+        refreshBtn.textContent = '❌ Erreur';
+        setTimeout(() => {
+            refreshBtn.textContent = '🔄 Actualiser';
+            refreshBtn.disabled = false;
+        }, 2000);
+    }
+}
+
+// Initialiser les dates par défaut
+function initializeDatePickers() {
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    const dateFromEl = document.getElementById('date-from');
+    const dateToEl = document.getElementById('date-to');
+    
+    if (dateFromEl && dateToEl) {
+        dateFromEl.value = formatDate(lastWeek);
+        dateToEl.value = formatDate(today);
+    }
+}
+
 // Fonction pour rafraîchir toutes les données
 async function refreshAllData() {
     await loadDemoData();
@@ -266,6 +355,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     
+    initializeDatePickers();
     await loadDemoData();
     loadCurrentUser();
     refreshAllData();

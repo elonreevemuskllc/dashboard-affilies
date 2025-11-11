@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard Affiliés - April Leads (DEMO)</title>
+        <title>Dashboard Affiliés - April Leads</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     
@@ -23,6 +23,7 @@
             <div class="header-info">
                 <span id="user-name"></span>
                 <span id="last-update">Dernière mise à jour: --:--</span>
+                <button onclick="manualRefresh()" class="btn refresh-btn" id="refresh-btn">Actualiser</button>
                 <button onclick="logout()" class="btn btn-secondary">Déconnexion</button>
             </div>
         </div>
@@ -30,6 +31,22 @@
 
     <!-- Main Content -->
     <main class="container">
+        <!-- Filtres de période -->
+        <section style="margin-bottom: var(--spacing-xl);">
+            <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap; align-items: center;">
+                <button class="period-btn active" data-period="today" onclick="changePeriod('today')">Aujourd'hui</button>
+                <button class="period-btn" data-period="yesterday" onclick="changePeriod('yesterday')">Hier</button>
+                
+                <div style="display: flex; gap: 10px; align-items: center; background: var(--bg-card); padding: 10px 15px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                    <label style="color: var(--text-secondary); font-size: 14px;">Du :</label>
+                    <input type="date" id="date-from" style="padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    <label style="color: var(--text-secondary); font-size: 14px;">Au :</label>
+                    <input type="date" id="date-to" style="padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    <button class="btn" onclick="applyCustomPeriod()" style="padding: 5px 15px;">Appliquer</button>
+                </div>
+            </div>
+        </section>
+
         <!-- Explication Bonus -->
         <section style="margin-bottom: var(--spacing-xl); text-align: center;">
             <div style="display: inline-block; background-color: var(--bg-card); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); padding: var(--spacing-md) var(--spacing-lg); max-width: 600px;">
@@ -165,4 +182,3 @@
     <script src="demo-app.js"></script>
 </body>
 </html>
-
