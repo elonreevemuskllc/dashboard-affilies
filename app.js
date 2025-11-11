@@ -746,6 +746,13 @@ async function loadManagerEPC() {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
+    // Ne pas charger si c'est une session demo
+    const demoAuth = sessionStorage.getItem('demoAuth');
+    if (demoAuth === 'true') {
+        console.log('✅ Session demo détectée - app.js ne se charge pas');
+        return;
+    }
+    
     initializeDatePickers();
     loadCurrentUser();
     refreshAllData();
