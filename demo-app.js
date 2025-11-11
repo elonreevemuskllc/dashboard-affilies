@@ -73,11 +73,77 @@ async function loadDemoData() {
     }
 }
 
+// Obtenir les dates selon la période
+function getDateRange(period) {
+    const today = new Date();
+    let startDate, endDate;
+    
+    switch(period) {
+        case 'yesterday':
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 1);
+            endDate = new Date(startDate);
+            break;
+        case 'today':
+        default:
+            startDate = new Date(today);
+            endDate = new Date(today);
+            break;
+    }
+    
+    return { startDate, endDate };
+}
+
+// Calculer les stats pour une période
+function calculateStatsForPeriod(period) {
+    if (!demoData || !demoData.dailyStats) return null;
+    
+    const { startDate, endDate } = getDateRange(period);
+    
+    // Format YYYY-MM-DD
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    let totalClicks = 0;
+    let totalConversions = 0;
+    let totalRevenue = 0;
+    let totalBonus = 0;
+    
+    // Itérer sur chaque jour dans la période
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        const dateKey = formatDate(currentDate);
+        const dayData = demoData.dailyStats[dateKey];
+        
+        if (dayData) {
+            totalClicks += dayData.clicks;
+            totalConversions += dayData.conversions;
+            totalRevenue += dayData.revenue;
+            totalBonus += dayData.bonus;
+        }
+        
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return {
+        clicks: totalClicks,
+        conversions: totalConversions,
+        revenue: totalRevenue,
+        bonus: totalBonus
+    };
+}
+
 // 1. Charger les statistiques du dashboard
 async function loadDashboardStats() {
     if (!demoData) return;
     
-    const stats = demoData.stats;
+    // Calculer les stats selon la période sélectionnée
+    const stats = calculateStatsForPeriod(currentPeriod);
+    if (!stats) return;
     
     document.getElementById('total-clicks').textContent = formatNumber(stats.clicks);
     document.getElementById('total-conversions').textContent = formatNumber(stats.conversions);
@@ -105,10 +171,33 @@ async function loadConversions() {
     
     const conversionsBody = document.getElementById('conversions-body');
     
-    if (!demoData.conversions || demoData.conversions.length === 0) {
+    // Générer les conversions selon la période
+    const { startDate } = getDateRange(currentPeriod);
+    const formatDateKey = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    const conversions = [];
+    if (demoData.conversionsTemplates) {
+        demoData.conversionsTemplates.forEach(template => {
+            const dateKey = formatDateKey(startDate);
+            const dateTimeStr = `${dateKey}T${template.time}.000Z`;
+            
+            conversions.push({
+                created_at: dateTimeStr,
+                payout: template.payout,
+                status: template.status
+            });
+        });
+    }
+    
+    if (conversions.length === 0) {
         conversionsBody.innerHTML = `
             <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-light);">
+                <td colspan="3" style="text-align: center; color: var(--text-light);">
                     Aucune conversion pour le moment
                 </td>
             </tr>
@@ -116,7 +205,7 @@ async function loadConversions() {
         return;
     }
     
-    conversionsBody.innerHTML = demoData.conversions.map(conversion => {
+    conversionsBody.innerHTML = conversions.map(conversion => {
         const status = conversion.status || 'pending';
         const statusClass = `status-${status.toLowerCase()}`;
         const statusText = status === 'approved' ? 'Approuvé' : 
@@ -134,18 +223,38 @@ async function loadConversions() {
 
 // 3. Charger les données de performance et créer le graphique
 async function loadPerformance() {
-    if (!demoData) return;
+    if (!demoData || !demoData.dailyStats) return;
     
     const labels = [];
     const clicksData = [];
     const conversionsData = [];
     
-    demoData.performance.forEach(item => {
-        const date = new Date(item.date);
+    // Obtenir les 30 derniers jours
+    const today = new Date();
+    const formatDateKey = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    // Créer les données pour les 30 derniers jours
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateKey = formatDateKey(date);
+        
         labels.push(date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }));
-        clicksData.push(item.clicks);
-        conversionsData.push(item.conversions);
-    });
+        
+        const dayData = demoData.dailyStats[dateKey];
+        if (dayData) {
+            clicksData.push(dayData.clicks);
+            conversionsData.push(dayData.conversions);
+        } else {
+            clicksData.push(0);
+            conversionsData.push(0);
+        }
+    }
     
     const ctx = document.getElementById('performanceChart').getContext('2d');
     
@@ -225,7 +334,7 @@ async function loadLeaderboard() {
     `).join('');
 }
 
-// Fonction pour changer la période (non-fonctionnelle en demo, juste visuelle)
+// Fonction pour changer la période
 function changePeriod(period) {
     currentPeriod = period;
     
@@ -238,8 +347,8 @@ function changePeriod(period) {
         btn.classList.add('active');
     }
     
-    // En demo, on ne recharge pas les données (elles sont statiques)
-    console.log(`Période changée en mode demo: ${period}`);
+    // Recharger les données pour la nouvelle période
+    refreshAllData();
 }
 
 // Fonction pour appliquer les dates personnalisées (non-fonctionnelle en demo)
