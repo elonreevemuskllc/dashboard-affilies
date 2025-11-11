@@ -457,10 +457,10 @@ async function loadCurrentUser() {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async () => {
-    // Vérifier l'authentification demo
+    // Vérifier l'authentification demo (ne pas rediriger, juste ne pas charger)
     const demoAuth = sessionStorage.getItem('demoAuth');
-    if (!demoAuth) {
-        window.location.href = '/login';
+    if (!demoAuth || demoAuth !== 'true') {
+        console.log('❌ Pas de session demo détectée');
         return;
     }
     

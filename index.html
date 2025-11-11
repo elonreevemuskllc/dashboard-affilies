@@ -253,6 +253,21 @@
         </div>
     </footer>
 
-    <script src="app.js"></script>
+    <script>
+        // Détecter si c'est une session demo
+        const demoAuth = sessionStorage.getItem('demoAuth');
+        
+        if (demoAuth === 'true') {
+            // Charger le script demo
+            const script = document.createElement('script');
+            script.src = 'demo-app.js';
+            document.body.appendChild(script);
+        } else {
+            // Charger le script normal
+            const script = document.createElement('script');
+            script.src = 'app.js';
+            document.body.appendChild(script);
+        }
+    </script>
 </body>
 </html>
