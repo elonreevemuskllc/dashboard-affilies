@@ -54,6 +54,11 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'login.html'));
 });
 
+// Route demo page (accessible sans authentification)
+app.get('/demo', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'demo.html'));
+});
+
 // Route admin page
 app.get('/admin', (req, res) => {
   if (!req.session || !req.session.user || req.session.user.role !== 'admin') {

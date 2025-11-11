@@ -1,0 +1,104 @@
+{
+  "stats": {
+    "clicks": 8450,
+    "conversions": 127,
+    "revenue": 596.90,
+    "bonus": 120
+  },
+  "conversions": [
+    {
+      "created_at": "2025-11-11T14:23:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T13:45:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T12:18:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T11:52:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T10:30:00.000Z",
+      "payout": 4.70,
+      "status": "pending"
+    },
+    {
+      "created_at": "2025-11-11T09:15:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T08:42:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T07:28:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T06:55:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    },
+    {
+      "created_at": "2025-11-11T05:12:00.000Z",
+      "payout": 4.70,
+      "status": "approved"
+    }
+  ],
+  "performance": [
+    {"date": "2025-10-12", "clicks": 180, "conversions": 3},
+    {"date": "2025-10-13", "clicks": 245, "conversions": 4},
+    {"date": "2025-10-14", "clicks": 312, "conversions": 5},
+    {"date": "2025-10-15", "clicks": 198, "conversions": 3},
+    {"date": "2025-10-16", "clicks": 278, "conversions": 6},
+    {"date": "2025-10-17", "clicks": 356, "conversions": 7},
+    {"date": "2025-10-18", "clicks": 423, "conversions": 8},
+    {"date": "2025-10-19", "clicks": 289, "conversions": 4},
+    {"date": "2025-10-20", "clicks": 367, "conversions": 6},
+    {"date": "2025-10-21", "clicks": 445, "conversions": 9},
+    {"date": "2025-10-22", "clicks": 512, "conversions": 10},
+    {"date": "2025-10-23", "clicks": 378, "conversions": 5},
+    {"date": "2025-10-24", "clicks": 298, "conversions": 4},
+    {"date": "2025-10-25", "clicks": 421, "conversions": 8},
+    {"date": "2025-10-26", "clicks": 489, "conversions": 9},
+    {"date": "2025-10-27", "clicks": 534, "conversions": 11},
+    {"date": "2025-10-28", "clicks": 412, "conversions": 7},
+    {"date": "2025-10-29", "clicks": 367, "conversions": 6},
+    {"date": "2025-10-30", "clicks": 456, "conversions": 8},
+    {"date": "2025-10-31", "clicks": 523, "conversions": 10},
+    {"date": "2025-11-01", "clicks": 478, "conversions": 9},
+    {"date": "2025-11-02", "clicks": 389, "conversions": 6},
+    {"date": "2025-11-03", "clicks": 445, "conversions": 8},
+    {"date": "2025-11-04", "clicks": 512, "conversions": 10},
+    {"date": "2025-11-05", "clicks": 434, "conversions": 7},
+    {"date": "2025-11-06", "clicks": 398, "conversions": 6},
+    {"date": "2025-11-07", "clicks": 467, "conversions": 9},
+    {"date": "2025-11-08", "clicks": 523, "conversions": 11},
+    {"date": "2025-11-09", "clicks": 489, "conversions": 8},
+    {"date": "2025-11-10", "clicks": 456, "conversions": 9}
+  ],
+  "leaderboard": [
+    {"rank": 1, "nameMasked": "***", "leads": 245},
+    {"rank": 2, "nameMasked": "***", "leads": 189},
+    {"rank": 3, "nameMasked": "***", "leads": 156},
+    {"rank": 4, "nameMasked": "***", "leads": 134},
+    {"rank": 5, "nameMasked": "***", "leads": 98}
+  ],
+  "user": {
+    "name": "Affilié Demo",
+    "role": "affiliate"
+  }
+}
+

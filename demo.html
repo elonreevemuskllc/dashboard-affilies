@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard Affiliés - April Leads (DEMO)</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Force cache refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+        <div class="header-left">
+            <h1>Dashboard</h1>
+        </div>
+            <div class="header-info">
+                <span id="user-name"></span>
+                <span id="last-update">Dernière mise à jour: --:--</span>
+                <button onclick="logout()" class="btn btn-secondary">Retour</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Explication Bonus -->
+        <section style="margin-bottom: var(--spacing-xl); text-align: center;">
+            <div style="display: inline-block; background-color: var(--bg-card); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); padding: var(--spacing-md) var(--spacing-lg); max-width: 600px;">
+                <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">
+                    💡 <strong>Bonus :</strong> Vous gagnez <strong>10€</strong> par tranche de <strong>10 conversions</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Section des statistiques principales -->
+        <section class="stats-grid">
+            <div class="stat-card stat-card-blue">
+                <div class="stat-icon">👆</div>
+                <div class="stat-content">
+                    <h3>Clicks</h3>
+                    <p class="stat-value" id="total-clicks">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-green">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h3>Conversions</h3>
+                    <p class="stat-value" id="total-conversions">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-purple" id="revenue-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>Revenus</h3>
+                    <p class="stat-value" id="total-revenue">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-orange" id="bonus-card">
+                <div class="stat-icon">🎁</div>
+                <div class="stat-content">
+                    <h3>Bonus</h3>
+                    <p class="stat-value" id="conversion-rate">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-red" id="cost-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-content">
+                    <h3>Profit Net</h3>
+                    <p class="stat-value" id="total-cost">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Classement Affiliés -->
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>🏆 Classement Affiliés (Leads)</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Affilié</th>
+                            <th>Leads</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="3" class="loading-row">
+                                <span class="loading">Chargement du classement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section des conversions récentes -->
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>🎯 Conversions Récentes</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Commission</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="conversions-body">
+                        <tr>
+                            <td colspan="3" class="loading-row">
+                                <span class="loading">Chargement des conversions...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section graphique de performance -->
+        <section class="chart-section">
+            <div class="section-header">
+                <h2>📊 Performance des 30 derniers jours</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </section>
+
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Dashboard Affiliés</p>
+        </div>
+    </footer>
+
+    <script src="demo-app.js"></script>
+</body>
+</html>
+
