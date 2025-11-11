@@ -281,10 +281,24 @@
       "phases": [
         {
           "from_date": "2025-10-25",
+          "to_date": "2025-11-08",
+          "multiplier": 0.5,
+          "manual_bonus_leads": 0,
+          "comment": "50% shave du 25 octobre au 8 novembre"
+        },
+        {
+          "from_date": "2025-11-09",
+          "to_date": "2025-11-09",
+          "multiplier": 0.5,
+          "manual_bonus_leads": 3,
+          "comment": "50% shave + 3 leads bonus manuels pour le 09 novembre 2025"
+        },
+        {
+          "from_date": "2025-11-10",
           "to_date": null,
           "multiplier": 0.5,
           "manual_bonus_leads": 0,
-          "comment": "50% shave à partir du 25 octobre"
+          "comment": "50% shave à partir du 10 novembre"
         }
       ],
       "comment": "Shave pour ais"
