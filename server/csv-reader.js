@@ -328,6 +328,7 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
         
         aggregated[sub1].convs = totalLeads + bonusTotal;
         console.log(`🎯 TOTAL ${sub1}: ${aggregated[sub1].noRule || 0} (avant règles) + ${totalLeads - (aggregated[sub1].noRule || 0)} (avec shaves) + ${bonusTotal} (bonus) = ${aggregated[sub1].convs} leads`);
+        console.log(`🔍 DEBUG ${sub1}: totalLeads=${totalLeads}, bonusTotal=${bonusTotal}, finalConvs=${aggregated[sub1].convs}`);
       } else {
         // Pas de règle : compte tout normalement
         aggregated[sub1].convs = aggregated[sub1].totalConvs || 0;
