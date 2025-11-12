@@ -17,7 +17,7 @@
     "anat": 10,
     "matt": 10,
     "ais": 10,
-    "mast": 10,
+    "mast": 15,
     "land": 10,
     "Gab": 10,
     "kris": 10,
@@ -61,7 +61,7 @@
     {
       "sourceSub1": "mast",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 15
     },
     {
       "sourceSub1": "land",

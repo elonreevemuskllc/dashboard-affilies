@@ -139,12 +139,12 @@
       "sub1": "mast",
       "role": "affiliate",
       "name": "Master",
-      "commissionPerLead": 10,
+      "commissionPerLead": 15,
       "referralCommission": {
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 15
       }
     },
     {
