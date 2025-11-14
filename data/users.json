@@ -236,6 +236,66 @@
         "affiliateSub1": "bad",
         "commissionPerLead": 5
       }
+    },
+    {
+      "id": 23,
+      "email": "malo1270@yopmail.com",
+      "password": "Malo1010",
+      "sub1": "malo",
+      "role": "affiliate",
+      "name": "Malo",
+      "commissionPerLead": 5,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 5
+      }
+    },
+    {
+      "id": 24,
+      "email": "carl1270@yopmail.com",
+      "password": "Carl1010",
+      "sub1": "carl",
+      "role": "affiliate",
+      "name": "Carl",
+      "commissionPerLead": 5,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 5
+      }
+    },
+    {
+      "id": 25,
+      "email": "victor1270@yopmail.com",
+      "password": "Victor1010",
+      "sub1": "vict",
+      "role": "affiliate",
+      "name": "Victor",
+      "commissionPerLead": 5,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 5
+      }
+    },
+    {
+      "id": 26,
+      "email": "maxime1270@yopmail.com",
+      "password": "Maxime1010",
+      "sub1": "maxi",
+      "role": "affiliate",
+      "name": "Maxime",
+      "commissionPerLead": 5,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 5
+      }
     }
   ]
 }
