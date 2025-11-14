@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard Affiliés - April Leads</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Force cache refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+        <div class="header-left">
+            <h1>Dashboard</h1>
+        </div>
+            <div class="header-info">
+                <span id="user-name"></span>
+                <span id="last-update">Dernière mise à jour: --:--</span>
+                <button onclick="manualRefresh()" class="btn refresh-btn" id="refresh-btn">Actualiser</button>
+                <button onclick="logout()" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Filtres de période -->
+        <section style="margin-bottom: var(--spacing-xl);">
+            <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap; align-items: center;">
+                <button class="period-btn active" data-period="today" onclick="changePeriod('today')">Aujourd'hui</button>
+                <button class="period-btn" data-period="yesterday" onclick="changePeriod('yesterday')">Hier</button>
+                
+                <div style="display: flex; gap: 10px; align-items: center; background: var(--bg-card); padding: 10px 15px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                    <label style="color: var(--text-secondary); font-size: 14px;">Du :</label>
+                    <input type="date" id="date-from" style="padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    <label style="color: var(--text-secondary); font-size: 14px;">Au :</label>
+                    <input type="date" id="date-to" style="padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    <button class="btn" onclick="applyCustomPeriod()" style="padding: 5px 15px;">Appliquer</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Explication Bonus -->
+        <section style="margin-bottom: var(--spacing-xl); text-align: center;">
+            <div style="display: inline-block; background-color: var(--bg-card); border: 0.5px solid var(--border-color); border-radius: var(--border-radius); padding: var(--spacing-md) var(--spacing-lg); max-width: 600px;">
+                <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">
+                    💡 <strong>Bonus :</strong> Vous gagnez <strong>10€</strong> par tranche de <strong>10 conversions</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Section des statistiques principales -->
+        <section class="stats-grid">
+            <div class="stat-card stat-card-blue">
+                <div class="stat-icon">👆</div>
+                <div class="stat-content">
+                    <h3>Clicks</h3>
+                    <p class="stat-value" id="total-clicks">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-green">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h3>Conversions</h3>
+                    <p class="stat-value" id="total-conversions">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-purple" id="revenue-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>Revenus</h3>
+                    <p class="stat-value" id="total-revenue">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-orange" id="bonus-card">
+                <div class="stat-icon">🎁</div>
+                <div class="stat-content">
+                    <h3>Bonus</h3>
+                    <p class="stat-value" id="conversion-rate">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+                   <!-- Commission Helper Card (visible seulement pour les submanagers) -->
+                   <div class="stat-card stat-card-purple" id="commission-helper-card" style="display: none;">
+                       <div class="stat-icon">🤝</div>
+                       <div class="stat-content">
+                           <h3>Commission Helper</h3>
+                           <p class="stat-value" id="commission-helper-total">
+                               <span class="loading">Chargement...</span>
+                           </p>
+                       </div>
+                   </div>
+
+                   <!-- Profit Net Card (pour submanagers) -->
+                   <div class="stat-card stat-card-red" id="profit-net-card" style="display: none;">
+                       <div class="stat-icon">💰</div>
+                       <div class="stat-content">
+                           <h3>Profit Net</h3>
+                           <p class="stat-value" id="profit-net-total">
+                               <span class="loading">Chargement...</span>
+                           </p>
+                       </div>
+                   </div>
+
+            <div class="stat-card stat-card-info" id="ca-card" style="display: none;">
+                <div class="stat-icon">💵</div>
+                <div class="stat-content">
+                    <h3>CA</h3>
+                    <p class="stat-value" id="ca-total">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-success" id="manager-profit-card" style="display: none;">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>Profit</h3>
+                    <p class="stat-value" id="manager-profit">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-cyan" id="epc-card" style="display: none;">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                    <h3>EPC Global</h3>
+                    <p class="stat-value" id="global-epc">
+                        <span class="loading">Chargement...</span>
+                    </p>
+                    <p class="stat-description">€ par clic</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Classement Affiliés (masqué pour tout le monde sauf admin/manager/submanager affichage générique) -->
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>🏆 Classement Affiliés (Leads)</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Affilié</th>
+                            <th>Leads</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="3" class="loading-row">
+                                <span class="loading">Chargement du classement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- Section des leads par sub1 pour les managers -->
+        <section class="conversions-section" id="sub1-leads-section" style="display: none;">
+            <div class="section-header">
+                <h2>👥 Leads par Sub1</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Sub1</th>
+                    <th>Leads</th>
+                    <th>Gains Affilié</th>
+                    <th>Bonus</th>
+                    <th>Bonus Losh</th>
+                    <th>Net</th>
+                    <th>EPC</th>
+                </tr>
+            </thead>
+                    <tbody id="sub1-leads-body">
+                        <tr>
+                            <td colspan="7" class="loading-row">
+                                <span class="loading">Chargement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section des conversions récentes -->
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>🎯 Conversions Récentes</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Commission</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="conversions-body">
+                        <tr>
+                            <td colspan="3" class="loading-row">
+                                <span class="loading">Chargement des conversions...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section graphique de performance -->
+        <section class="chart-section">
+            <div class="section-header">
+                <h2>📊 Performance des 30 derniers jours</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </section>
+
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Dashboard Affiliés</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

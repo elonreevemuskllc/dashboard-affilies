@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Dashboard Affiliés</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <style>
+        /* Admin responsive styles */
+        .admin-grid-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .payout-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 200px 100px;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-grid-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .payout-item {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .payout-item > div:nth-child(1),
+            .payout-item > div:nth-child(2) {
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+    </style>
+
+    <header class="header">
+        <div class="container">
+        <div class="header-left">
+            <h1>Administration</h1>
+        </div>
+            <div class="header-info">
+                <span id="admin-name"></span>
+                <button onclick="logout()" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 2rem 0;">
+        <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+            <a href="/" class="btn btn-primary">Voir le Dashboard</a>
+            <button onclick="clearCache()" class="btn" style="background-color: var(--warning-color); color: white;">Vider le Cache</button>
+        </div>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>💰 Paramètres du Payout</h2>
+            </div>
+
+        <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
+            <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Payout par Défaut</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Payout par défaut appliqué aux affiliés sans payout spécifique</p>
+            <div style="display: flex; gap: var(--spacing-md); align-items: center; padding: var(--spacing-lg); background-color: var(--bg-card); border-radius: var(--border-radius); border: 0.5px solid var(--border-color);">
+                <div style="flex: 1;">
+                    <span style="font-weight: 600; color: var(--text-primary); font-size: 15px;">Payout par défaut :</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 24px; font-weight: 700; color: var(--success-color);">$4.70</span>
+                    <div style="font-size: 12px; color: var(--text-secondary); opacity: 0.7; margin-top: 2px;">≈ 4.32 €</div>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-tertiary); margin-top: var(--spacing-md); font-style: italic;">
+                🔒 Cette valeur est fixe et ne peut pas être modifiée
+            </p>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-xl); padding: var(--spacing-xl); background-color: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--border-color);">
+            <h3 style="margin-bottom: var(--spacing-md); font-size: 18px; font-weight: 600; color: var(--text-primary);">Marge Manager</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Marge que les managers gagnent par lead (en plus du payout affilié)</p>
+            <div style="display: flex; gap: var(--spacing-md); align-items: center; padding: var(--spacing-lg); background-color: var(--bg-card); border-radius: var(--border-radius); border: 0.5px solid var(--border-color);">
+                <div style="flex: 1;">
+                    <span style="font-weight: 600; color: var(--text-primary); font-size: 15px;">Marge par lead :</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 24px; font-weight: 700; color: var(--success-color);">$25.30</span>
+                    <div style="font-size: 12px; color: var(--text-secondary); opacity: 0.7; margin-top: 2px;">≈ 23.28 €</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: var(--spacing-lg); padding: var(--spacing-md); background-color: var(--bg-card); border-radius: var(--border-radius);">
+                💡 <strong>Exemple :</strong> Si affilié fait 100 leads, le manager gagne $2530 (en plus de ce que l'affilié touche)
+            </p>
+            <p style="font-size: 12px; color: var(--text-tertiary); margin-top: var(--spacing-md); font-style: italic;">
+                🔒 Cette valeur est fixe et ne peut pas être modifiée
+            </p>
+        </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Payout par Affilié (Sub1)</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Définissez un payout spécifique pour chaque affilié en <strong>$ (USD)</strong>. Le revenu sera : <strong>Conversions × Payout spécifique ($)</strong></p>
+                <div id="payout-by-sub1-container" style="display: grid; gap: 1rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">🔗 Système de Sous-Affiliés</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Liez les affiliés entre eux et définissez les bonus. Exemple : Losh supervise Som et gagne $2 par lead de Som.</p>
+                
+                <div style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto auto; gap: 1rem; align-items: end;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sous-affilié (fait les leads):</label>
+                            <select id="sub-affiliate-source" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                                <option value="">-- Sélectionnez un Sub1 --</option>
+                            </select>
+                        </div>
+                        <div style="text-align: center; font-size: 1.2rem;">→</div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Superviseur (reçoit le bonus):</label>
+                            <select id="sub-affiliate-target" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                                <option value="">-- Sélectionnez un Sub1 --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Bonus ($ par lead):</label>
+                            <input type="number" id="sub-affiliate-bonus" step="0.01" placeholder="2.00" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button onclick="addSubAffiliateRule()" class="btn btn-primary" style="padding: 0.5rem 1rem;">Lier</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="sub-affiliate-rules-container" style="display: grid; gap: 1rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement des liens...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>👥 Gestion des Utilisateurs</h2>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">Créer un nouveau compte</h3>
+                <form id="create-user-form" class="admin-grid-form">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Nom</label>
+                        <input type="text" id="name" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email</label>
+                        <input type="email" id="email" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Mot de passe</label>
+                        <input type="password" id="password" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Rôle</label>
+                        <select id="role" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
+                            <option value="affiliate">Affilié (1 sub1)</option>
+                            <option value="manager">Manager (plusieurs sub1)</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sub1 (ID Affilié) - Maintenez Ctrl pour sélectionner plusieurs</label>
+                        <select id="sub1" multiple size="6" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: white;">
+                            <option value="">Chargement...</option>
+                        </select>
+                        <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.5rem;">
+                            💡 Pour un Affilié : sélectionnez 1 seul sub1<br>
+                            💡 Pour un Manager : maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs sub1
+                        </p>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <button type="submit" style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Créer le compte</button>
+                    </div>
+                </form>
+                <div id="create-message" style="margin-top: 1rem; display: none;"></div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Sub1</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <tr>
+                            <td colspan="6" class="loading-row">
+                                <span class="loading">Chargement...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="conversions-section">
+            <div class="section-header">
+                <h2>💰 Comptabilité - Balance des Paiements</h2>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">💵 Balance des Affiliés</h3>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                    Balance = Revenus totaux depuis le début • Reste à payer = Balance - Paiements
+                </p>
+                
+                <div id="accounting-container" style="display: grid; gap: 1.5rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">➕ Enregistrer un Paiement</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Affilié:</label>
+                        <select id="payment-affiliate" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="bad">bad</option>
+                            <option value="ran">ran</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Montant ($):</label>
+                        <input type="number" id="payment-amount" step="0.01" placeholder="100.00" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Note (optionnelle):</label>
+                        <input type="text" id="payment-note" placeholder="Ex: Paiement semaine 42" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <button onclick="recordPayment()" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-color); border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">📜 Historique des Paiements</h3>
+                <div id="payments-history-container" style="display: grid; gap: 0.75rem;">
+                    <p style="text-align: center; color: var(--text-light);">Chargement...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function loadSub1List() {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const select = document.getElementById('sub1');
+                
+                if (sub1List.length === 0) {
+                    select.innerHTML = '<option value="">Aucun sub1 disponible (lancez report_today.ps1)</option>';
+                    return;
+                }
+                
+                select.innerHTML = '<option value="">-- Sélectionnez un sub1 --</option>' +
+                    sub1List.map(item => 
+                        `<option value="${item.sub1}">${item.sub1} (${item.conversions} conv, $${item.revenue.toFixed(2)})</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Erreur chargement sub1:', error);
+                document.getElementById('sub1').innerHTML = '<option value="">Erreur de chargement</option>';
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                const users = await response.json();
+                
+                const tbody = document.getElementById('users-body');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Aucun utilisateur</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => {
+                    const sub1Display = Array.isArray(user.sub1) ? user.sub1.join(', ') : user.sub1;
+                    const roleDisplay = user.role === 'admin' ? 'Admin' : user.role === 'manager' ? 'Manager' : 'Affilié';
+                    const roleBadge = user.role === 'admin' ? 'approved' : user.role === 'manager' ? 'pending' : 'rejected';
+                    
+                    return `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td><strong>${sub1Display}</strong></td>
+                        <td><span class="status-badge status-${roleBadge}">${roleDisplay}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button onclick="addSub1ToUser(${user.id})" class="btn btn-primary" style="font-size: 12px; padding: 4px 8px;">+ Sub1</button>
+                                ${Array.isArray(user.sub1) && user.sub1.length > 0 ? user.sub1.map(sub1 => 
+                                    `<button onclick="removeSub1FromUser(${user.id}, '${sub1}')" class="btn btn-danger" style="font-size: 12px; padding: 4px 8px;" title="Supprimer ${sub1}">- ${sub1}</button>`
+                                ).join('') : ''}
+                                ${user.role !== 'admin' ? `<button onclick="deleteUser(${user.id})" class="btn btn-danger" style="font-size: 12px; padding: 4px 8px;">Supprimer</button>` : '<span style="color: var(--text-secondary);">-</span>'}
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur chargement users:', error);
+            }
+        }
+
+        document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            // Récupérer les sub1 sélectionnés (peut être un ou plusieurs)
+            const sub1Select = document.getElementById('sub1');
+            const selectedSub1 = Array.from(sub1Select.selectedOptions).map(option => option.value);
+            const sub1 = selectedSub1.length === 1 ? selectedSub1[0] : selectedSub1;
+            
+            const messageDiv = document.getElementById('create-message');
+            
+            try {
+                const response = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, sub1, role })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `Compte créé avec succès pour ${data.name} !`;
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('create-user-form').reset();
+                    
+                    // Recharger la liste
+                    loadUsers();
+                } else {
+                    messageDiv.textContent = data.error || 'Erreur lors de la création';
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.padding = '1rem';
+                    messageDiv.style.borderRadius = '6px';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion au serveur';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        async function deleteUser(userId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadUsers();
+                } else {
+                    alert('Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/api/auth/me');
+                const user = await response.json();
+                document.getElementById('admin-name').textContent = user.name;
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/admin/settings');
+                const settings = await response.json();
+                // Les valeurs sont maintenant fixes et affichées directement
+                
+                // Charger la liste des sub1 pour les payouts personnalisés
+                await loadPayoutBySub1(settings);
+                
+                // Charger les liens de sous-affiliés
+                await loadSubAffiliateRules();
+                
+                // Charger les sub1 dans les dropdowns de sous-affiliés
+                await loadSub1ForSubAffiliate();
+            } catch (error) {
+                console.error('Erreur chargement settings:', error);
+            }
+        }
+
+
+        // Les valeurs sont maintenant fixes, plus besoin d'event listeners
+
+        async function loadPayoutBySub1(settings) {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const container = document.getElementById('payout-by-sub1-container');
+                
+                if (sub1List.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun affilié disponible</p>';
+                    return;
+                }
+                
+                container.innerHTML = sub1List.map(item => `
+                    <div class="payout-item">
+                        <div>
+                            <strong style="font-size: 1.1rem;">${item.sub1}</strong>
+                        </div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">
+                            ${item.conversions} conv • $${item.revenue.toFixed(2)}
+                        </div>
+                        <div>
+                            <input type="number" 
+                                   id="payout_${item.sub1}" 
+                                   step="0.01" 
+                                   placeholder="Payout ($)" 
+                                   value="${settings.payout_by_sub1[item.sub1] || '4.70'}"
+                                   style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button onclick="updateSub1Payout('${item.sub1}')" 
+                                    style="width: 100%; padding: 0.5rem; background: var(--success-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                                ✓
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur chargement payout by sub1:', error);
+            }
+        }
+
+        async function updateSub1Payout(sub1) {
+            const input = document.getElementById(`payout_${sub1}`);
+            const payoutValue = parseFloat(input.value);
+            
+            if (isNaN(payoutValue) || payoutValue < 0) {
+                alert('Valeur invalide');
+                return;
+            }
+            
+            try {
+                const settingsResponse = await fetch('/api/admin/settings');
+                const currentSettings = await settingsResponse.json();
+                
+                const updatedPayoutBySub1 = { ...currentSettings.payout_by_sub1 };
+                updatedPayoutBySub1[sub1] = payoutValue;
+                
+                const response = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ payout_by_sub1: updatedPayoutBySub1 })
+                });
+                
+                if (response.ok) {
+                    input.style.borderColor = 'var(--success-color)';
+                    setTimeout(() => {
+                        input.style.borderColor = 'var(--border-color)';
+                    }, 1000);
+                } else {
+                    alert('Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        // Les formulaires de modification ont été supprimés car les valeurs sont maintenant fixes
+
+        // Gestion du système de sous-affiliés
+        async function loadSubAffiliateRules() {
+            try {
+                const response = await fetch('/api/admin/sub-affiliate-rules');
+                const rules = await response.json();
+                
+                const container = document.getElementById('sub-affiliate-rules-container');
+                
+                if (rules.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun lien de sous-affilié configuré</p>';
+                    return;
+                }
+                
+                container.innerHTML = rules.map(rule => `
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto auto; gap: 1rem; align-items: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div>
+                            <strong>${rule.sourceSub1}</strong> fait des leads
+                        </div>
+                        <div style="text-align: center; font-size: 1.2rem;">→</div>
+                        <div>
+                            <strong>${rule.targetSub1}</strong> supervise
+                        </div>
+                        <div style="text-align: right;">
+                            <strong style="color: var(--success-color); font-size: 1.1rem;">$${rule.bonusAmount}</strong> par lead
+                        </div>
+                        <div>
+                            <button onclick="deleteSubAffiliateRule('${rule.sourceSub1}', '${rule.targetSub1}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Délier</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erreur chargement sub-affiliate rules:', error);
+                document.getElementById('sub-affiliate-rules-container').innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+            }
+        }
+
+        async function loadSub1ForSubAffiliate() {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                const sourceSelect = document.getElementById('sub-affiliate-source');
+                const targetSelect = document.getElementById('sub-affiliate-target');
+                
+                if (sub1List.length === 0) {
+                    sourceSelect.innerHTML = '<option value="">Aucun sub1 disponible</option>';
+                    targetSelect.innerHTML = '<option value="">Aucun sub1 disponible</option>';
+                    return;
+                }
+                
+                const options = sub1List.map(item => 
+                    `<option value="${item.sub1}">${item.sub1}</option>`
+                ).join('');
+                
+                sourceSelect.innerHTML = '<option value="">-- Sélectionnez un Sub1 --</option>' + options;
+                targetSelect.innerHTML = '<option value="">-- Sélectionnez un Sub1 --</option>' + options;
+                
+            } catch (error) {
+                console.error('Erreur chargement sub1 pour sous-affiliés:', error);
+            }
+        }
+
+        async function addSubAffiliateRule() {
+            const sourceSub1 = document.getElementById('sub-affiliate-source').value;
+            const targetSub1 = document.getElementById('sub-affiliate-target').value;
+            const bonusAmount = parseFloat(document.getElementById('sub-affiliate-bonus').value);
+            
+            if (!sourceSub1 || !targetSub1 || !bonusAmount) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            if (sourceSub1 === targetSub1) {
+                alert('Un Sub1 ne peut pas se superviser lui-même');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/sub-affiliate-rules', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sourceSub1, targetSub1, bonusAmount })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lien de sous-affilié créé avec succès !');
+                    loadSubAffiliateRules();
+                    // Reset form
+                    document.getElementById('sub-affiliate-source').value = '';
+                    document.getElementById('sub-affiliate-target').value = '';
+                    document.getElementById('sub-affiliate-bonus').value = '';
+                } else {
+                    alert(data.error || 'Erreur lors de la création du lien');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function deleteSubAffiliateRule(sourceSub1, targetSub1) {
+            if (!confirm(`Délier ${sourceSub1} de ${targetSub1} ?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/sub-affiliate-rules/${sourceSub1}/${targetSub1}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Lien supprimé avec succès !');
+                    loadSubAffiliateRules();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function addSub1ToUser(userId) {
+            try {
+                const response = await fetch('/api/admin/sub1-list');
+                const sub1List = await response.json();
+                
+                if (sub1List.length === 0) {
+                    showMessage('Aucun sub1 disponible', 'error');
+                    return;
+                }
+                
+                // Créer le modal de sélection
+                showSub1SelectionModal(userId, sub1List);
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showMessage('Erreur de connexion au serveur', 'error');
+            }
+        }
+
+        function showSub1SelectionModal(userId, sub1List) {
+            // Créer le modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: var(--bg-card); padding: var(--spacing-xl);
+                border-radius: var(--border-radius-lg); max-width: 500px;
+                width: 90%; box-shadow: var(--shadow-lg); border: 0.5px solid var(--border-color);
+            `;
+            
+            modalContent.innerHTML = `
+                <h3 style="margin-bottom: var(--spacing-lg); color: var(--text-primary); font-size: 18px; font-weight: 600;">Ajouter un Sub1</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Sélectionnez le sub1 à ajouter à cet utilisateur :</p>
+                
+                <select id="sub1-select" style="width: 100%; padding: var(--spacing-md); 
+                    border: 0.5px solid var(--border-color); border-radius: var(--border-radius); 
+                    font-size: 15px; background-color: var(--bg-secondary); 
+                    color: var(--text-primary); margin-bottom: var(--spacing-lg); min-height: 44px;">
+                    <option value="">-- Sélectionner un sub1 --</option>
+                    ${sub1List.map(sub1 => 
+                        `<option value="${sub1.sub1}">${sub1.sub1} (${sub1.conversions} conv • $${sub1.revenue.toFixed(2)})</option>`
+                    ).join('')}
+                </select>
+                
+                <div style="display: flex; gap: var(--spacing-md); justify-content: flex-end;">
+                    <button onclick="closeSub1Modal()" class="btn btn-secondary">Annuler</button>
+                    <button onclick="confirmAddSub1(${userId})" class="btn btn-primary">Ajouter</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Fonction pour fermer le modal
+            window.closeSub1Modal = () => {
+                document.body.removeChild(modal);
+                delete window.closeSub1Modal;
+                delete window.confirmAddSub1;
+            };
+            
+            // Fonction pour confirmer l'ajout
+            window.confirmAddSub1 = async (userId) => {
+                const select = document.getElementById('sub1-select');
+                const selectedSub1 = select.value;
+                
+                if (!selectedSub1) {
+                    showMessage('Veuillez sélectionner un sub1', 'error');
+                    return;
+                }
+                
+                try {
+                    const addResponse = await fetch(`/api/admin/users/${userId}/sub1`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sub1: selectedSub1 })
+                    });
+                    
+                    closeSub1Modal();
+                    
+                    if (addResponse.ok) {
+                        showMessage('Sub1 ajouté avec succès', 'success');
+                        loadUsers();
+                    } else {
+                        const error = await addResponse.json();
+                        showMessage('Erreur: ' + (error.error || 'Erreur lors de l\'ajout'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    closeSub1Modal();
+                    showMessage('Erreur lors de l\'ajout du sub1', 'error');
+                }
+            };
+        }
+
+        async function removeSub1FromUser(userId, sub1) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le sub1 "${sub1}" de cet utilisateur ?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/sub1/${sub1}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert(`Sub1 "${sub1}" supprimé avec succès !`);
+                    loadUsers();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('Erreur de connexion au serveur');
+            }
+        }
+
+        async function clearCache() {
+            if (!confirm('Vider le cache ? Cela forcera un rafraîchissement des données.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/clear-cache', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    alert('✅ Cache vidé ! Les données vont se rafraîchir.');
+                    // Recharger les données
+                    // loadSettings() supprimé car les paramètres sont fixes
+                } else {
+                    alert('❌ Erreur lors du vidage du cache');
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        loadCurrentUser();
+        // Fonction pour afficher un message
+        function showMessage(message, type) {
+            alert(message);
+        }
+
+        // Fonction pour fermer le modal Sub1
+        function closeSub1Modal() {
+            const modal = document.getElementById('sub1Modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        loadUsers();
+        loadSub1List();
+        loadSettings();
+        loadAccounting();
+
+        // Comptabilité - Fonctions
+        async function loadAccounting() {
+            try {
+                const response = await fetch('/api/admin/accounting');
+                const data = await response.json();
+                
+                const container = document.getElementById('accounting-container');
+                
+                if (!data || !data.affiliates) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+                    return;
+                }
+                
+                container.innerHTML = Object.keys(data.affiliates).map(affiliate => {
+                    const acc = data.affiliates[affiliate];
+                    return `
+                    <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; font-size: 1.3rem; color: var(--text-primary);">${affiliate}</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Affilié</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Balance Totale</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);">$${acc.totalEarned.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.totalEarned * 0.92).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Paiements Effectués</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$${acc.totalPaid.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.totalPaid * 0.92).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Reste à Payer</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: ${acc.remaining > 0 ? 'var(--warning-color)' : 'var(--success-color)'};">$${acc.remaining.toFixed(2)}</p>
+                                <p style="font-size: 0.8rem; color: var(--text-tertiary);">≈ ${(acc.remaining * 0.92).toFixed(2)} €</p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+                // Charger l'historique
+                loadPaymentsHistory(data.payments);
+                
+            } catch (error) {
+                console.error('Erreur chargement comptabilité:', error);
+                document.getElementById('accounting-container').innerHTML = '<p style="text-align: center; color: var(--danger-color);">Erreur de chargement</p>';
+            }
+        }
+
+        function loadPaymentsHistory(payments) {
+            const container = document.getElementById('payments-history-container');
+            
+            if (!payments || payments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Aucun paiement enregistré</p>';
+                return;
+            }
+            
+            // Trier par date (plus récent en premier)
+            const sortedPayments = payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            container.innerHTML = sortedPayments.map(payment => `
+                <div style="display: grid; grid-template-columns: 120px 100px 1fr auto auto; gap: 1rem; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: 6px; border: 1px solid var(--border-color);">
+                    <div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">${new Date(payment.date).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-primary);">${payment.affiliate}</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">${payment.note || '-'}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: var(--success-color); font-size: 1.1rem;">$${payment.amount.toFixed(2)}</strong>
+                    </div>
+                    <div>
+                        <button onclick="deletePayment('${payment.id}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function recordPayment() {
+            const affiliate = document.getElementById('payment-affiliate').value;
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+            const note = document.getElementById('payment-note').value;
+            
+            if (!affiliate || isNaN(amount) || amount <= 0) {
+                alert('Veuillez remplir tous les champs correctement');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/payments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ affiliate, amount, note })
+                });
+                
+                if (response.ok) {
+                    alert('✅ Paiement enregistré avec succès !');
+                    document.getElementById('payment-amount').value = '';
+                    document.getElementById('payment-note').value = '';
+                    loadAccounting();
+                } else {
+                    const error = await response.json();
+                    alert('❌ Erreur: ' + (error.error || 'Erreur lors de l\'enregistrement'));
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        async function deletePayment(paymentId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/payments/${paymentId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('✅ Paiement supprimé !');
+                    loadAccounting();
+                } else {
+                    alert('❌ Erreur lors de la suppression');
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@dashboard.com",
+      "password": "admin123",
+      "sub1": "admin",
+      "role": "admin",
+      "name": "Administrateur"
+    },
+    {
+      "id": 2,
+      "email": "moddingcharo123@gmail.com",
+      "password": "losh123",
+      "sub1": "losh",
+      "role": "submanager",
+      "name": "Losh",
+      "parentManager": 5,
+      "commissionPerLead": 2.00
+    },
+    {
+      "id": 3,
+      "email": "saw398493843@yopmail.com",
+      "password": "sw123",
+      "sub1": "elon",
+      "role": "affiliate",
+      "name": "sw"
+    },
+    {
+      "id": 4,
+      "email": "ila.email.pro@gmail.com",
+      "password": "lico123",
+      "sub1": [
+        "llico",
+        "lico",
+        "llllico",
+        "lllico",
+        "fian"
+      ],
+      "role": "manager",
+      "name": "lico"
+    },
+    {
+      "id": 5,
+      "email": "johnpalmer1270@gmail.com",
+      "password": "Oui1313@",
+      "sub1": [
+        "elon",
+        "losh"
+      ],
+      "role": "manager",
+      "name": "elon"
+    },
+    {
+      "id": 6,
+      "email": "Samapril@yopmail.com",
+      "password": "Sam1313#",
+      "sub1": "som",
+      "role": "affiliate",
+      "name": "Som",
+      "parentSubManager": 2
+    },
+    {
+      "id": 7,
+      "email": "shan3898U749@yopmail.com",
+      "password": "Shan1313@",
+      "sub1": "shan",
+      "role": "affiliate",
+      "name": "Shan"
+    },
+    {
+      "id": 8,
+      "email": "kel1270@yopmail.com",
+      "password": "Kel1010@",
+      "sub1": "kel",
+      "role": "affiliate",
+      "name": "Kel"
+    },
+    {
+      "id": 9,
+      "email": "badder1270@yopmail.com",
+      "password": "Badder1010@",
+      "sub1": "bad",
+      "role": "affiliate",
+      "name": "Badder"
+    },
+    {
+      "id": 10,
+      "email": "nilam1270@yopmail.com",
+      "password": "Nilam1010",
+      "sub1": "lams",
+      "role": "affiliate",
+      "name": "Lams"
+    },
+    {
+      "id": 11,
+      "email": "ran1270@yopmail.com",
+      "password": "Ran1010@",
+      "sub1": "ran",
+      "role": "affiliate",
+      "name": "Ran"
+    },
+    {
+      "id": 12,
+      "email": "titouan1270@yopmail.com",
+      "password": "Titou1010",
+      "sub1": "tito",
+      "role": "affiliate",
+      "name": "Titouan"
+    },
+    {
+      "id": 13,
+      "email": "anatol1270@yopmail.com",
+      "password": "Anatol1414",
+      "sub1": "anat",
+      "role": "affiliate",
+      "name": "Anatol"
+    },
+    {
+      "id": 14,
+      "email": "matteo1270@yopmail.com",
+      "password": "Matt1010",
+      "sub1": "matt",
+      "role": "affiliate",
+      "name": "Matt"
+    },
+    {
+      "id": 15,
+      "email": "ais1270@yopmail.com",
+      "password": "Ais1010",
+      "sub1": "ais",
+      "role": "affiliate",
+      "name": "Ais"
+    },
+    {
+      "id": 16,
+      "email": "master1270@yopmail.com",
+      "password": "Master1010",
+      "sub1": "mast",
+      "role": "affiliate",
+      "name": "Master",
+      "commissionPerLead": 15,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 15
+      }
+    },
+    {
+      "id": 17,
+      "email": "landy1270@yopmail.com",
+      "password": "Landy1010",
+      "sub1": "land",
+      "role": "affiliate",
+      "name": "Landy",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 18,
+      "email": "gabin1270@yopmail.com",
+      "password": "Gabin1010",
+      "sub1": "Gab",
+      "role": "affiliate",
+      "name": "Gabin",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 19,
+      "email": "kris1270@yopmail.com",
+      "password": "Kris1010@",
+      "sub1": "kris",
+      "role": "affiliate",
+      "name": "Kris",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 20,
+      "email": "leo1270@yopmail.com",
+      "password": "Leo1010@",
+      "sub1": "leo",
+      "role": "affiliate",
+      "name": "Léo",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    },
+    {
+      "id": 21,
+      "email": "tom1270@yopmail.com",
+      "password": "Tom1010@",
+      "sub1": "tom",
+      "role": "affiliate",
+      "name": "Tom",
+      "commissionPerLead": 10,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 20
+      }
+    }
+  ]
+}
