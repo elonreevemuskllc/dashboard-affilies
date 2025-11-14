@@ -221,6 +221,21 @@
         "affiliateSub1": "bad",
         "commissionPerLead": 20
       }
+    },
+    {
+      "id": 22,
+      "email": "julien1270@yopmail.com",
+      "password": "Julien1010",
+      "sub1": "juli",
+      "role": "affiliate",
+      "name": "Julien",
+      "commissionPerLead": 5,
+      "referralCommission": {
+        "affiliateId": 9,
+        "affiliateName": "Badder",
+        "affiliateSub1": "bad",
+        "commissionPerLead": 5
+      }
     }
   ]
 }
