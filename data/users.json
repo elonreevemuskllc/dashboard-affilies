@@ -3,7 +3,7 @@
     {
       "id": 1,
       "email": "admin@dashboard.com",
-      "password": "admin123",
+      "password": "adezfzeFDEFEFG45455534424min123",
       "sub1": "admin",
       "role": "admin",
       "name": "Administrateur"
@@ -144,7 +144,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 15
+        "commissionPerLead": 19
       }
     },
     {
@@ -159,7 +159,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 24
       }
     },
     {
@@ -174,7 +174,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 24
       }
     },
     {
@@ -189,7 +189,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 24
       }
     },
     {
@@ -204,7 +204,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 24
       }
     },
     {
@@ -219,7 +219,7 @@
         "affiliateId": 9,
         "affiliateName": "Badder",
         "affiliateSub1": "bad",
-        "commissionPerLead": 20
+        "commissionPerLead": 24
       }
     }
   ]
