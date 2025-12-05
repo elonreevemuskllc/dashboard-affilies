@@ -229,13 +229,7 @@
       "sub1": "juli",
       "role": "affiliate",
       "name": "Julien",
-      "commissionPerLead": 5,
-      "referralCommission": {
-        "affiliateId": 9,
-        "affiliateName": "Badder",
-        "affiliateSub1": "bad",
-        "commissionPerLead": 29
-      }
+      "commissionPerLead": 10
     },
     {
       "id": 23,
@@ -244,13 +238,7 @@
       "sub1": "malo",
       "role": "affiliate",
       "name": "Malo",
-      "commissionPerLead": 5,
-      "referralCommission": {
-        "affiliateId": 9,
-        "affiliateName": "Badder",
-        "affiliateSub1": "bad",
-        "commissionPerLead": 29
-      }
+      "commissionPerLead": 10
     },
     {
       "id": 24,
@@ -259,13 +247,7 @@
       "sub1": "carl",
       "role": "affiliate",
       "name": "Carl",
-      "commissionPerLead": 5,
-      "referralCommission": {
-        "affiliateId": 9,
-        "affiliateName": "Badder",
-        "affiliateSub1": "bad",
-        "commissionPerLead": 29
-      }
+      "commissionPerLead": 10
     },
     {
       "id": 25,
@@ -296,6 +278,15 @@
         "affiliateSub1": "bad",
         "commissionPerLead": 29
       }
+    },
+    {
+      "id": 27,
+      "email": "enze1270@yopmail.com",
+      "password": "Ezn1010@",
+      "sub1": "enz",
+      "role": "affiliate",
+      "name": "Enz",
+      "commissionPerLead": 10
     }
   ]
 }
