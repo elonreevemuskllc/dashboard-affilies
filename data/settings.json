@@ -36,57 +36,57 @@
     {
       "sourceSub1": "ran",
       "targetSub1": "bad",
-      "bonusAmount": 15
+      "bonusAmount": 19
     },
     {
       "sourceSub1": "tito",
       "targetSub1": "bad",
-      "bonusAmount": 15
+      "bonusAmount": 19
     },
     {
       "sourceSub1": "anat",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "matt",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "ais",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "mast",
       "targetSub1": "bad",
-      "bonusAmount": 15
+      "bonusAmount": 19
     },
     {
       "sourceSub1": "land",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "Gab",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "kris",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "leo",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     },
     {
       "sourceSub1": "tom",
       "targetSub1": "bad",
-      "bonusAmount": 20
+      "bonusAmount": 24
     }
   ],
   "lead_count_rules": [
