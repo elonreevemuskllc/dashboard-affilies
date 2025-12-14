@@ -210,19 +210,33 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
     let allConversions = response.data.conversions || [];
     console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
     
+    // Log des sub1 uniques pour debug
+    const uniqueSub1sBeforeFilter = [...new Set(allConversions.map(c => c.sub1 || 'unknown'))];
+    console.log(`📊 [DEBUG] Sub1 uniques dans la réponse Everflow (${uniqueSub1sBeforeFilter.length}): ${uniqueSub1sBeforeFilter.slice(0, 20).join(', ')}${uniqueSub1sBeforeFilter.length > 20 ? '...' : ''}`);
+    
     // Si pas custom ET qu'il y a 500 conversions, il y en a peut-être plus (pagination)
     if (!isCustomPeriod && allConversions.length === 500) {
       console.log(`⚠️ 500 conversions = max par page. Il y en a peut-être plus, mais on limite à 500 pour éviter les doublons Everflow.`);
+      console.log(`⚠️ [WARNING] Si le sub1 recherché n'est pas dans les 500 premières conversions, il ne sera pas trouvé !`);
     }
-
-    console.log(`✅ ${allConversions.length} conversions Everflow récupérées`);
 
     // FILTRAGE côté serveur si sub1Filter fourni (Everflow ignore le filtre API)
     if (sub1Filter) {
       const sub1Array = Array.isArray(sub1Filter) ? sub1Filter : [sub1Filter];
       const beforeFilter = allConversions.length;
+      
+      // Log des sub1 uniques avant filtrage pour debug
+      const uniqueSub1s = [...new Set(allConversions.map(c => c.sub1))];
+      console.log(`🔍 [DEBUG] Sub1 uniques dans les données avant filtrage: ${uniqueSub1s.join(', ')}`);
+      console.log(`🔍 [DEBUG] Recherche des sub1: ${sub1Array.join(', ')}`);
+      
       allConversions = allConversions.filter(conv => sub1Array.includes(conv.sub1));
       console.log(`🔍 FILTRAGE SERVEUR: ${beforeFilter} → ${allConversions.length} conversions (sub1=${sub1Array.join(',')})`);
+      
+      if (allConversions.length === 0 && beforeFilter > 0) {
+        console.log(`⚠️ [WARNING] Aucune conversion trouvée pour sub1=${sub1Array.join(',')} mais ${beforeFilter} conversions totales récupérées`);
+        console.log(`🔍 [DEBUG] Vérifiez que le sub1 dans Everflow correspond exactement (sensible à la casse)`);
+      }
     }
 
     // Agréger par sub1 avec gestion des phases de règles
