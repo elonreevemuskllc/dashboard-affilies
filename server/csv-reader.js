@@ -917,7 +917,9 @@ const csvDataAPI = {
         totalConversions += conversions;
         totalRevenue += conversions * payoutPerLead;
       } else {
-        console.log(`🔒 [SECURITY] ${sub1} - Aucune donnée trouvée`);
+        console.log(`⚠️ [SECURITY] ${sub1} - Aucune donnée trouvée dans Everflow pour ce sub1`);
+        console.log(`🔍 [DEBUG] Sub1 disponibles dans les données: ${aggBySub1.map(r => r.sub1).join(', ')}`);
+        console.log(`🔍 [DEBUG] Vérifiez que le sub1 "${sub1}" est bien configuré dans Everflow et qu'il y a des conversions`);
       }
     });
 
