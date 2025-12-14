@@ -36,57 +36,68 @@
     {
       "sourceSub1": "ran",
       "targetSub1": "bad",
-      "bonusAmount": 19
+      "bonusAmount": 19,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "tito",
       "targetSub1": "bad",
-      "bonusAmount": 19
+      "bonusAmount": 19,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "anat",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "matt",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "ais",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "mast",
       "targetSub1": "bad",
-      "bonusAmount": 19
+      "bonusAmount": 19,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "land",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "Gab",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "kris",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "leo",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     },
     {
       "sourceSub1": "tom",
       "targetSub1": "bad",
-      "bonusAmount": 24
+      "bonusAmount": 24,
+      "disabledUntil": "2025-12-20"
     }
   ],
   "lead_count_rules": [

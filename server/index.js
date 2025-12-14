@@ -299,6 +299,24 @@ app.get('/api/user-bonuses', requireAuth, async (req, res) => {
     // Pour chaque règle, calculer le bonus basé sur les leads de la source
     const bonusDetails = await Promise.all(applicableRules.map(async (rule) => {
       try {
+        // Vérifier si la règle est désactivée jusqu'à une certaine date
+        if (rule.disabledUntil) {
+          const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+          const disabledUntilDate = rule.disabledUntil;
+          
+          if (todayDate <= disabledUntilDate) {
+            console.log(`🚫 [BONUS] Règle désactivée pour ${rule.targetSub1} depuis "${rule.sourceSub1}" jusqu'au ${disabledUntilDate} (aujourd'hui: ${todayDate})`);
+            return {
+              sourceSub1: rule.sourceSub1,
+              targetSub1: rule.targetSub1,
+              bonusAmount: rule.bonusAmount,
+              leads: 0,
+              totalBonus: 0,
+              disabled: true
+            };
+          }
+        }
+        
         // UTILISER LA MÊME LOGIQUE QUE POUR SOm !
         // Au lieu de fetchConversionsFromAPI(), utiliser getAffiliateStats()
         const sourceStats = await csvDataAPI.getAffiliateStats(rule.sourceSub1, period);

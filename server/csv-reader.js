@@ -931,6 +931,17 @@ const csvDataAPI = {
         console.log(`🎁 [BONUS] Règles de sub-affiliés trouvées pour ${sub1}:`, applicableRules);
         
         applicableRules.forEach(rule => {
+          // Vérifier si la règle est désactivée jusqu'à une certaine date
+          if (rule.disabledUntil) {
+            const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            const disabledUntilDate = rule.disabledUntil;
+            
+            if (todayDate <= disabledUntilDate) {
+              console.log(`🚫 [BONUS] Règle désactivée pour ${sub1} depuis "${rule.sourceSub1}" jusqu'au ${disabledUntilDate} (aujourd'hui: ${todayDate})`);
+              return; // Skip cette règle
+            }
+          }
+          
           // Récupérer les conversions du source (filtrées par l'API)
           const sourceData = aggBySub1.find(row => row.sub1 === rule.sourceSub1);
           
@@ -1121,7 +1132,14 @@ const csvDataAPI = {
            
            if (applicableRules.length > 0) {
              // Pour l'affichage, on montre le total des bonus générés par ce sub1
-             subAffiliateBonus = applicableRules.reduce((total, rule) => total + (leads * rule.bonusAmount), 0);
+             const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+             subAffiliateBonus = applicableRules.reduce((total, rule) => {
+               // Vérifier si la règle est désactivée jusqu'à une certaine date
+               if (rule.disabledUntil && todayDate <= rule.disabledUntil) {
+                 return total; // Skip cette règle
+               }
+               return total + (leads * rule.bonusAmount);
+             }, 0);
            }
            
            // Calculer le net (CA total - gains affilié - bonus = profit manager)
