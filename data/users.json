@@ -287,6 +287,24 @@
       "role": "affiliate",
       "name": "Enz",
       "commissionPerLead": 10
+    },
+    {
+      "id": 28,
+      "email": "lenny1270@yopmail.com",
+      "password": "Lenny1010@",
+      "sub1": "len",
+      "role": "affiliate",
+      "name": "Lenny",
+      "commissionPerLead": 10
+    },
+    {
+      "id": 29,
+      "email": "enzo21270@yopmail.com",
+      "password": "Enzo1010@",
+      "sub1": "enz2",
+      "role": "affiliate",
+      "name": "Enzo2",
+      "commissionPerLead": 10
     }
   ]
 }
