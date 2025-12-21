@@ -244,18 +244,19 @@ async function fetchEverflowConversions(period = 'today', sub1Filter = null) {
     const settingsData = settings.getSettings();
     const leadCountRules = settingsData.lead_count_rules || [];
     
-    // 🚫 DÉSACTIVER LES NOUVELLES DONNÉES POUR BADDER (après le 14/12/2025)
-    const BADDER_DATA_CUTOFF_DATE = '2025-12-14'; // Date limite : pas de nouvelles données après cette date
-    const cutoffDate = new Date(BADDER_DATA_CUTOFF_DATE + ' 23:59:59');
+    // 🚫 DÉSACTIVER LES NOUVELLES DONNÉES POUR CERTAINS AFFILIÉS (après le 14/12/2025)
+    const DATA_CUTOFF_DATE = '2025-12-14'; // Date limite : pas de nouvelles données après cette date
+    const cutoffDate = new Date(DATA_CUTOFF_DATE + ' 23:59:59');
+    const DISABLED_AFFILIATES = ['bad', 'ran', 'tito', 'anat', 'matt', 'ais', 'mast', 'land']; // Affiliés désactivés
     
     allConversions.forEach(conv => {
       const sub1 = conv.sub1 || 'unknown';
       
-      // Filtrer les conversions de "bad" après la date limite
-      if (sub1 === 'bad') {
+      // Filtrer les conversions des affiliés désactivés après la date limite
+      if (DISABLED_AFFILIATES.includes(sub1)) {
         const conversionDate = new Date(conv.conversion_unix_timestamp * 1000);
         if (conversionDate > cutoffDate) {
-          console.log(`🚫 [BADDER] Conversion filtrée pour bad (date: ${conversionDate.toISOString()}, limite: ${cutoffDate.toISOString()})`);
+          console.log(`🚫 [DISABLED] Conversion filtrée pour ${sub1} (date: ${conversionDate.toISOString()}, limite: ${cutoffDate.toISOString()})`);
           return; // Skip cette conversion
         }
       }
@@ -615,14 +616,15 @@ const csvDataAPI = {
       filtered = rawConversions.filter(conv => !HIDDEN_AFFILIATES.includes(conv.sub1));
     }
     
-    // 🚫 DÉSACTIVER LES NOUVELLES DONNÉES POUR BADDER (après le 14/12/2025)
-    const BADDER_DATA_CUTOFF_DATE = '2025-12-14'; // Date limite : pas de nouvelles données après cette date
-    const cutoffDate = new Date(BADDER_DATA_CUTOFF_DATE + ' 23:59:59');
+    // 🚫 DÉSACTIVER LES NOUVELLES DONNÉES POUR CERTAINS AFFILIÉS (après le 14/12/2025)
+    const DATA_CUTOFF_DATE = '2025-12-14'; // Date limite : pas de nouvelles données après cette date
+    const cutoffDate = new Date(DATA_CUTOFF_DATE + ' 23:59:59');
+    const DISABLED_AFFILIATES = ['bad', 'ran', 'tito', 'anat', 'matt', 'ais', 'mast', 'land']; // Affiliés désactivés
     filtered = filtered.filter(conv => {
-      if (conv.sub1 === 'bad') {
+      if (DISABLED_AFFILIATES.includes(conv.sub1)) {
         const conversionDate = new Date(conv.conversion_unix_timestamp * 1000);
         if (conversionDate > cutoffDate) {
-          console.log(`🚫 [BADDER] Conversion filtrée dans getConversions pour bad (date: ${conversionDate.toISOString()})`);
+          console.log(`🚫 [DISABLED] Conversion filtrée dans getConversions pour ${conv.sub1} (date: ${conversionDate.toISOString()})`);
           return false; // Exclure cette conversion
         }
       }
